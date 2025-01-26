@@ -1,5 +1,5 @@
-import { useAppDispatch, useAppSelector } from '@/app/redux'
-import { setIsSideBarCollapsed } from '@/app/state'
+import { useAppDispatch, useAppSelector } from '../app/redux'
+import { setIsSideBarCollapsed } from '../app/state'
 import { Archive, Icon, Layout, Menu, SlidersHorizontal, Users, Clipboard, CircleDollarSign } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
