@@ -1,5 +1,5 @@
 import { useGetDashboardMetricsQuery } from '@/app/state/api'
-import { TrendingUp } from 'lucide-react'
+import { TrendingDown, TrendingUp } from 'lucide-react'
 import React, { useState } from 'react'
 import { ResponsiveContainer, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar } from 'recharts'
 
@@ -43,10 +43,21 @@ const SalesSummaryCard = () => {
                         <span className='text-2xl font-extrabold'>
                            ${(totalValueSum / 1000000).toLocaleString('en-US', {maximumFractionDigits: 2})}m
                         </span>
-                        <span className='text-green-500 text-sm ml-2'>
-                           <TrendingUp className='inline w-4 h-4 mr-1'/>
-                           {averageChangePercentage.toFixed(2)}%
-                        </span>
+                        {averageChangePercentage >= 0 ? (
+                           <>
+                              <span className='text-green-500 text-sm ml-2'>
+                                 <TrendingUp className='inline w-4 h-4 mr-1'/>
+                                 {averageChangePercentage.toFixed(2)}%
+                              </span>
+                           </>
+                        ) : (
+                           <>
+                              <span className='text-red-500 text-sm ml-2'>
+                                 <TrendingDown className='inline w-4 h-4 mr-1'/>
+                                 {Math.abs(averageChangePercentage).toFixed(2)}%
+                              </span>
+                           </>
+                        )}
                      </div>
                   </div>
 
@@ -72,7 +83,14 @@ const SalesSummaryCard = () => {
                         />
                         <Tooltip formatter={(value: number) => [
                            `$${value.toLocaleString('en-US')}`
-                        ]} 
+                        ]}
+                        labelFormatter={(label) => {
+                           const date = new Date(label)
+                           return date.toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long', 
+                              day: 'numeric'})
+                        }} 
                         />
                         <Bar dataKey='totalValue' fill='#3182ce' barSize={10} radius={[10,10,0,0]}/>
                      </BarChart>
