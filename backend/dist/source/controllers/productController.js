@@ -19,7 +19,8 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const products = yield prisma.products.findMany({
             where: {
                 name: {
-                    contains: search
+                    contains: search,
+                    mode: 'insensitive'
                 }
             }
         });
