@@ -87,9 +87,9 @@ const Sidebar = () => {
             />
 
             <SidebarLink 
-               href='/users' 
+               href='/customers' 
                icon={Users} 
-               label='Users' 
+               label='Customers' 
                isCollapsed={isSideBarCollapsed}
             />
 
