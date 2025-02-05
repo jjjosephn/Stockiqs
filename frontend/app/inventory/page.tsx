@@ -1,10 +1,11 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Product, useCreateProductMutation, useGetProductsQuery } from '../state/api'
+import { useCreateProductMutation, useDeleteProductMutation, useGetProductsQuery } from '../state/api'
 import Header from '@/components/Header'
 import { PlusCircle, Search } from 'lucide-react'
-import SneakerModal from '@/components/SneakerModal'
+import AddSneakerModal from '@/components/AddSneakerModal'
+import SneakerInfoModal from '@/components/SneakerInfoModal'
 
 type ProductFormData = {
    name: string,
@@ -15,12 +16,20 @@ type ProductFormData = {
 
 const Inventory = () => {
    const [search, setSearch] = useState('')
-   const [isModalOpen, setIsModalOpen] = useState(false)
+   const [addSneakerModalOpen, setAddSneakerModalOpen] = useState(false)
+   const [sneakerInfoModalOpen, setSneakerInfoModalOpen] = useState(false)
    const { data, isError, isLoading } = useGetProductsQuery(search)
    const [ addSneaker ] = useCreateProductMutation()
+   const [ deleteSneaker ] = useDeleteProductMutation()
+   const [selectedProduct, setSelectedProduct] = useState<any>(null)
+
 
    const handleAddSneaker = async (data: ProductFormData) => {
       await addSneaker(data)
+   }
+
+   const handleDeleteSneaker = async (productId: string) => {
+      await deleteSneaker(productId)
    }
 
    if (isLoading) {
@@ -49,10 +58,10 @@ const Inventory = () => {
             </div>
             <div className='mb-6'>
                <button className='flex items-center bg-blue-500 hover:bg-blue-700 
-                  text-gray-200 font-bold py-2 px-4 rounded'
-                  onClick={() => setIsModalOpen(true)}
+                  text-white font-bold py-2 px-4 rounded'
+                  onClick={() => setAddSneakerModalOpen(true)}
                >
-                  <PlusCircle className='w-5 h-5 mr-2 !text-gray-200'/>
+                  <PlusCircle className='w-5 h-5 mr-2 !text-white'/>
                   Add Sneaker
                </button>
             </div>
@@ -63,7 +72,12 @@ const Inventory = () => {
                   data.map((product) => (
                      <div 
                         key={product.productId} 
-                        className='border shadow rounded-md p-4 max-w-full w-full mx-auto'
+                        className='border shadow rounded-md p-4 max-w-full w-full mx-auto hover:bg-gray-300'
+                        onClick={() => {
+                           setSneakerInfoModalOpen(true)
+                           setSelectedProduct(product)
+                           console.log(selectedProduct)
+                        }}
                      >
                         <div className='flex flex-col items-center'>
                            image
@@ -79,12 +93,21 @@ const Inventory = () => {
                   ))
                )}
             </div>
-
-            <SneakerModal 
-               isOpen={isModalOpen} 
-               onClose={() => setIsModalOpen(false)}
+            
+            <AddSneakerModal 
+               isOpen={addSneakerModalOpen} 
+               onClose={() => setAddSneakerModalOpen(false)}
                onCreate={handleAddSneaker}
             />
+
+            {selectedProduct && (
+               <SneakerInfoModal
+                  isOpen={sneakerInfoModalOpen} 
+                  onClose={() => setSneakerInfoModalOpen(false)}
+                  onDelete={() => handleDeleteSneaker(selectedProduct.productId)}
+                  product={selectedProduct} 
+               />
+            )}
          </div>
       </>
    )
