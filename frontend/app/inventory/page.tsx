@@ -3,9 +3,9 @@
 import { useState } from "react"
 import { useCreateProductMutation, useDeleteProductMutation, useGetProductsQuery } from "../state/api"
 import Header from "@/components/Header"
-import { PlusCircle, Search, Loader2 } from "lucide-react"
-import AddSneakerModal from "@/components/SneakerModals/AddSneakerModal"
-import SneakerInfoModal from "@/components/SneakerModals/SneakerInfoModal"
+import { PlusCircle, Search, Loader2, ChevronLeft, ChevronRight } from 'lucide-react'
+import AddSneakerModal from "@/components/Modals/AddSneakerModal"
+import SneakerInfoModal from "@/components/Modals/SneakerInfoModal"
 import { motion } from "framer-motion"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -25,6 +25,8 @@ const Inventory = () => {
   const [addSneaker] = useCreateProductMutation()
   const [deleteSneaker] = useDeleteProductMutation()
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 12
 
   const handleAddSneaker = async (data: ProductFormData) => {
     await addSneaker(data)
@@ -44,6 +46,19 @@ const Inventory = () => {
 
   if (isError || !data) {
     return <div className="text-center text-red-500 py-4">Error fetching products</div>
+  }
+
+  const filteredProducts = data.filter(product =>
+    product.name.toLowerCase().includes(search.toLowerCase())
+  )
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentProducts = filteredProducts.slice(startIndex, endIndex)
+
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)))
   }
 
   return (
@@ -76,7 +91,7 @@ const Inventory = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {data.map((product) => (
+        {currentProducts.map((product) => (
           <motion.div
             key={product.productId}
             className="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
@@ -98,6 +113,33 @@ const Inventory = () => {
         ))}
       </motion.div>
 
+      <div className="flex justify-between items-center mt-8">
+        <div className="text-sm text-muted-foreground">
+          Showing {startIndex + 1} to {Math.min(endIndex, filteredProducts.length)} of {filteredProducts.length} products
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <div className="text-sm">
+            Page {currentPage} of {totalPages}
+          </div>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
       <AddSneakerModal
         isOpen={addSneakerModalOpen}
         onClose={() => setAddSneakerModalOpen(false)}
@@ -117,4 +159,3 @@ const Inventory = () => {
 }
 
 export default Inventory
-

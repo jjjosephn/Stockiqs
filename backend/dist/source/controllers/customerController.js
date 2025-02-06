@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCustomers = void 0;
+exports.createCustomer = exports.getCustomers = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getCustomers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -22,3 +22,20 @@ const getCustomers = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.getCustomers = getCustomers;
+const createCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { userId, name, email } = req.body;
+        const customer = yield prisma.users.create({
+            data: {
+                userId,
+                name,
+                email
+            }
+        });
+        res.status(201).json({ message: 'User created', customer });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Error creating user' });
+    }
+});
+exports.createCustomer = createCustomer;

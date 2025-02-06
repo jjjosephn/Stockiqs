@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useGetCustomersQuery } from '../state/api'
+import { useCreateCustomerMutation, useGetCustomersQuery } from '../state/api'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -9,11 +9,20 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, UserPlus, ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
+import AddCustomerModal from '@/components/Modals/AddCustomerModal'
+
+type CustomerFormData = {
+  name: string
+  email: string
+}
 
 const Customers = () => {
   const { data, isError, isLoading } = useGetCustomersQuery()
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
+  const [addCustomerModalOpen, setAddCustomerModalOpen] = useState(false)
+  const [addCustomer] = useCreateCustomerMutation()
+
   const itemsPerPage = 10
 
   if (isLoading) {
@@ -38,6 +47,10 @@ const Customers = () => {
     setCurrentPage(Math.max(1, Math.min(page, totalPages)))
   }
 
+  const handleAddCustomer = async (data: CustomerFormData) => {
+    await addCustomer(data)
+  }
+
   return (
     <div className="container mx-auto p-4">
       <Card>
@@ -47,7 +60,9 @@ const Customers = () => {
               <CardTitle className="text-2xl font-bold">Customers</CardTitle>
               <CardDescription>Manage your customer base</CardDescription>
             </div>
-            <Button>
+            <Button
+              onClick={() => setAddCustomerModalOpen(true)}
+            >
               <UserPlus className="mr-2 h-4 w-4" /> Add New Customer
             </Button>
           </div>
@@ -129,6 +144,13 @@ const Customers = () => {
           </div>
         </CardContent>
       </Card>
+
+      <AddCustomerModal
+        isOpen={addCustomerModalOpen}
+        onClose={() => setAddCustomerModalOpen(false)}
+        onCreate={handleAddCustomer}
+      />
+
     </div>
   )
 }

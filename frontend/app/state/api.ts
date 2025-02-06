@@ -56,6 +56,11 @@ export interface Customers {
    email: string
 }
 
+export interface NewCustomer {
+   name: string,
+   email: string
+}
+
 export const api = createApi({
    baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL }),
    reducerPath: "api",
@@ -90,7 +95,15 @@ export const api = createApi({
       getCustomers: build.query<Customers[], void>({
          query: () => '/customers',
          providesTags: ['Customers']
-      })
+      }),
+      createCustomer: build.mutation<Customers[], NewCustomer>({
+         query: (newCustomer) => ({
+            url: '/customers',
+            method: 'POST',
+            body: newCustomer
+         }),
+         invalidatesTags: ['Customers']
+      }),
    }),
 })
 
@@ -99,5 +112,6 @@ export const {
    useGetProductsQuery, 
    useCreateProductMutation, 
    useDeleteProductMutation,
-   useGetCustomersQuery 
+   useGetCustomersQuery,
+   useCreateCustomerMutation
 } = api;
