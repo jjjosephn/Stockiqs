@@ -51,7 +51,7 @@ const AddCustomerModal = ({ isOpen, onClose, onCreate }: AddCustomerModalProps) 
     <div className="fixed inset-0 bg-[#475569] bg-opacity-50 flex items-center justify-center p-4 z-50">
       <Card className="w-full max-w-md">
         <CardHeader className="relative">
-          <CardTitle className="text-2xl font-bold">Add New Customer</CardTitle>
+          <CardTitle className="text-2xl font-bold text-gray-900">Add New Customer</CardTitle>
           <Button 
             variant="ghost" 
             className="absolute right-4 top-4" 
@@ -63,7 +63,7 @@ const AddCustomerModal = ({ isOpen, onClose, onCreate }: AddCustomerModalProps) 
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
+              <Label className='text-gray-900' htmlFor="name">Name</Label>
               <Input
                 id="name"
                 name="name"
@@ -74,7 +74,7 @@ const AddCustomerModal = ({ isOpen, onClose, onCreate }: AddCustomerModalProps) 
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label className='text-gray-900' htmlFor="email">Email</Label>
               <Input
                 id="email"
                 name="email"
@@ -87,10 +87,10 @@ const AddCustomerModal = ({ isOpen, onClose, onCreate }: AddCustomerModalProps) 
             </div>
           </CardContent>
           <CardFooter className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={onClose}>
+            <Button className='bg-gray-100 text-gray-900' variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
+            <Button className='bg-gray-900 text-gray-50' type="submit">
               Add Customer
             </Button>
           </CardFooter>

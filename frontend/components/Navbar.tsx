@@ -50,7 +50,7 @@ const Navbar = () => {
          {/* Right */}
 
          <div className='flex justify-between items-center gap-5'>
-            <div className='hidden md:flex justify-between items-center gap-5'>
+            <div className='md:flex justify-between items-center gap-5'>
                <div>
                   <button onClick={handleToggleDarkMode}>
                      {isDarkMode ? (
