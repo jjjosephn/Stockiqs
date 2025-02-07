@@ -1,7 +1,7 @@
 -- CreateTable
 CREATE TABLE "Customers" (
     "userId" TEXT NOT NULL,
-    "phoneNumber" TEXT,
+    "phoneNumber" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "instagram" TEXT,
     "streetAddress" TEXT,

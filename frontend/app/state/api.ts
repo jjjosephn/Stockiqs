@@ -53,12 +53,22 @@ export interface DashboardMetrics {
 export interface Customers {
    userId: string,
    name: string,
-   email: string
+   phoneNumber: string,
+   instagram: string,
+   streetAddress: string,
+   city: string,
+   state: string,
+   zipCode: string
 }
 
 export interface NewCustomer {
    name: string,
-   email: string
+   phoneNumber: string,
+   instagram: string,
+   streetAddress: string,
+   city: string,
+   state: string,
+   zipCode: string
 }
 
 export const api = createApi({
@@ -96,6 +106,10 @@ export const api = createApi({
          query: () => '/customers',
          providesTags: ['Customers']
       }),
+      getCustomer: build.query<Customers, string>({
+         query: (userId) => `/customers/${userId}`,
+         providesTags: ['Customers']
+      }),
       createCustomer: build.mutation<Customers[], NewCustomer>({
          query: (newCustomer) => ({
             url: '/customers',
@@ -104,6 +118,21 @@ export const api = createApi({
          }),
          invalidatesTags: ['Customers']
       }),
+      deleteCustomer: build.mutation<void, string>({
+         query: (userId) => ({
+            url: `/customers/${userId}`,
+            method: 'DELETE'
+         }),
+         invalidatesTags: ['Customers']
+      }),
+      updateCustomer: build.mutation<Customers, Partial<Customers>>({
+         query: ({ userId, ...updatedFields }) => ({
+            url: `/customers/${userId}`,
+            method: 'PUT',
+            body: updatedFields
+         }),
+         invalidatesTags: ['Customers']
+      })
    }),
 })
 
@@ -113,5 +142,8 @@ export const {
    useCreateProductMutation, 
    useDeleteProductMutation,
    useGetCustomersQuery,
-   useCreateCustomerMutation
+   useGetCustomerQuery,
+   useDeleteCustomerMutation,
+   useCreateCustomerMutation,
+   useUpdateCustomerMutation
 } = api;

@@ -28,6 +28,7 @@ const Inventory = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 12
 
+  console.log(data)
   const handleAddSneaker = async (data: ProductFormData) => {
     await addSneaker(data)
   }

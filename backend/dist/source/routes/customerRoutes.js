@@ -4,5 +4,8 @@ const express_1 = require("express");
 const customerController_1 = require("../controllers/customerController");
 const router = (0, express_1.Router)();
 router.get('/', customerController_1.getCustomers);
+router.get('/:userId', customerController_1.getCustomer);
 router.post('/', customerController_1.createCustomer);
+router.delete('/:userId', customerController_1.deleteCustomer);
+router.put('/:userId', customerController_1.updateCustomer);
 exports.default = router;

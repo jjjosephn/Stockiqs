@@ -13,7 +13,12 @@ import AddCustomerModal from '@/components/Modals/AddCustomerModal'
 
 type CustomerFormData = {
   name: string
-  email: string
+  phoneNumber: string
+  instagram: string
+  streetAddress: string
+  city: string
+  state: string
+  zipCode: string
 }
 
 const Customers = () => {
@@ -35,7 +40,7 @@ const Customers = () => {
 
   const filteredCustomers = data.filter(customer =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.email.toLowerCase().includes(searchTerm.toLowerCase())
+    customer.phoneNumber.includes(searchTerm)
   )
 
   const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage)
@@ -88,7 +93,7 @@ const Customers = () => {
             <TableHeader>
               <TableRow className='border-gray-300'>
                 <TableHead>Customer</TableHead>
-                <TableHead>Email</TableHead>
+                <TableHead>Phone Number</TableHead>
                 <TableHead>ID</TableHead>
               </TableRow>
             </TableHeader>
@@ -104,7 +109,7 @@ const Customers = () => {
                       {customer.name}
                     </div>
                   </TableCell>
-                  <TableCell className='text-gray-800'>{customer.email}</TableCell>
+                  <TableCell className='text-gray-800'>{customer.phoneNumber}</TableCell>
                   <TableCell className='text-gray-800'>{customer.userId}</TableCell>
                   <TableCell className='text-gray-900'>
                     <Button className='hover:bg-gray-300'variant="ghost" asChild>

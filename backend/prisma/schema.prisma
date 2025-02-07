@@ -15,7 +15,7 @@ datasource db {
 
 model Customers {
   userId        String @id
-  phoneNumber   String?
+  phoneNumber   String
   name          String
   instagram     String?
   streetAddress String?
