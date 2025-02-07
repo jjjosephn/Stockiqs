@@ -119,23 +119,25 @@ const Inventory = () => {
         </div>
         <div className="flex items-center space-x-2">
           <Button
+            className='bg-gray-900 hover:bg-gray-300'
             variant="outline"
             size="icon"
             onClick={() => goToPage(currentPage - 1)}
             disabled={currentPage === 1}
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4 text-gray-50" />
           </Button>
           <div className="text-sm">
             Page {currentPage} of {totalPages}
           </div>
           <Button
+            className='bg-gray-900 hover:bg-gray-300'
             variant="outline"
             size="icon"
             onClick={() => goToPage(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 text-gray-50" />
           </Button>
         </div>
       </div>

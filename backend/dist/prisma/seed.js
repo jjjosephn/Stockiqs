@@ -45,7 +45,7 @@ function main() {
             "salesSummary.json",
             "purchases.json",
             "purchaseSummary.json",
-            "users.json",
+            "customers.json",
             "expenses.json",
             "expenseByCategory.json",
         ];

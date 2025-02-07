@@ -1,10 +1,15 @@
 -- CreateTable
-CREATE TABLE "Users" (
+CREATE TABLE "Customers" (
     "userId" TEXT NOT NULL,
+    "phoneNumber" TEXT,
     "name" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
+    "instagram" TEXT,
+    "streetAddress" TEXT,
+    "city" TEXT,
+    "state" TEXT,
+    "zipCode" TEXT,
 
-    CONSTRAINT "Users_pkey" PRIMARY KEY ("userId")
+    CONSTRAINT "Customers_pkey" PRIMARY KEY ("userId")
 );
 
 -- CreateTable

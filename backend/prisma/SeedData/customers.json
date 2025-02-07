@@ -1,0 +1,52 @@
+[
+  {
+    "userId": "1a2b3c4d-1234-5678-90ab-cdef12345678",
+    "name": "Carly",
+    "phoneNumber": "555-1234",
+    "instagram": "carly_gram",
+    "streetAddress": "123 Main St",
+    "city": "Los Angeles",
+    "state": "CA",
+    "zipCode": "90001"
+  },
+  {
+    "userId": "2b3c4d5e-2345-6789-01bc-def234567890",
+    "name": "Inesita",
+    "phoneNumber": "555-5678",
+    "instagram": "ines_gram",
+    "streetAddress": "456 Oak St",
+    "city": "San Francisco",
+    "state": "CA",
+    "zipCode": "94102"
+  },
+  {
+    "userId": "3c4d5e6f-3456-7890-12cd-ef3456789012",
+    "name": "Tulley",
+    "phoneNumber": "555-9012",
+    "instagram": "tulley_snap",
+    "streetAddress": "789 Pine St",
+    "city": "New York",
+    "state": "NY",
+    "zipCode": "10001"
+  },
+  {
+    "userId": "4d5e6f7g-4567-8901-23de-f45678901234",
+    "name": "Amelia",
+    "phoneNumber": "555-3456",
+    "instagram": null,
+    "streetAddress": "321 Elm St",
+    "city": "Chicago",
+    "state": "IL",
+    "zipCode": "60601"
+  },
+  {
+    "userId": "5e6f7g8h-5678-9012-34ef-567890123456",
+    "name": "Bucky",
+    "phoneNumber": "555-7890",
+    "instagram": "bucky_thebest",
+    "streetAddress": "654 Maple Ave",
+    "city": "Houston",
+    "state": "TX",
+    "zipCode": "77001"
+  }
+]

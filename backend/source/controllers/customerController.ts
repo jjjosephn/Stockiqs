@@ -8,10 +8,10 @@ export const getCustomers = async (
    res: Response
 ): Promise<void> => {
    try {
-      const customers = await prisma.users.findMany()
+      const customers = await prisma.customers.findMany()
       res.json(customers)
    } catch (error) {
-      res.status(500).json({ message: 'Error retrieving users' });
+      res.status(500).json({ message: 'Error retrieving customers' });
    }
 }
 
@@ -20,12 +20,17 @@ export const createCustomer = async (
    res: Response
 ): Promise<void> => {
    try {
-      const { userId, name, email } = req.body
-      const customer = await prisma.users.create({
+      const { userId, phoneNumber, name, instagram, streetAddress, city, state, zipCode } = req.body
+      const customer = await prisma.customers.create({
          data: {
             userId,
             name,
-            email
+            phoneNumber,
+            instagram,
+            streetAddress,
+            city,
+            state,
+            zipCode  
          }
       })
    res.status(201).json({ message: 'User created', customer });

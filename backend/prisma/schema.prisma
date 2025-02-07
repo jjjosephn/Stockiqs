@@ -13,10 +13,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
-  userId String @id
-  name   String
-  email  String
+model Customers {
+  userId        String @id
+  phoneNumber   String?
+  name          String
+  instagram     String?
+  streetAddress String?
+  city          String?
+  state         String?
+  zipCode       String?
 }
 
 model Products {

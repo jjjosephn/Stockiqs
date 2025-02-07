@@ -14,22 +14,27 @@ const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getCustomers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const customers = yield prisma.users.findMany();
+        const customers = yield prisma.customers.findMany();
         res.json(customers);
     }
     catch (error) {
-        res.status(500).json({ message: 'Error retrieving users' });
+        res.status(500).json({ message: 'Error retrieving customers' });
     }
 });
 exports.getCustomers = getCustomers;
 const createCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { userId, name, email } = req.body;
-        const customer = yield prisma.users.create({
+        const { userId, phoneNumber, name, instagram, streetAddress, city, state, zipCode } = req.body;
+        const customer = yield prisma.customers.create({
             data: {
                 userId,
                 name,
-                email
+                phoneNumber,
+                instagram,
+                streetAddress,
+                city,
+                state,
+                zipCode
             }
         });
         res.status(201).json({ message: 'User created', customer });
