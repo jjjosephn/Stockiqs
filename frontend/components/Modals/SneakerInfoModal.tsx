@@ -3,12 +3,12 @@
 import type React from "react"
 import { useState } from "react"
 import { X, DollarSign, Package, Edit, Plus } from "lucide-react"
-import { v4 } from "uuid"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useUpdateProductMutation, useUpdateProductStockMutation } from "@/app/state/api"
+import { useDeleteProductStockMutation, useUpdateProductMutation } from "@/app/state/api"
+import { v4 } from "uuid"
 
 type StockItem = {
 productId: string
@@ -37,8 +37,8 @@ const [isEditing, setIsEditing] = useState(false)
 const [editedProduct, setEditedProduct] = useState<Product>(product)
 const [updateProduct] = useUpdateProductMutation()
 const [newStock, setNewStock] = useState<Partial<StockItem>>({ size: 0, quantity: 0, price: 0 })
-const [updateStock] = useUpdateProductStockMutation()
-console.log(product)
+const [deleteProductStock] = useDeleteProductStockMutation()
+
 
 if (!isOpen) return null
 
@@ -54,6 +54,22 @@ const handleSizeChange = (value: string) => {
 const selectedStockItem = selectedSize
    ? editedProduct.stock.find((item) => item.size.toString() === selectedSize)
    : null
+
+const handleDeleteSize = async () => {
+   if (!selectedStockItem?.stockId || !editedProduct?.productId) {
+      console.error("Missing productId or stockId.");
+      return;
+   }
+
+   try {
+      await deleteProductStock({ 
+         productId: editedProduct.productId, 
+         stockId: selectedStockItem.stockId 
+      });
+   } catch (error) {
+      console.error("Error deleting stock item:", error);
+   }
+};
 
 const handleEdit = () => {
    setIsEditing(true)
@@ -76,6 +92,7 @@ const handleSave = async () => {
       }).unwrap()
 
       setIsEditing(false)
+      setSelectedSize(null)
       onClose()
    } catch (error) {
       console.error("Failed to update product:", error)
@@ -105,36 +122,28 @@ const handleNewStockChange = (field: keyof StockItem, value: string) => {
    }))
 }
 
-const handleAddNewStock = async () => {
+const handleAddNewStock = () => {
    if (newStock.size && newStock.quantity && newStock.price) {
       const newStockItem: StockItem = {
-      productId: editedProduct.productId,
-      stockId: v4(),
-      size: newStock.size,
-      quantity: newStock.quantity,
-      price: newStock.price,
-      }
-
-      const res = await updateStock({
          productId: editedProduct.productId,
-         stock: [newStockItem]
-      }).unwrap()
-
-      if (res) {
+         stockId: v4(), 
+         size: newStock.size,
+         quantity: newStock.quantity,
+         price: newStock.price,
+      }
       setEditedProduct((prev) => ({
          ...prev,
          stock: [...prev.stock, newStockItem],
-      }))
-      setNewStock({ size: 0, quantity: 0, price: 0 })
-      }
+      }));
+
+      setNewStock({ size: 0, quantity: 0, price: 0 });
    }
 }
 
 
-
 return (
    <div className="fixed inset-0 bg-[#475569] bg-opacity-50 overflow-y-auto h-full w-full z-20 flex items-center justify-center">
-      <Card className={`bg-white shadow-xl ${isEditing ? "w-full max-w-2xl" : "w-full max-w-md"}`}>
+      <Card className={`bg-white shadow-xl ${isEditing ? "w-full max-w-xl" : "w-full max-w-md"}`}>
       <CardHeader className="relative">
          <Button
             variant="ghost"
@@ -144,7 +153,6 @@ return (
             onClose()
             setSelectedSize(null)
             setIsEditing(false)
-            setNewStock({ size: 0, quantity: 0, price: 0 })
             }}
          >
             <X className="h-4 w-4" />
@@ -204,45 +212,58 @@ return (
             <label htmlFor="size-select" className="block text-sm font-medium text-[#475569]">
             Select Size
             </label>
+            <div className="flex items-center space-x-2">
             <Select onValueChange={handleSizeChange} value={selectedSize || undefined}>
-            <SelectTrigger id="size-select">
-               <SelectValue placeholder="Choose a size" />
-            </SelectTrigger>
-            <SelectContent>
-               {editedProduct.stock.map((item) => (
+               <SelectTrigger id="size-select">
+                  <SelectValue placeholder="Choose a size" />
+               </SelectTrigger>
+               <SelectContent>
+                  {editedProduct.stock.map((item) => (
                   <SelectItem key={item.stockId} value={item.size.toString()}>
-                  {item.size}
+                     {item.size}
                   </SelectItem>
-               ))}
-            </SelectContent>
+                  ))}
+               </SelectContent>
             </Select>
+            {isEditing && selectedSize && (
+               <Button variant="destructive" size="sm" onClick={() => {
+                  handleDeleteSize()
+                  onClose()
+               }}>
+                  Delete Size
+               </Button>
+            )}
+            </div>
          </div>
          {isEditing && (
-            <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Add New Stock</h3>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-2">
+            <h3 className="text-md font-semibold">Add New Stock</h3>
+            <div className="flex items-center space-x-2">
                <Input
                   type="number"
                   placeholder="Size"
                   value={newStock.size || ""}
                   onChange={(e) => handleNewStockChange("size", e.target.value)}
+                  className="w-20"
                />
                <Input
                   type="number"
-                  placeholder="Quantity"
+                  placeholder="Qty"
                   value={newStock.quantity || ""}
                   onChange={(e) => handleNewStockChange("quantity", e.target.value)}
+                  className="w-20"
                />
                <Input
                   type="number"
                   placeholder="Price"
                   value={newStock.price || ""}
                   onChange={(e) => handleNewStockChange("price", e.target.value)}
+                  className="w-24"
                />
+               <Button size="sm" onClick={handleAddNewStock}>
+                  <Plus className="h-4 w-4" /> Add Stock
+               </Button>
             </div>
-            <Button onClick={handleAddNewStock} className="w-full">
-               <Plus className="mr-2 h-4 w-4" /> Add New Stock
-            </Button>
             </div>
          )}
       </CardContent>
@@ -253,7 +274,6 @@ return (
             setSelectedSize(null)
             setIsEditing(false)
             onClose()
-            setNewStock({ size: 0, quantity: 0, price: 0 })
             }}
          >
             Close
@@ -283,4 +303,3 @@ return (
 }
 
 export default SneakerInfoModal
-

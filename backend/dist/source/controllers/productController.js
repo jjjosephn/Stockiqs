@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateProductStock = exports.updateProduct = exports.deleteProduct = exports.createProduct = exports.getProducts = void 0;
+exports.deleteProductStock = exports.updateProductStock = exports.updateProduct = exports.deleteProduct = exports.createProduct = exports.getProducts = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -135,3 +135,17 @@ const updateProductStock = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.updateProductStock = updateProductStock;
+const deleteProductStock = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { productId, stockId } = req.params;
+        console.log("Received DELETE request for:", { productId, stockId });
+        const deletedStock = yield prisma.productStock.delete({
+            where: { stockId },
+        });
+        res.status(200).json({ message: 'Stock item deleted successfully', deletedStock });
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to delete stock item', details: error });
+    }
+});
+exports.deleteProductStock = deleteProductStock;

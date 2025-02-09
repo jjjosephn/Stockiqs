@@ -124,11 +124,20 @@ export const api = createApi({
          }),
          invalidatesTags: ['Products']
       }),
+
+
       updateProductStock: build.mutation<Product, { productId: string, stock: ProductStock[] }>({
          query: ({ productId, stock }) => ({
             url: `/products/${productId}/stock`,
             method: 'POST',
             body: { stock },
+         }),
+         invalidatesTags: ['Products'],
+      }),
+      deleteProductStock: build.mutation<Product, { productId: string, stockId: string }>({
+         query: ({ productId, stockId }) => ({
+            url: `/products/${productId}/stock/${stockId}`,
+            method: 'DELETE',
          }),
          invalidatesTags: ['Products'],
       }),
@@ -175,6 +184,7 @@ export const {
    useDeleteProductMutation,
    useUpdateProductMutation,
    useUpdateProductStockMutation,
+   useDeleteProductStockMutation,
    useGetCustomersQuery,
    useGetCustomerQuery,
    useDeleteCustomerMutation,

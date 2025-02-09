@@ -147,3 +147,21 @@ export const updateProductStock = async (
       res.status(500).json({ error: 'Failed to add stock' });
    }
 }
+
+export const deleteProductStock = async (
+   req: Request, 
+   res: Response
+): Promise<void> => {
+   try {
+      const { productId, stockId } = req.params;
+      console.log("Received DELETE request for:", { productId, stockId });
+
+      const deletedStock = await prisma.productStock.delete({
+         where: { stockId },
+      });
+
+      res.status(200).json({ message: 'Stock item deleted successfully', deletedStock });
+   } catch (error) {
+      res.status(500).json({ error: 'Failed to delete stock item', details: error });
+   }
+};

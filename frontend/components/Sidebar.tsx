@@ -80,6 +80,13 @@ const Sidebar = () => {
             />
 
             <SidebarLink 
+               href='/sales' 
+               icon={CircleDollarSign} 
+               label='Sales' 
+               isCollapsed={isSideBarCollapsed}
+            />
+
+            <SidebarLink 
                href='/inventory' 
                icon={Archive} 
                label='Inventory' 
@@ -90,13 +97,6 @@ const Sidebar = () => {
                href='/customers' 
                icon={Users} 
                label='Customers' 
-               isCollapsed={isSideBarCollapsed}
-            />
-
-            <SidebarLink 
-               href='/expenses' 
-               icon={CircleDollarSign} 
-               label='Expenses' 
                isCollapsed={isSideBarCollapsed}
             />
 
