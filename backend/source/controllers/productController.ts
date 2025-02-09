@@ -66,6 +66,12 @@ export const deleteProduct = async (
 ): Promise<void> => {
    try {
       const { productId } = req.params
+      
+      await prisma.productStock.deleteMany({
+         where: {
+            productId
+         }
+      })
       await prisma.products.delete({
          where: {
             productId
@@ -121,18 +127,22 @@ export const updateProductStock = async (
 ): Promise<void> => {
    try {
       const { productId } = req.params;
-      const { price, size, quantity } = req.body; 
+      const { stock } = req.body; 
 
-      const newStock = await prisma.productStock.create({
-         data: {
-            productId,
-            price,
-            size,
-            quantity,
-         },
-      })
+      const newStockItems = await prisma.$transaction(
+         stock.map((item: any) =>
+            prisma.productStock.create({
+               data: {
+                  productId,
+                  price: item.price,
+                  size: item.size,
+                  quantity: item.quantity,
+               },
+            })
+         )
+      );
 
-      res.status(200).json(newStock);
+      res.status(200).json(newStockItems);
    } catch (error) {
       res.status(500).json({ error: 'Failed to add stock' });
    }

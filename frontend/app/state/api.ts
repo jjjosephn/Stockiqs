@@ -128,7 +128,7 @@ export const api = createApi({
          query: ({ productId, stock }) => ({
             url: `/products/${productId}/stock`,
             method: 'POST',
-            body: { ...stock },
+            body: { stock },
          }),
          invalidatesTags: ['Products'],
       }),

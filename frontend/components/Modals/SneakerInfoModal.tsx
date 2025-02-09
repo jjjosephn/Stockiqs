@@ -38,6 +38,7 @@ const [editedProduct, setEditedProduct] = useState<Product>(product)
 const [updateProduct] = useUpdateProductMutation()
 const [newStock, setNewStock] = useState<Partial<StockItem>>({ size: 0, quantity: 0, price: 0 })
 const [updateStock] = useUpdateProductStockMutation()
+console.log(product)
 
 if (!isOpen) return null
 
@@ -96,7 +97,6 @@ const handleStockItemChange = (stockId: string, field: keyof StockItem, value: s
       ),
    }))
 }
-console.log(newStock)
 
 const handleNewStockChange = (field: keyof StockItem, value: string) => {
    setNewStock((prev) => ({
@@ -117,7 +117,7 @@ const handleAddNewStock = async () => {
 
       const res = await updateStock({
          productId: editedProduct.productId,
-         stock: newStockItem
+         stock: [newStockItem]
       }).unwrap()
 
       if (res) {

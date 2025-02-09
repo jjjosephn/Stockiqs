@@ -66,6 +66,11 @@ exports.createProduct = createProduct;
 const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { productId } = req.params;
+        yield prisma.productStock.deleteMany({
+            where: {
+                productId
+            }
+        });
         yield prisma.products.delete({
             where: {
                 productId
@@ -114,16 +119,16 @@ exports.updateProduct = updateProduct;
 const updateProductStock = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { productId } = req.params;
-        const { price, size, quantity } = req.body;
-        const newStock = yield prisma.productStock.create({
+        const { stock } = req.body;
+        const newStockItems = yield prisma.$transaction(stock.map((item) => prisma.productStock.create({
             data: {
                 productId,
-                price,
-                size,
-                quantity,
+                price: item.price,
+                size: item.size,
+                quantity: item.quantity,
             },
-        });
-        res.status(200).json(newStock);
+        })));
+        res.status(200).json(newStockItems);
     }
     catch (error) {
         res.status(500).json({ error: 'Failed to add stock' });
