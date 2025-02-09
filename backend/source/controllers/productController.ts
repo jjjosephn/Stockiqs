@@ -15,6 +15,9 @@ export const getProducts = async (
                contains: search,
                mode: 'insensitive'
             }
+         },
+         include: {
+            stock: true
          }
       })
       res.json(products)
@@ -28,17 +31,30 @@ export const createProduct = async (
    res: Response
 ): Promise<void> => {
    try{
-      const { productId, name, price, rating, stockQuantity} = req.body
+      const { name, stock } = req.body; 
+
+      if (!name || !Array.isArray(stock)) {
+         res.status(400).json({ message: 'Name and stock array are required' });
+         return;
+      }
+
       const product = await prisma.products.create({
          data: {
-            productId,
             name,
-            price,
-            rating,
-            stockQuantity,
+            stock: {
+               create: stock.map(({ size, quantity, price }) => ({
+                  size,
+                  quantity,
+                  price
+               }))
+            }
          },
-      })
-      res.status(201).json(product)
+         include: {
+            stock: true
+         }
+      });
+
+      res.status(201).json(product);
    } catch (error) {
       res.status(500).json({ message: 'Error creating product' });
    }
@@ -58,5 +74,66 @@ export const deleteProduct = async (
       res.status(201).json({ message: 'Product deleted' })
    } catch (error) {
       res.status(500).json({ message: 'Error deleting product' });
+   }
+}
+
+export const updateProduct = async (
+   req: Request,
+   res: Response
+): Promise<void> => {
+   try {
+      const { productId } = req.params
+      const { name, stock } = req.body
+
+      if (!name || !Array.isArray(stock)) {
+         res.status(400).json({ message: 'Name and stock array are required' });
+         return;
+      }
+
+      const updatedProduct = await prisma.products.update({
+         where: {
+            productId
+         },
+         data: {
+            name,
+            stock: {
+               upsert: stock.map(({ stockId, size, quantity, price }) => ({
+                  where: { stockId },
+                  update: { size, quantity, price },
+                  create: { size, quantity, price }
+               }))
+            }
+         },
+         include: {
+            stock: true
+         }
+      })
+
+      res.status(201).json(updatedProduct)
+   } catch (error) {
+      res.status(500).json({ message: 'Error updating product' });
+   }
+}
+
+export const updateProductStock = async (
+   req: Request,
+   res: Response
+): Promise<void> => {
+   try {
+      const { productId } = req.params;
+      const { price, size, quantity } = req.body; 
+
+      const newStock = await prisma.productStock.create({
+         data: {
+            productId,
+            price,
+            size,
+            quantity,
+         },
+      })
+
+      res.status(200).json(newStock);
+   } catch (error) {
+      res.status(500).json({ error: 'Failed to add stock' });
    }
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useCreateProductMutation, useDeleteProductMutation, useGetProductsQuery } from "../state/api"
 import Header from "@/components/Header"
 import { PlusCircle, Search, Loader2, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -10,11 +10,16 @@ import { motion } from "framer-motion"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
+type StockItem = {
+  stockId: string
+  price: number
+  size: number
+  quantity: number
+}
+
 type ProductFormData = {
   name: string
-  price: number
-  stockQuantity: number
-  rating: number
+  stock: StockItem[]
 }
 
 const Inventory = () => {
@@ -28,7 +33,6 @@ const Inventory = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 12
 
-  console.log(data)
   const handleAddSneaker = async (data: ProductFormData) => {
     await addSneaker(data)
   }
@@ -36,6 +40,13 @@ const Inventory = () => {
   const handleDeleteSneaker = async (productId: string) => {
     await deleteSneaker(productId)
   }
+
+  const sortedAndFilteredProducts = useMemo(() => {
+    if (!data) return []
+    return data
+      .filter(product => product.name.toLowerCase().includes(search.toLowerCase()))
+      .sort((a, b) => a.name.localeCompare(b.name))
+  }, [data, search])
 
   if (isLoading) {
     return (
@@ -49,14 +60,10 @@ const Inventory = () => {
     return <div className="text-center text-red-500 py-4">Error fetching products</div>
   }
 
-  const filteredProducts = data.filter(product =>
-    product.name.toLowerCase().includes(search.toLowerCase())
-  )
-
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
+  const totalPages = Math.ceil(sortedAndFilteredProducts.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
-  const currentProducts = filteredProducts.slice(startIndex, endIndex)
+  const currentProducts = sortedAndFilteredProducts.slice(startIndex, endIndex)
 
   const goToPage = (page: number) => {
     setCurrentPage(Math.max(1, Math.min(page, totalPages)))
@@ -107,8 +114,8 @@ const Inventory = () => {
                 <span className="text-gray-500">Image Placeholder</span>
               </div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">{product.name}</h3>
-              <p className="text-2xl font-bold text-blue-600 mb-2">${product.price.toFixed(2)}</p>
-              <div className="text-gray-600">Stock: {product.stockQuantity}</div>
+              <p className="text-2xl font-bold text-blue-600 mb-2">${(product.stock.reduce((sum, item) => sum + (item.price * item.quantity), 0)).toFixed(2)}</p>
+              <div className="text-gray-600">Stock: {product.stock.reduce((total, item) => total + item.quantity, 0)}</div>
             </div>
           </motion.div>
         ))}
@@ -116,7 +123,7 @@ const Inventory = () => {
 
       <div className="flex justify-between items-center mt-8">
         <div className="text-sm text-muted-foreground">
-          Showing {startIndex + 1} to {Math.min(endIndex, filteredProducts.length)} of {filteredProducts.length} products
+          Showing {startIndex + 1} to {Math.min(endIndex, sortedAndFilteredProducts.length)} of {sortedAndFilteredProducts.length} products
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -152,7 +159,10 @@ const Inventory = () => {
       {selectedProduct && (
         <SneakerInfoModal
           isOpen={sneakerInfoModalOpen}
-          onClose={() => setSneakerInfoModalOpen(false)}
+          onClose={() => {
+            setSneakerInfoModalOpen(false)
+            setSelectedProduct(null)
+          }}
           onDelete={() => handleDeleteSneaker(selectedProduct.productId)}
           product={selectedProduct}
         />

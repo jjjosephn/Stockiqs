@@ -40,6 +40,7 @@ function main() {
         const dataDirectory = path_1.default.join(__dirname, "seedData");
         const orderedFileNames = [
             "products.json",
+            "productStock.json",
             "expenseSummary.json",
             "sales.json",
             "salesSummary.json",

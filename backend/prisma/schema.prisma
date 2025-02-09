@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Customers {
-  userId        String @id
+  userId        String  @id
   phoneNumber   String
   name          String
   instagram     String?
@@ -25,13 +25,20 @@ model Customers {
 }
 
 model Products {
-  productId     String      @id
-  name          String
-  price         Float
-  rating        Float
-  stockQuantity Int
-  Sales         Sales[]
-  Purchases     Purchases[]
+  productId String         @id @default(uuid())
+  name      String
+  Sales     Sales[]
+  Purchases Purchases[]
+  stock     ProductStock[]
+}
+
+model ProductStock {
+  stockId   String   @id @default(uuid())
+  product   Products @relation(fields: [productId], references: [productId])
+  price     Float
+  productId String
+  size      Float
+  quantity  Int
 }
 
 model Sales {

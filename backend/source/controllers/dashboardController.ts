@@ -8,12 +8,12 @@ export const getDashboardMetrics = async (
    res: Response
 ): Promise<void> => {
    try {
-      const popularProducts = await prisma.products.findMany({
-         take: 15,
-         orderBy: {
-            stockQuantity: 'desc'
-         }
-      })
+      // const popularProducts = await prisma.products.findMany({
+      //    take: 15,
+      //    orderBy: {
+      //       stockQuantity: 'desc'
+      //    }
+      // })
 
       const saleSummary = await prisma.salesSummary.findMany({
          take: 5,
@@ -49,7 +49,7 @@ export const getDashboardMetrics = async (
       }))
 
       res.json({
-         popularProducts,
+         // popularProducts,
          saleSummary,
          purchaseSummary,
          expenseSummary,

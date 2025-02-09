@@ -16,11 +16,19 @@ CREATE TABLE "Customers" (
 CREATE TABLE "Products" (
     "productId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "price" DOUBLE PRECISION NOT NULL,
-    "rating" DOUBLE PRECISION NOT NULL,
-    "stockQuantity" INTEGER NOT NULL,
 
     CONSTRAINT "Products_pkey" PRIMARY KEY ("productId")
+);
+
+-- CreateTable
+CREATE TABLE "ProductStock" (
+    "stockId" TEXT NOT NULL,
+    "price" DOUBLE PRECISION NOT NULL,
+    "productId" TEXT NOT NULL,
+    "size" DOUBLE PRECISION NOT NULL,
+    "quantity" INTEGER NOT NULL,
+
+    CONSTRAINT "ProductStock_pkey" PRIMARY KEY ("stockId")
 );
 
 -- CreateTable
@@ -96,6 +104,9 @@ CREATE TABLE "ExpenseByCategory" (
 
     CONSTRAINT "ExpenseByCategory_pkey" PRIMARY KEY ("expenseByCategoryId")
 );
+
+-- AddForeignKey
+ALTER TABLE "ProductStock" ADD CONSTRAINT "ProductStock_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Products"("productId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Sales" ADD CONSTRAINT "Sales_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Products"("productId") ON DELETE RESTRICT ON UPDATE CASCADE;

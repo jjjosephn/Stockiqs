@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProduct = exports.createProduct = exports.getProducts = void 0;
+exports.updateProductStock = exports.updateProduct = exports.deleteProduct = exports.createProduct = exports.getProducts = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -22,6 +22,9 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                     contains: search,
                     mode: 'insensitive'
                 }
+            },
+            include: {
+                stock: true
             }
         });
         res.json(products);
@@ -33,15 +36,25 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getProducts = getProducts;
 const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { productId, name, price, rating, stockQuantity } = req.body;
+        const { name, stock } = req.body;
+        if (!name || !Array.isArray(stock)) {
+            res.status(400).json({ message: 'Name and stock array are required' });
+            return;
+        }
         const product = yield prisma.products.create({
             data: {
-                productId,
                 name,
-                price,
-                rating,
-                stockQuantity,
+                stock: {
+                    create: stock.map(({ size, quantity, price }) => ({
+                        size,
+                        quantity,
+                        price
+                    }))
+                }
             },
+            include: {
+                stock: true
+            }
         });
         res.status(201).json(product);
     }
@@ -65,3 +78,55 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.deleteProduct = deleteProduct;
+const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { productId } = req.params;
+        const { name, stock } = req.body;
+        if (!name || !Array.isArray(stock)) {
+            res.status(400).json({ message: 'Name and stock array are required' });
+            return;
+        }
+        const updatedProduct = yield prisma.products.update({
+            where: {
+                productId
+            },
+            data: {
+                name,
+                stock: {
+                    upsert: stock.map(({ stockId, size, quantity, price }) => ({
+                        where: { stockId },
+                        update: { size, quantity, price },
+                        create: { size, quantity, price }
+                    }))
+                }
+            },
+            include: {
+                stock: true
+            }
+        });
+        res.status(201).json(updatedProduct);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Error updating product' });
+    }
+});
+exports.updateProduct = updateProduct;
+const updateProductStock = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { productId } = req.params;
+        const { price, size, quantity } = req.body;
+        const newStock = yield prisma.productStock.create({
+            data: {
+                productId,
+                price,
+                size,
+                quantity,
+            },
+        });
+        res.status(200).json(newStock);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to add stock' });
+    }
+});
+exports.updateProductStock = updateProductStock;

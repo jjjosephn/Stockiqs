@@ -3,16 +3,25 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export interface Product {
    productId: string,
    name: string,
+   stock: ProductStock[]
+}
+
+export interface ProductStock {
+   stockId: string,
+   productId: string,
+   size: number,
+   quantity: number 
    price: number,
-   rating?: number,
-   stockQuantity: number,
 }
 
 export interface NewProduct {
-   name: string,
-   price: number,
-   rating?: number,
-   stockQuantity: number,
+   name: string;
+   productId?: string;
+   stock: {
+      size: number;
+      quantity: number;
+      price: number;
+   }[];
 }
 
 export interface SaleSummary {
@@ -43,7 +52,7 @@ export interface ExpenseByCategorySummary {
 }
 
 export interface DashboardMetrics {
-   popularProducts: Product[],
+   // popularProducts: Product[],
    saleSummary: SaleSummary[],
    purchaseSummary: PurchaseSummary[],
    expenseSummary: ExpenseSummary[],
@@ -80,6 +89,8 @@ export const api = createApi({
          query: () => '/dashboard',
          providesTags: ['DashboardMetrics']
       }),
+
+
       getProducts: build.query<Product[], string | void>({
          query: (search) => ({
             url: '/products',
@@ -91,7 +102,10 @@ export const api = createApi({
          query: (newProduct) => ({
             url: '/products',
             method: 'POST',
-            body: newProduct
+            body: {
+               name: newProduct.name,
+               stock: newProduct.stock
+            }
          }),
          invalidatesTags: ['Products']
       }),
@@ -102,6 +116,24 @@ export const api = createApi({
          }),
          invalidatesTags: ['Products']
       }),
+      updateProduct: build.mutation<Product, Partial<Product>>({
+         query: ({ productId, ...updatedFields }) => ({
+            url: `/products/${productId}`,
+            method: 'PUT',
+            body: updatedFields,
+         }),
+         invalidatesTags: ['Products']
+      }),
+      updateProductStock: build.mutation<Product, { productId: string, stock: ProductStock[] }>({
+         query: ({ productId, stock }) => ({
+            url: `/products/${productId}/stock`,
+            method: 'POST',
+            body: { ...stock },
+         }),
+         invalidatesTags: ['Products'],
+      }),
+
+
       getCustomers: build.query<Customers[], void>({
          query: () => '/customers',
          providesTags: ['Customers']
@@ -141,6 +173,8 @@ export const {
    useGetProductsQuery, 
    useCreateProductMutation, 
    useDeleteProductMutation,
+   useUpdateProductMutation,
+   useUpdateProductStockMutation,
    useGetCustomersQuery,
    useGetCustomerQuery,
    useDeleteCustomerMutation,
