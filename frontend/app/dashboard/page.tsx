@@ -1,9 +1,9 @@
 'use client'
 
-import ExpenseSummaryCard from '@/components/DashboardCards/ExpenseSummaryCard'
-import PopularProductsCard from '@/components/DashboardCards/PopularProductsCard'
-import PurchaseSummaryCard from '@/components/DashboardCards/PurchaseSummaryCard'
-import SalesSummaryCard from '@/components/DashboardCards/SalesSummaryCard'
+import ExpenseSummaryCard from '@/components/DashboardComponents/ExpenseSummaryCard'
+import PopularProductsCard from '@/components/DashboardComponents/PopularProductsCard'
+import PurchaseSummaryCard from '@/components/DashboardComponents/PurchaseSummaryCard'
+import SalesSummaryCard from '@/components/DashboardComponents/SalesSummaryCard'
 import React from 'react'
 
 const Dashboard = () => {

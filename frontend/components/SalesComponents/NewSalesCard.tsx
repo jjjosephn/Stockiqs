@@ -1,10 +1,12 @@
-import { useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
+import { v4 } from "uuid"
+import { useNewSaleMutation } from "@/app/state/api"
 
 type Customer = {
   userId: string
@@ -30,10 +32,37 @@ type NewSalesCardProps = {
   products: Product[]
 }
 
+type SalesFormData = {
+  saleId: string
+  stockId: string
+  userId: string
+  quantity: number
+  salesPrice: number
+  timestamp: string
+}
+
 const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
   const [selectedShoe, setSelectedShoe] = useState<Product | null>(null)
   const [selectedSize, setSelectedSize] = useState<ProductStock | null>(null)
+  const [formData, setFormData] = useState<SalesFormData>({
+    saleId: v4(),
+    stockId: selectedSize?.stockId || '',
+    userId: selectedCustomer?.userId || '',
+    quantity: 0,
+    salesPrice: 0,
+    timestamp: new Date().toISOString(),
+  })
+  const [addNewSale] = useNewSaleMutation()
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+  console.log(selectedSize)
 
   const handleCustomerSelect = (userId: string) => {
     setSelectedCustomer(customers.find((customer) => customer.userId === userId) || null)
@@ -50,6 +79,36 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
       setSelectedSize(sizeData || null)
     }
   }
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+
+    if (selectedSize && selectedCustomer && formData.quantity > 0) { 
+      await addNewSale(formData)
+      setFormData({
+        saleId: v4(),
+        stockId: selectedSize?.stockId || '',
+        userId: selectedCustomer?.userId || '',
+        quantity: 0,
+        salesPrice: 0,
+        timestamp: new Date().toISOString(),
+      })
+      setSelectedCustomer(null)
+      setSelectedShoe(null)
+      setSelectedSize(null)
+    }
+
+    
+  }
+
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      userId: selectedCustomer?.userId || '',
+      stockId: selectedSize?.stockId || '',
+    }))
+  }, [selectedCustomer, selectedSize])
 
   const getCustomerInitials = (name: string) => {
     return name
@@ -68,7 +127,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
-            <Select onValueChange={handleCustomerSelect}>
+            <Select onValueChange={handleCustomerSelect} value={selectedCustomer?.userId || ''}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Customer" />
               </SelectTrigger>
@@ -81,7 +140,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
               </SelectContent>
             </Select>
 
-            <Select onValueChange={handleShoeSelect}>
+            <Select onValueChange={handleShoeSelect} value={selectedShoe?.productId || ''}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Shoe" />
               </SelectTrigger>
@@ -94,7 +153,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
               </SelectContent>
             </Select>
 
-            <Select onValueChange={handleSizeSelect}>
+            <Select onValueChange={handleSizeSelect} value={selectedSize?.size.toString() || ''}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Size" />
               </SelectTrigger>
@@ -108,11 +167,28 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
             </Select>
 
             <div className="flex gap-4">
-              <Input type="number" placeholder="Quantity" className="w-1/2" />
-              <Input type="number" placeholder="Sale Price" className="w-1/2" />
+              <Input 
+                type="number" 
+                name='quantity' 
+                value={formData.quantity}
+                min={0} max={selectedSize?.quantity} 
+                placeholder="Quantity" 
+                className="w-1/2" 
+                onChange={handleChange}
+                required 
+              />
+              <Input 
+                type="number" 
+                name='salesPrice' 
+                value={formData.salesPrice}
+                placeholder="Sale Price" 
+                className="w-1/2" 
+                onChange={handleChange}
+                required
+              />
             </div>
 
-            <Button className="w-full">Add Sale</Button>
+            <Button onClick={handleSubmit} className="w-full">Add Sale</Button>
           </div>
 
           <div className="bg-gray-100 p-4 rounded-lg relative">

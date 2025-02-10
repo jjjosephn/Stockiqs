@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import exp from "constants";
 
 export interface Product {
    productId: string,
@@ -80,17 +81,34 @@ export interface NewCustomer {
    zipCode: string
 }
 
+export interface Sales {
+   saleId: string,
+   stockId: string,
+   userId: string,
+   quantity: number,
+   salesPrice: number,
+   timestamp: string
+}
+
+export interface NewSale {
+   stockId: string,
+   userId: string,
+   quantity: number,
+   salesPrice: number,
+   timestamp: string
+}
+
 export const api = createApi({
    baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL }),
    reducerPath: "api",
-   tagTypes: ['DashboardMetrics', 'Products', 'Customers'],
+   tagTypes: ['DashboardMetrics', 'Products', 'Customers', 'Sales'],
    endpoints: (build) => ({
       getDashboardMetrics: build.query<DashboardMetrics, void>({
          query: () => '/dashboard',
          providesTags: ['DashboardMetrics']
       }),
 
-
+      // Products
       getProducts: build.query<Product[], string | void>({
          query: (search) => ({
             url: '/products',
@@ -125,7 +143,7 @@ export const api = createApi({
          invalidatesTags: ['Products']
       }),
 
-
+      // Product Stocks
       updateProductStock: build.mutation<Product, { productId: string, stock: ProductStock[] }>({
          query: ({ productId, stock }) => ({
             url: `/products/${productId}/stock`,
@@ -142,7 +160,7 @@ export const api = createApi({
          invalidatesTags: ['Products'],
       }),
 
-
+      // Customers
       getCustomers: build.query<Customers[], void>({
          query: () => '/customers',
          providesTags: ['Customers']
@@ -173,7 +191,17 @@ export const api = createApi({
             body: updatedFields
          }),
          invalidatesTags: ['Customers']
-      })
+      }),
+
+      // Sales
+      newSale: build.mutation<Sales, NewSale>({
+         query: (saleData) => ({
+           url: '/sales',
+           method: 'POST',
+           body: saleData,
+         }),
+         invalidatesTags: ['Sales'],
+       }),
    }),
 })
 
@@ -189,5 +217,6 @@ export const {
    useGetCustomerQuery,
    useDeleteCustomerMutation,
    useCreateCustomerMutation,
-   useUpdateCustomerMutation
+   useUpdateCustomerMutation,
+   useNewSaleMutation
 } = api;

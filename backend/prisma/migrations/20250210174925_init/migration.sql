@@ -34,7 +34,6 @@ CREATE TABLE "ProductStock" (
 -- CreateTable
 CREATE TABLE "Sales" (
     "saleId" TEXT NOT NULL,
-    "productId" TEXT NOT NULL,
     "stockId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "timestamp" TIMESTAMP(3) NOT NULL,
@@ -108,9 +107,6 @@ CREATE TABLE "ExpenseByCategory" (
 
 -- AddForeignKey
 ALTER TABLE "ProductStock" ADD CONSTRAINT "ProductStock_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Products"("productId") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Sales" ADD CONSTRAINT "Sales_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Products"("productId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Sales" ADD CONSTRAINT "Sales_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Customers"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;

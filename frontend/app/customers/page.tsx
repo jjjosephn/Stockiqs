@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, UserPlus, ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
-import AddCustomerModal from '@/components/Modals/AddCustomerModal'
+import AddCustomerModal from '@/components/CustomerComponents/AddCustomerModal'
 
 type CustomerFormData = {
   name: string

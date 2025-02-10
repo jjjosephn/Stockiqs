@@ -19,7 +19,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import EditCustomerModal from '@/components/Modals/EditCustomerModal'
+import EditCustomerModal from '@/components/CustomerComponents/EditCustomerModal'
 
 type CustomerDetailProps = {
   name: string

@@ -28,30 +28,27 @@ model Customers {
 model Products {
   productId String         @id @default(uuid())
   name      String
-  Sales     Sales[]
   Purchases Purchases[]
   stock     ProductStock[]
 }
 
 model ProductStock {
   stockId   String   @id @default(uuid())
-  product   Products @relation(fields: [productId], references: [productId])
   price     Float
   productId String
   size      Float
   quantity  Int
+  product   Products @relation(fields: [productId], references: [productId])
   Sales     Sales[]
 }
 
 model Sales {
   saleId     String    @id
-  productId  String
   stockId    String
   userId     String
   timestamp  DateTime
   quantity   Int
   salesPrice Float
-  product    Products  @relation(fields: [productId], references: [productId])
   customers  Customers @relation(fields: [userId], references: [userId])
   productStock ProductStock @relation(fields: [stockId], references: [stockId])
 }
