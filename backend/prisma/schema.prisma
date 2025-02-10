@@ -22,6 +22,7 @@ model Customers {
   city          String?
   state         String?
   zipCode       String?
+  Sales         Sales[]
 }
 
 model Products {
@@ -39,16 +40,20 @@ model ProductStock {
   productId String
   size      Float
   quantity  Int
+  Sales     Sales[]
 }
 
 model Sales {
-  saleId      String   @id
-  productId   String
-  timestamp   DateTime
-  quantity    Int
-  unitPrice   Float
-  totalAmount Float
-  product     Products @relation(fields: [productId], references: [productId])
+  saleId     String    @id
+  productId  String
+  stockId    String
+  userId     String
+  timestamp  DateTime
+  quantity   Int
+  salesPrice Float
+  product    Products  @relation(fields: [productId], references: [productId])
+  customers  Customers @relation(fields: [userId], references: [userId])
+  productStock ProductStock @relation(fields: [stockId], references: [stockId])
 }
 
 model Purchases {

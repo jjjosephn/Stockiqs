@@ -1,68 +1,79 @@
 [
-   {
-     "productId": "d35623ee-bef6-42b2-8776-2f99f8bb4782",
-     "size": 8.0,
-     "quantity": 20,
-     "price": 205.00
-   },
-   {
-     "productId": "d35623ee-bef6-42b2-8776-2f99f8bb4782",
-     "size": 8.5,
-     "quantity": 5,
-     "price": 195.00
-   },
-   {
-     "productId": "d35623ee-bef6-42b2-8776-2f99f8bb4782",
-     "size": 9.0,
-     "quantity": 9,
-     "price": 200.00
-   },
-   {
-     "productId": "8ac1ac77-7358-425e-be16-0bdde9f02e59",
-     "size": 10.0,
-     "quantity": 2,
-     "price": 50.00
-   },
-   {
-     "productId": "8ac1ac77-7358-425e-be16-0bdde9f02e59",
-     "size": 10.5,
-     "quantity": 7,
-     "price": 51.82
-   },
-   {
-     "productId": "1afc136b-4d9f-4e8e-aace-8e1df908a404",
-     "size": 7.5,
-     "quantity": 19,
-     "price": 105.00
-   },
-   {
-     "productId": "1afc136b-4d9f-4e8e-aace-8e1df908a404",
-     "size": 8.0,
-     "quantity": 4,
-     "price": 105.00
-   },
-   {
-     "productId": "af84cc12-4fea-4f58-aece-f2ce92ca9580",
-     "size": 6.0,
-     "quantity": 14,
-     "price": 105.00
-   },
-   {
-     "productId": "af84cc12-4fea-4f58-aece-f2ce92ca9580",
-     "size": 6.5,
-     "quantity": 7,
-     "price": 104.00
-   },
-   {
-     "productId": "86e3bb1c-2f5d-4774-98f3-4df7cddd0a0f",
-     "size": 9.5,
-     "quantity": 4,
-     "price": 235.15
-   },
-   {
-     "productId": "86e3bb1c-2f5d-4774-98f3-4df7cddd0a0f",
-     "size": 10.0,
-     "quantity": 11,
-     "price": 234.17
-   }
+  {
+    "stockId": "927c6b00-bf1e-416b-9473-fc65f7c64d39",
+    "productId": "d35623ee-bef6-42b2-8776-2f99f8bb4782",
+    "size": 8.0,
+    "quantity": 20,
+    "price": 205.00
+  },
+  {
+    "stockId": "42320403-8f69-47db-9f63-ea3b69227392",
+    "productId": "d35623ee-bef6-42b2-8776-2f99f8bb4782",
+    "size": 8.5,
+    "quantity": 5,
+    "price": 195.00
+  },
+  {
+    "stockId": "aab5fa44-a00d-4ac7-993c-933414c1ee25",
+    "productId": "d35623ee-bef6-42b2-8776-2f99f8bb4782",
+    "size": 9.0,
+    "quantity": 9,
+    "price": 200.00
+  },
+  {
+    "stockId": "df7fcfa8-4e5a-4462-a6e6-78f84256b9b3",
+    "productId": "8ac1ac77-7358-425e-be16-0bdde9f02e59",
+    "size": 10.0,
+    "quantity": 2,
+    "price": 50.00
+  },
+  {
+    "stockId": "f6edc10b-5abc-45ec-9f7f-505aa93adfde",
+    "productId": "8ac1ac77-7358-425e-be16-0bdde9f02e59",
+    "size": 10.5,
+    "quantity": 7,
+    "price": 51.82
+  },
+  {
+    "stockId": "aa0b8643-44a5-4736-b5d0-d588527a4355",
+    "productId": "1afc136b-4d9f-4e8e-aace-8e1df908a404",
+    "size": 7.5,
+    "quantity": 19,
+    "price": 105.00
+  },
+  {
+    "stockId": "b629cdcc-0a5b-4cd8-b628-2ad5702c5ae7",
+    "productId": "1afc136b-4d9f-4e8e-aace-8e1df908a404",
+    "size": 8.0,
+    "quantity": 4,
+    "price": 105.00
+  },
+  {
+    "stockId": "d555d475-7111-47ff-8eb1-70fb3ec65b63",
+    "productId": "af84cc12-4fea-4f58-aece-f2ce92ca9580",
+    "size": 6.0,
+    "quantity": 14,
+    "price": 105.00
+  },
+  {
+    "stockId": "54b8f836-0fe5-4b09-91be-558b6514c888",
+    "productId": "af84cc12-4fea-4f58-aece-f2ce92ca9580",
+    "size": 6.5,
+    "quantity": 7,
+    "price": 104.00
+  },
+  {
+    "stockId": "ac65a160-ae16-42a1-8a6d-d2aca4a8f0e4",
+    "productId": "86e3bb1c-2f5d-4774-98f3-4df7cddd0a0f",
+    "size": 9.5,
+    "quantity": 4,
+    "price": 235.15
+  },
+  {
+    "stockId": "7d076a1e-fa38-4958-8f7a-a59dcd9006e2",
+    "productId": "86e3bb1c-2f5d-4774-98f3-4df7cddd0a0f",
+    "size": 10.0,
+    "quantity": 11,
+    "price": 234.17
+  }
 ]

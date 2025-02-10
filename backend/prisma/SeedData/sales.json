@@ -1,34 +1,38 @@
 [
   {
+    "saleId": "4a2575dd-8861-46ce-80ad-74f488d79a5a",
+    "productId": "af84cc12-4fea-4f58-aece-f2ce92ca9580",
+    "stockId": "54b8f836-0fe5-4b09-91be-558b6514c888", 
+    "userId": "4d5e6f7g-4567-8901-23de-f45678901234", 
+    "quantity": 1,
+    "salesPrice": 400.00,
+    "timestamp": "2023-05-04T03:54:06Z"
+  },
+  {
     "saleId": "6d4ab0ae-5d49-4731-b099-d8e155fb49d1",
     "productId": "d35623ee-bef6-42b2-8776-2f99f8bb4782",
-    "timestamp": "2023-06-14T08:48:03Z",
-    "quantity": 677,
-    "unitPrice": 479.94,
-    "totalAmount": 7760.82
+    "stockId": "aab5fa44-a00d-4ac7-993c-933414c1ee25", 
+    "userId": "1a2b3c4d-1234-5678-90ab-cdef12345678",
+    "quantity": 1, 
+    "salesPrice": 400.00,
+    "timestamp": "2023-05-04T03:54:06Z"
   },
   {
     "saleId": "81aa20f8-591f-47e6-8bad-7ad3e3003f81",
     "productId": "8ac1ac77-7358-425e-be16-0bdde9f02e59",
-    "timestamp": "2023-06-30T12:47:06Z",
-    "quantity": 555,
-    "unitPrice": 410.27,
-    "totalAmount": 9330.17
+    "stockId": "df7fcfa8-4e5a-4462-a6e6-78f84256b9b3", 
+    "userId": "2b3c4d5e-2345-6789-01bc-def234567890", 
+    "quantity": 1,
+    "salesPrice": 400.00,
+    "timestamp": "2023-05-04T03:54:06Z"
   },
   {
     "saleId": "a93e6a0c-d178-4889-b2ae-ba0325d9051f",
     "productId": "1afc136b-4d9f-4e8e-aace-8e1df908a404",
-    "timestamp": "2023-11-24T12:14:40Z",
-    "quantity": 508,
-    "unitPrice": 558.25,
-    "totalAmount": 4006.69
-  },
-  {
-    "saleId": "4a2575dd-8861-46ce-80ad-74f488d79a5a",
-    "productId": "af84cc12-4fea-4f58-aece-f2ce92ca9580",
-    "timestamp": "2023-09-16T14:34:18Z",
-    "quantity": 259,
-    "unitPrice": 368.39,
-    "totalAmount": 5611.94
+    "stockId": "b629cdcc-0a5b-4cd8-b628-2ad5702c5ae7", 
+    "userId": "3c4d5e6f-3456-7890-12cd-ef3456789012", 
+    "quantity": 1,
+    "salesPrice": 400.00,
+    "timestamp": "2023-05-04T03:54:06Z"
   }
 ]
