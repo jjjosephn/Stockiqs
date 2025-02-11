@@ -154,7 +154,6 @@ export const deleteProductStock = async (
 ): Promise<void> => {
    try {
       const { productId, stockId } = req.params;
-      console.log("Received DELETE request for:", { productId, stockId });
 
       const deletedStock = await prisma.productStock.delete({
          where: { stockId },
@@ -165,3 +164,77 @@ export const deleteProductStock = async (
       res.status(500).json({ error: 'Failed to delete stock item', details: error });
    }
 };
+
+export const updateProductStockAfterSale = async (
+   req: Request,
+   res: Response
+): Promise<void> => {
+   try {
+      const {stockId} = req.params;
+      const { quantity } = req.body;
+
+      const updateStockItem = await prisma.productStock.update({
+         where: {
+            stockId
+         },
+         data: {
+            quantity: {
+               decrement: parseInt(quantity)
+            }
+         }
+      });
+      res.status(200).json(updateStockItem);
+
+   } catch (error) {
+      res.status(500).json({ message: 'Error updating stock' });
+   }
+}
+
+export const deleteProductStockAfterSale = async (
+   req: Request,
+   res: Response
+): Promise<void> => {
+   try {
+      const { stockId } = req.params;
+      console.log('Archiving and deleting stock:', stockId);
+
+      const stockToArchive = await prisma.productStock.findUnique({
+         where: { stockId: stockId },
+      });
+
+      if (!stockToArchive) {
+         res.status(404).json({ message: 'Stock item not found' });
+         return;
+      }
+
+      const archivedStock = await prisma.pSArchive.create({
+         data: {
+            stockId: stockToArchive.stockId, 
+            price: stockToArchive.price,
+            productId: stockToArchive.productId,
+            size: stockToArchive.size,
+            quantity: stockToArchive.quantity,
+         },
+      });
+
+      await prisma.sales.updateMany({
+         where: { 
+            stockId: stockId 
+         },
+         data: { 
+            archiveId: archivedStock.archiveId, 
+            stockId: null },
+      });
+
+      await prisma.productStock.delete({
+         where: { 
+            stockId: stockId 
+         },
+      });
+
+      res.status(200).json({ message: 'Stock item archived and deleted successfully' });
+   } catch (error) {
+      console.error('Error deleting stock:', error);
+      res.status(500).json({ message: 'Error deleting stock' });
+   }
+}

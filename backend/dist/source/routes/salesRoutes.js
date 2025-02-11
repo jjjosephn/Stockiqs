@@ -4,4 +4,5 @@ const express_1 = require("express");
 const salesController_1 = require("../controllers/salesController");
 const router = (0, express_1.Router)();
 router.post('/', salesController_1.newSale);
+router.get('/', salesController_1.getSales);
 exports.default = router;

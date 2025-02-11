@@ -9,4 +9,6 @@ router.delete('/:productId', productController_1.deleteProduct);
 router.put('/:productId', productController_1.updateProduct);
 router.post('/:productId/stock', productController_1.updateProductStock);
 router.delete('/:productId/stock/:stockId', productController_1.deleteProductStock);
+router.post('/stock/:stockId', productController_1.updateProductStockAfterSale);
+router.delete('/stock/:stockId', productController_1.deleteProductStockAfterSale);
 exports.default = router;

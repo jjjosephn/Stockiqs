@@ -32,9 +32,23 @@ CREATE TABLE "ProductStock" (
 );
 
 -- CreateTable
+CREATE TABLE "PSArchive" (
+    "archiveId" TEXT NOT NULL,
+    "stockId" TEXT NOT NULL,
+    "price" DOUBLE PRECISION NOT NULL,
+    "productId" TEXT NOT NULL,
+    "size" DOUBLE PRECISION NOT NULL,
+    "quantity" INTEGER NOT NULL,
+    "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "PSArchive_pkey" PRIMARY KEY ("archiveId")
+);
+
+-- CreateTable
 CREATE TABLE "Sales" (
     "saleId" TEXT NOT NULL,
-    "stockId" TEXT NOT NULL,
+    "stockId" TEXT,
+    "archiveId" TEXT,
     "userId" TEXT NOT NULL,
     "timestamp" TIMESTAMP(3) NOT NULL,
     "quantity" INTEGER NOT NULL,
@@ -109,10 +123,16 @@ CREATE TABLE "ExpenseByCategory" (
 ALTER TABLE "ProductStock" ADD CONSTRAINT "ProductStock_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Products"("productId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "PSArchive" ADD CONSTRAINT "PSArchive_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Products"("productId") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Sales" ADD CONSTRAINT "Sales_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Customers"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Sales" ADD CONSTRAINT "Sales_stockId_fkey" FOREIGN KEY ("stockId") REFERENCES "ProductStock"("stockId") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Sales" ADD CONSTRAINT "Sales_stockId_fkey" FOREIGN KEY ("stockId") REFERENCES "ProductStock"("stockId") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Sales" ADD CONSTRAINT "Sales_archiveId_fkey" FOREIGN KEY ("archiveId") REFERENCES "PSArchive"("archiveId") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Purchases" ADD CONSTRAINT "Purchases_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Products"("productId") ON DELETE RESTRICT ON UPDATE CASCADE;

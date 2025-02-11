@@ -30,6 +30,7 @@ model Products {
   name      String
   Purchases Purchases[]
   stock     ProductStock[]
+  PSArchive PSArchive[]
 }
 
 model ProductStock {
@@ -42,15 +43,29 @@ model ProductStock {
   Sales     Sales[]
 }
 
+model PSArchive {
+  archiveId String   @id @default(uuid())
+  stockId   String 
+  price     Float
+  productId String
+  size      Float
+  quantity  Int
+  timestamp DateTime @default(now())
+  product   Products @relation(fields: [productId], references: [productId])
+  Sales     Sales[]
+}
+
 model Sales {
-  saleId     String    @id
-  stockId    String
-  userId     String
-  timestamp  DateTime
-  quantity   Int
-  salesPrice Float
-  customers  Customers @relation(fields: [userId], references: [userId])
-  productStock ProductStock @relation(fields: [stockId], references: [stockId])
+  saleId       String        @id
+  stockId      String? 
+  archiveId    String? 
+  userId       String
+  timestamp    DateTime
+  quantity     Int
+  salesPrice   Float
+  customers    Customers     @relation(fields: [userId], references: [userId])
+  productStock ProductStock? @relation(fields: [stockId], references: [stockId])
+  psArchive    PSArchive?    @relation(fields: [archiveId], references: [archiveId])
 }
 
 model Purchases {

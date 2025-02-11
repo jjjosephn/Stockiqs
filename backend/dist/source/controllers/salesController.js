@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newSale = void 0;
+exports.getSales = exports.newSale = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const newSale = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -37,3 +37,19 @@ const newSale = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.newSale = newSale;
+const getSales = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const sales = yield prisma.sales.findMany({
+            include: {
+                customers: true,
+                productStock: true,
+                psArchive: true
+            }
+        });
+        res.status(200).json(sales);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Error retrieving sales' });
+    }
+});
+exports.getSales = getSales;

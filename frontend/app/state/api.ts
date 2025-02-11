@@ -159,6 +159,21 @@ export const api = createApi({
          }),
          invalidatesTags: ['Products'],
       }),
+      updateProductStockAfterSale: build.mutation<Product, { stockId: string, quantity: number }>({
+         query: ({ stockId, quantity }) => ({
+            url: `/products/stock/${stockId}`,
+            method: 'POST',
+            body: { quantity },
+         }),
+         invalidatesTags: ['Products']
+      }),
+      deleteProductStockAfterSale: build.mutation<Product, { stockId: string }>({
+         query: ({ stockId }) => ({
+            url: `/products/stock/${stockId}`,
+            method: 'DELETE',
+         }),
+         invalidatesTags: ['Products']
+      }),
 
       // Customers
       getCustomers: build.query<Customers[], void>({
@@ -202,6 +217,10 @@ export const api = createApi({
          }),
          invalidatesTags: ['Sales'],
        }),
+       getSales: build.query<Sales[], void>({
+         query: () => '/sales',
+         providesTags: ['Sales'],
+       }),
    }),
 })
 
@@ -213,6 +232,8 @@ export const {
    useUpdateProductMutation,
    useUpdateProductStockMutation,
    useDeleteProductStockMutation,
+   useUpdateProductStockAfterSaleMutation,
+   useDeleteProductStockAfterSaleMutation,
    useGetCustomersQuery,
    useGetCustomerQuery,
    useDeleteCustomerMutation,

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProductStock = exports.updateProductStock = exports.updateProduct = exports.deleteProduct = exports.createProduct = exports.getProducts = void 0;
+exports.deleteProductStockAfterSale = exports.updateProductStockAfterSale = exports.deleteProductStock = exports.updateProductStock = exports.updateProduct = exports.deleteProduct = exports.createProduct = exports.getProducts = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -138,7 +138,6 @@ exports.updateProductStock = updateProductStock;
 const deleteProductStock = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { productId, stockId } = req.params;
-        console.log("Received DELETE request for:", { productId, stockId });
         const deletedStock = yield prisma.productStock.delete({
             where: { stockId },
         });
@@ -149,3 +148,66 @@ const deleteProductStock = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.deleteProductStock = deleteProductStock;
+const updateProductStockAfterSale = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { stockId } = req.params;
+        const { quantity } = req.body;
+        const updateStockItem = yield prisma.productStock.update({
+            where: {
+                stockId
+            },
+            data: {
+                quantity: {
+                    decrement: parseInt(quantity)
+                }
+            }
+        });
+        res.status(200).json(updateStockItem);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Error updating stock' });
+    }
+});
+exports.updateProductStockAfterSale = updateProductStockAfterSale;
+const deleteProductStockAfterSale = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { stockId } = req.params;
+        console.log('Archiving and deleting stock:', stockId);
+        const stockToArchive = yield prisma.productStock.findUnique({
+            where: { stockId: stockId },
+        });
+        if (!stockToArchive) {
+            res.status(404).json({ message: 'Stock item not found' });
+            return;
+        }
+        const archivedStock = yield prisma.pSArchive.create({
+            data: {
+                stockId: stockToArchive.stockId,
+                price: stockToArchive.price,
+                productId: stockToArchive.productId,
+                size: stockToArchive.size,
+                quantity: stockToArchive.quantity,
+            },
+        });
+        yield prisma.sales.updateMany({
+            where: {
+                stockId: stockId
+            },
+            data: {
+                archiveId: archivedStock.archiveId,
+                stockId: null
+            },
+        });
+        yield prisma.productStock.delete({
+            where: {
+                stockId: stockId
+            },
+        });
+        res.status(200).json({ message: 'Stock item archived and deleted successfully' });
+    }
+    catch (error) {
+        console.error('Error deleting stock:', error);
+        res.status(500).json({ message: 'Error deleting stock' });
+    }
+});
+exports.deleteProductStockAfterSale = deleteProductStockAfterSale;
