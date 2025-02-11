@@ -32,20 +32,25 @@ export const newSale = async (
    }
 }
 
-export const getSales = async (
-   req: Request,
-   res: Response
-): Promise<void> => {
+export const getSales = async (req: Request, res: Response): Promise<void> => {
    try {
-      const sales = await prisma.sales.findMany({
-         include: {
-            customers: true,
-            productStock: true,
-            psArchive: true
-         }
-      })
-      res.status(200).json(sales);
+     const sales = await prisma.sales.findMany({
+       include: {
+         customers: true,
+         productStock: {
+           include: {
+             product: true, // Ensure product is included
+           },
+         },
+         psArchive: {
+           include: {
+             product: true, // Ensure archived products are included
+           },
+         },
+       },
+     });
+     res.status(200).json(sales);
    } catch (error) {
-      res.status(500).json({ message: 'Error retrieving sales' });
+     res.status(500).json({ message: "Error retrieving sales" });
    }
-}
+ };

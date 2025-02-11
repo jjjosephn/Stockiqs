@@ -12,6 +12,8 @@ import {
   useNewSaleMutation,
   useUpdateProductStockAfterSaleMutation,
   useDeleteProductStockAfterSaleMutation,
+  useGetProductsQuery,
+  useGetSalesQuery,
 } from "@/app/state/api"
 import { Label } from "@/components/ui/label"
 
@@ -76,6 +78,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
   const [addNewSale] = useNewSaleMutation()
   const [updateStock] = useUpdateProductStockAfterSaleMutation()
   const [deleteStock] = useDeleteProductStockAfterSaleMutation()
+  const {refetch} = useGetSalesQuery()
 
   const handleCustomerSelect = (userId: string) => {
     const customer = customers.find((customer) => customer.userId === userId) || null
@@ -115,6 +118,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
 
     if (selectedSize.quantity === formData.quantity) {
       await deleteStock({ stockId: selectedSize.stockId })
+      await refetch()
     } else {
       await updateStock({
         stockId: selectedSize.stockId,

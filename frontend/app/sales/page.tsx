@@ -7,7 +7,7 @@ import RecentSalesCard from "@/components/SalesComponents/RecentSalesCard"
 
 export default function SalesPage() {
   const {data: customers, isLoading, isError} = useGetCustomersQuery()
-  const {data: products} = useGetProductsQuery()
+  const {data: products, refetch} = useGetProductsQuery()
 
   if (isLoading) return <div>Loading...</div>
   if (isError) return <div>Error fetching customers</div>
