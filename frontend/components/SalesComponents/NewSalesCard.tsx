@@ -20,10 +20,21 @@ type Customer = {
   name: string
 }
 
+type PSArchive = {
+  archiveId: string
+  stockId: string
+  productId: string
+  size: number
+  quantity: number
+  price: number
+  timestamp: string
+}
+
 type Product = {
   productId: string
   name: string
   stock: ProductStock[]
+  psArchive: PSArchive[]
 }
 
 type ProductStock = {
@@ -41,6 +52,7 @@ type NewSalesCardProps = {
 
 type SalesFormData = {
   saleId: string
+  archiveId: string
   stockId: string
   userId: string
   quantity: number
@@ -54,6 +66,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
   const [selectedSize, setSelectedSize] = useState<ProductStock | null>(null)
   const [formData, setFormData] = useState<SalesFormData>({
     saleId: v4(),
+    archiveId: '',
     stockId: selectedSize?.stockId || "",
     userId: selectedCustomer?.userId || "",
     quantity: 0,
@@ -111,6 +124,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
 
     setFormData({
       saleId: v4(),
+      archiveId: '',
       stockId: "",
       userId: "",
       quantity: 0,

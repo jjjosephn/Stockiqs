@@ -24,7 +24,8 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 }
             },
             include: {
-                stock: true
+                stock: true,
+                psArchive: true
             }
         });
         res.json(products);

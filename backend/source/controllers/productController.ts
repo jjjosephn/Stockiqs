@@ -17,7 +17,8 @@ export const getProducts = async (
             }
          },
          include: {
-            stock: true
+            stock: true,
+            psArchive: true
          }
       })
       res.json(products)

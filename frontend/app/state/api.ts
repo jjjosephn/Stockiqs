@@ -1,10 +1,32 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import exp from "constants";
 
+export interface Customers {
+   userId: string,
+   name: string,
+   phoneNumber: string,
+   instagram: string,
+   streetAddress: string,
+   city: string,
+   state: string,
+   zipCode: string
+}
+
+export interface NewCustomer {
+   name: string,
+   phoneNumber: string,
+   instagram: string,
+   streetAddress: string,
+   city: string,
+   state: string,
+   zipCode: string
+}
+
 export interface Product {
    productId: string,
    name: string,
    stock: ProductStock[]
+   psArchive: PSArchive[]
 }
 
 export interface ProductStock {
@@ -23,6 +45,35 @@ export interface NewProduct {
       quantity: number;
       price: number;
    }[];
+}
+
+export interface PSArchive {
+   archiveId: string,
+   stockId: string,
+   productId: string,
+   size: number,
+   quantity: number 
+   price: number,
+   timestamp: string
+}
+
+export interface Sales {
+   saleId: string,
+   stockId: string,
+   archiveId: string,
+   userId: string,
+   quantity: number,
+   salesPrice: number,
+   timestamp: string
+}
+
+export interface NewSale {
+   stockId: string,
+   archiveId: string,
+   userId: string,
+   quantity: number,
+   salesPrice: number,
+   timestamp: string
 }
 
 export interface SaleSummary {
@@ -58,44 +109,6 @@ export interface DashboardMetrics {
    purchaseSummary: PurchaseSummary[],
    expenseSummary: ExpenseSummary[],
    expenseByCategorySummary: ExpenseByCategorySummary[]
-}
-
-export interface Customers {
-   userId: string,
-   name: string,
-   phoneNumber: string,
-   instagram: string,
-   streetAddress: string,
-   city: string,
-   state: string,
-   zipCode: string
-}
-
-export interface NewCustomer {
-   name: string,
-   phoneNumber: string,
-   instagram: string,
-   streetAddress: string,
-   city: string,
-   state: string,
-   zipCode: string
-}
-
-export interface Sales {
-   saleId: string,
-   stockId: string,
-   userId: string,
-   quantity: number,
-   salesPrice: number,
-   timestamp: string
-}
-
-export interface NewSale {
-   stockId: string,
-   userId: string,
-   quantity: number,
-   salesPrice: number,
-   timestamp: string
 }
 
 export const api = createApi({
@@ -239,5 +252,6 @@ export const {
    useDeleteCustomerMutation,
    useCreateCustomerMutation,
    useUpdateCustomerMutation,
-   useNewSaleMutation
+   useNewSaleMutation,
+   useGetSalesQuery
 } = api;

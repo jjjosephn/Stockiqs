@@ -30,7 +30,7 @@ model Products {
   name      String
   Purchases Purchases[]
   stock     ProductStock[]
-  PSArchive PSArchive[]
+  psArchive PSArchive[]
 }
 
 model ProductStock {

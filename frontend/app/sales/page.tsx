@@ -9,6 +9,8 @@ export default function SalesPage() {
   const {data: customers, isLoading, isError} = useGetCustomersQuery()
   const {data: products} = useGetProductsQuery()
 
+  if (isLoading) return <div>Loading...</div>
+  if (isError) return <div>Error fetching customers</div>
   return (
     <div className="container mx-auto p-4">
       <Header name='Sales Management' />
@@ -18,7 +20,10 @@ export default function SalesPage() {
         products={products || []} 
       />
 
-      <RecentSalesCard />
+      <RecentSalesCard 
+        customers={customers || []} 
+        products={products || []} 
+      />
     </div>
   )
 }
