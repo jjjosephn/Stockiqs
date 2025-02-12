@@ -8,6 +8,7 @@ import { useGetSalesQuery } from "@/app/state/api"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import Link from "next/link"
 
 type Customer = {
   userId: string
@@ -99,7 +100,11 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
                   key={sale.saleId}
                 >
                   <TableCell className="font-medium">{new Date(sale.timestamp).toLocaleDateString()}</TableCell>
-                  <TableCell>{customer?.name}</TableCell>
+                  <TableCell>
+                    <Link href={`/customers/${customer?.userId}`}>
+                      {customer?.name}
+                    </Link>
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Image

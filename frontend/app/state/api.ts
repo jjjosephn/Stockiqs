@@ -35,6 +35,7 @@ export interface ProductStock {
    size: number,
    quantity: number 
    price: number,
+   product?: Product
 }
 
 export interface NewProduct {
@@ -65,6 +66,8 @@ export interface Sales {
    quantity: number,
    salesPrice: number,
    timestamp: string
+   productStock: ProductStock,
+   psArchive: PSArchive[],
 }
 
 export interface NewSale {

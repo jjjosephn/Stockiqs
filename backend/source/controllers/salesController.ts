@@ -1,12 +1,12 @@
-import { Request, Response } from 'express';
-import { Prisma, PrismaClient } from '@prisma/client';
+   import { Request, Response } from 'express';
+   import { Prisma, PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+   const prisma = new PrismaClient();
 
 export const newSale = async (
    req: Request,
    res: Response
-): Promise<void> => {
+   ): Promise<void> => {
    try {
       const {saleId, stockId, userId, quantity, salesPrice, timestamp} = req.body;
 
@@ -34,23 +34,23 @@ export const newSale = async (
 
 export const getSales = async (req: Request, res: Response): Promise<void> => {
    try {
-     const sales = await prisma.sales.findMany({
-       include: {
-         customers: true,
-         productStock: {
-           include: {
-             product: true, // Ensure product is included
-           },
+      const sales = await prisma.sales.findMany({
+         include: {
+            customers: true,
+            productStock: {
+               include: {
+                  product: true, 
+               },
+            },
+            psArchive: {
+               include: {
+                  product: true,
+               },
+            },
          },
-         psArchive: {
-           include: {
-             product: true, // Ensure archived products are included
-           },
-         },
-       },
-     });
-     res.status(200).json(sales);
+      });
+      res.status(200).json(sales);
    } catch (error) {
-     res.status(500).json({ message: "Error retrieving sales" });
+      res.status(500).json({ message: "Error retrieving sales" });
    }
- };
+};

@@ -44,12 +44,12 @@ const getSales = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 customers: true,
                 productStock: {
                     include: {
-                        product: true, // Ensure product is included
+                        product: true,
                     },
                 },
                 psArchive: {
                     include: {
-                        product: true, // Ensure archived products are included
+                        product: true,
                     },
                 },
             },
