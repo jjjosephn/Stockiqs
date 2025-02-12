@@ -80,16 +80,9 @@ const Sidebar = () => {
             />
 
             <SidebarLink 
-               href='/inventory' 
-               icon={Archive} 
-               label='Inventory' 
-               isCollapsed={isSideBarCollapsed}
-            />
-
-            <SidebarLink 
-               href='/customers' 
-               icon={Users} 
-               label='Customers' 
+               href='/purchases' 
+               icon={ClipboardList} 
+               label='Purchases' 
                isCollapsed={isSideBarCollapsed}
             />
 
@@ -101,9 +94,16 @@ const Sidebar = () => {
             />
 
             <SidebarLink 
-               href='/purchases' 
-               icon={ClipboardList} 
-               label='Purchases' 
+               href='/customers' 
+               icon={Users} 
+               label='Customers' 
+               isCollapsed={isSideBarCollapsed}
+            />
+
+            <SidebarLink 
+               href='/inventory' 
+               icon={Archive} 
+               label='Inventory' 
                isCollapsed={isSideBarCollapsed}
             />
          </div>

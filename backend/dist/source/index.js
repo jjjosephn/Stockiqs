@@ -14,6 +14,7 @@ const dashboardRoutes_1 = __importDefault(require("./routes/dashboardRoutes"));
 const productRoutes_1 = __importDefault(require("./routes/productRoutes"));
 const customerRoutes_1 = __importDefault(require("./routes/customerRoutes"));
 const salesRoutes_1 = __importDefault(require("./routes/salesRoutes"));
+const purchasesRoutes_1 = __importDefault(require("./routes/purchasesRoutes"));
 /* Configs */
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -29,6 +30,7 @@ app.use('/dashboard', dashboardRoutes_1.default);
 app.use('/products', productRoutes_1.default);
 app.use('/customers', customerRoutes_1.default);
 app.use('/sales', salesRoutes_1.default);
+app.use('/purchases', purchasesRoutes_1.default);
 /* Server */
 const port = process.env.PORT || 3001;
 app.listen(port, () => {

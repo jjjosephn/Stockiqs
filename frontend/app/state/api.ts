@@ -127,7 +127,7 @@ export interface DashboardMetrics {
 export const api = createApi({
    baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL }),
    reducerPath: "api",
-   tagTypes: ['DashboardMetrics', 'Products', 'Customers', 'Sales'],
+   tagTypes: ['DashboardMetrics', 'Products', 'Customers', 'Sales', 'Purchases'],
    endpoints: (build) => ({
       getDashboardMetrics: build.query<DashboardMetrics, void>({
          query: () => '/dashboard',
@@ -242,11 +242,17 @@ export const api = createApi({
            body: saleData,
          }),
          invalidatesTags: ['Sales'],
-       }),
-       getSales: build.query<Sales[], void>({
+      }),
+      getSales: build.query<Sales[], void>({
          query: () => '/sales',
          providesTags: ['Sales'],
-       }),
+      }),
+
+      //Purchases
+      getPurchases: build.query<Purchases[], void>({
+         query: () => '/purchases',
+         providesTags: ['Purchases']
+      }),
    }),
 })
 
@@ -266,5 +272,6 @@ export const {
    useCreateCustomerMutation,
    useUpdateCustomerMutation,
    useNewSaleMutation,
-   useGetSalesQuery
+   useGetSalesQuery,
+   useGetPurchasesQuery
 } = api;

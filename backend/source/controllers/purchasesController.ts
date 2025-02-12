@@ -3,13 +3,27 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export const newPurchases = async (
-   req: Request,
-   res: Response
- ): Promise<void> => {
-   try {
-      
-   } catch (error) {
-      res.status(500).json({ message: 'Error creating purchase' });
-   }
- }
+export const getPurchases = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const purchases = await prisma.purchases.findMany({
+      include: {
+        productStock: {
+          include: {
+            product: true,
+          },
+        },
+        psArchive: {
+          include: {
+            product: true,
+          },
+        }
+      }
+    });
+    res.json(purchases);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving purchases' });
+  }
+}

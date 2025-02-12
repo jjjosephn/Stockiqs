@@ -9,14 +9,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newPurchases = void 0;
+exports.getPurchases = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
-const newPurchases = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getPurchases = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const purchases = yield prisma.purchases.findMany({
+            include: {
+                productStock: {
+                    include: {
+                        product: true,
+                    },
+                },
+                psArchive: {
+                    include: {
+                        product: true,
+                    },
+                }
+            }
+        });
+        res.json(purchases);
     }
     catch (error) {
-        res.status(500).json({ message: 'Error creating purchase' });
+        res.status(500).json({ message: 'Error retrieving purchases' });
     }
 });
-exports.newPurchases = newPurchases;
+exports.getPurchases = getPurchases;

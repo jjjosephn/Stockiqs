@@ -4,7 +4,7 @@ import { useState, useMemo } from "react"
 import { useCreateProductMutation, useDeleteProductMutation, useGetProductsQuery } from "../state/api"
 import Header from "@/components/Header"
 import { PlusCircle, Search, Loader2, ChevronLeft, ChevronRight } from 'lucide-react'
-import AddSneakerModal from "@/components/InventoryComponents/AddSneakerModal"
+// import AddSneakerModal from "@/components/InventoryComponents/AddSneakerModal"
 import SneakerInfoModal from "@/components/InventoryComponents/SneakerInfoModal"
 import { motion } from "framer-motion"
 import { Input } from "@/components/ui/input"
@@ -33,9 +33,9 @@ const Inventory = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 12
 
-  const handleAddSneaker = async (data: ProductFormData) => {
-    await addSneaker(data)
-  }
+  // const handleAddSneaker = async (data: ProductFormData) => {
+  //   await addSneaker(data)
+  // }
 
   const handleDeleteSneaker = async (productId: string) => {
     await deleteSneaker(productId)
@@ -73,12 +73,12 @@ const Inventory = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <Header name="Inventory" />
-        <Button
+        {/* <Button
           onClick={() => setAddSneakerModalOpen(true)}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold"
         >
           <PlusCircle className="mr-2 h-4 w-4" /> Add Sneaker
-        </Button>
+        </Button> */}
       </div>
 
       <div className="mb-8">
@@ -150,11 +150,11 @@ const Inventory = () => {
         </div>
       </div>
 
-      <AddSneakerModal
+      {/* <AddSneakerModal
         isOpen={addSneakerModalOpen}
         onClose={() => setAddSneakerModalOpen(false)}
         onCreate={handleAddSneaker}
-      />
+      /> */}
 
       {selectedProduct && (
         <SneakerInfoModal
