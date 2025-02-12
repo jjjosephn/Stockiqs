@@ -54,8 +54,15 @@ export const createProduct = async (
             stock: true
          }
       });
+      
+      console.log(product)
+      const purchases = await prisma.purchases.createMany({
+         data: product.stock.map(({ stockId }) => ({
+            stockId
+         }))
+      })
 
-      res.status(201).json(product);
+      res.status(201).json({product, purchases});
    } catch (error) {
       res.status(500).json({ message: 'Error creating product' });
    }
@@ -224,7 +231,18 @@ export const deleteProductStockAfterSale = async (
          },
          data: { 
             archiveId: archivedStock.archiveId, 
-            stockId: null },
+            stockId: null 
+         },
+      });
+
+      await prisma.purchases.updateMany({
+         where: { 
+            stockId: stockId 
+         },
+         data: { 
+            archiveId: archivedStock.archiveId, 
+            stockId: null 
+         },
       });
 
       await prisma.productStock.delete({

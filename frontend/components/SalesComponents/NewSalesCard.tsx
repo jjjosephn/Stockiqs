@@ -161,7 +161,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
   return (
     <Card className="mb-8 mt-5">
       <CardHeader>
-        <CardTitle>Add New Sale</CardTitle>
+      <CardTitle className="text-2xl font-bold text-gray-800">Add New Sales</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

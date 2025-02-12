@@ -28,37 +28,38 @@ model Customers {
 model Products {
   productId String         @id @default(uuid())
   name      String
-  Purchases Purchases[]
   stock     ProductStock[]
   psArchive PSArchive[]
 }
 
 model ProductStock {
-  stockId   String   @id @default(uuid())
+  stockId   String      @id @default(uuid())
   price     Float
   productId String
   size      Float
   quantity  Int
-  product   Products @relation(fields: [productId], references: [productId])
+  product   Products    @relation(fields: [productId], references: [productId])
   Sales     Sales[]
+  Purchases Purchases[]
 }
 
 model PSArchive {
-  archiveId String   @id @default(uuid())
-  stockId   String 
+  archiveId String      @id @default(uuid())
+  stockId   String
   price     Float
   productId String
   size      Float
   quantity  Int
-  timestamp DateTime @default(now())
-  product   Products @relation(fields: [productId], references: [productId])
+  timestamp DateTime    @default(now())
+  product   Products    @relation(fields: [productId], references: [productId])
   Sales     Sales[]
+  Purchases Purchases[]
 }
 
 model Sales {
   saleId       String        @id
-  stockId      String? 
-  archiveId    String? 
+  stockId      String?
+  archiveId    String?
   userId       String
   timestamp    DateTime
   quantity     Int
@@ -69,13 +70,12 @@ model Sales {
 }
 
 model Purchases {
-  purchaseId String   @id
-  productId  String
-  timestamp  DateTime
-  quantity   Int
-  unitCost   Float
-  totalCost  Float
-  product    Products @relation(fields: [productId], references: [productId])
+  purchaseId   String        @id @default(uuid())
+  stockId      String?
+  archiveId    String?
+  timestamp    DateTime      @default(now())
+  productStock ProductStock? @relation(fields: [stockId], references: [stockId])
+  psArchive    PSArchive?    @relation(fields: [archiveId], references: [archiveId])
 }
 
 model Expenses {

@@ -60,11 +60,9 @@ CREATE TABLE "Sales" (
 -- CreateTable
 CREATE TABLE "Purchases" (
     "purchaseId" TEXT NOT NULL,
-    "productId" TEXT NOT NULL,
-    "timestamp" TIMESTAMP(3) NOT NULL,
-    "quantity" INTEGER NOT NULL,
-    "unitCost" DOUBLE PRECISION NOT NULL,
-    "totalCost" DOUBLE PRECISION NOT NULL,
+    "stockId" TEXT,
+    "archiveId" TEXT,
+    "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Purchases_pkey" PRIMARY KEY ("purchaseId")
 );
@@ -135,7 +133,10 @@ ALTER TABLE "Sales" ADD CONSTRAINT "Sales_stockId_fkey" FOREIGN KEY ("stockId") 
 ALTER TABLE "Sales" ADD CONSTRAINT "Sales_archiveId_fkey" FOREIGN KEY ("archiveId") REFERENCES "PSArchive"("archiveId") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Purchases" ADD CONSTRAINT "Purchases_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Products"("productId") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Purchases" ADD CONSTRAINT "Purchases_stockId_fkey" FOREIGN KEY ("stockId") REFERENCES "ProductStock"("stockId") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Purchases" ADD CONSTRAINT "Purchases_archiveId_fkey" FOREIGN KEY ("archiveId") REFERENCES "PSArchive"("archiveId") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ExpenseByCategory" ADD CONSTRAINT "ExpenseByCategory_expenseSummaryId_fkey" FOREIGN KEY ("expenseSummaryId") REFERENCES "ExpenseSummary"("expenseSummaryId") ON DELETE RESTRICT ON UPDATE CASCADE;

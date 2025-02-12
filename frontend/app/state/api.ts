@@ -22,6 +22,15 @@ export interface NewCustomer {
    zipCode: string
 }
 
+export interface Purchases {
+   purchaseId: string,
+   stockId?: string,
+   archiveId?: string,
+   timestamp: string
+   psArchive: PSArchive[]
+   productStock: ProductStock
+}
+
 export interface Product {
    productId: string,
    name: string,
@@ -78,6 +87,7 @@ export interface NewSale {
    salesPrice: number,
    timestamp: string
 }
+
 
 export interface SaleSummary {
    saleSummaryId: string,

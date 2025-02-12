@@ -57,7 +57,13 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 stock: true
             }
         });
-        res.status(201).json(product);
+        console.log(product);
+        const purchases = yield prisma.purchases.createMany({
+            data: product.stock.map(({ stockId }) => ({
+                stockId
+            }))
+        });
+        res.status(201).json({ product, purchases });
     }
     catch (error) {
         res.status(500).json({ message: 'Error creating product' });
@@ -191,6 +197,15 @@ const deleteProductStockAfterSale = (req, res) => __awaiter(void 0, void 0, void
             },
         });
         yield prisma.sales.updateMany({
+            where: {
+                stockId: stockId
+            },
+            data: {
+                archiveId: archivedStock.archiveId,
+                stockId: null
+            },
+        });
+        yield prisma.purchases.updateMany({
             where: {
                 stockId: stockId
             },

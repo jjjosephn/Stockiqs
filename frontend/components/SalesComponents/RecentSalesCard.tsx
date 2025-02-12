@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -50,10 +50,46 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
+  const sortedSales = useMemo(() => {
+    return sales ? [...sales].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) : []
+  }, [sales])
+
+  const summaryStats = useMemo(() => {
+    if (!sortedSales.length) return { totalSales: 0, totalRevenue: 0, totalProfit: 0, avgProfitMargin: 0 }
+
+    let totalSales = 0
+    let totalRevenue = 0
+    let totalProfit = 0
+
+    sortedSales.forEach((sale: any) => {
+      const stock = products
+        .flatMap((product) => product.stock)
+        .find((productStock) => productStock.stockId === sale.stockId) || 
+        products
+          .flatMap((product) => product.psArchive)
+          .find((productStock) => productStock.archiveId === sale.archiveId)
+
+      const purchasePrice = stock?.price || 0
+      const soldPrice = sale.salesPrice
+      const quantity = sale.quantity
+
+      totalSales += quantity
+      totalRevenue += soldPrice * quantity
+      totalProfit += (soldPrice - purchasePrice) * quantity
+    })
+
+    const avgProfitMargin = (totalProfit / totalRevenue) * 100
+
+    return {
+      totalSales,
+      totalRevenue,
+      totalProfit,
+      avgProfitMargin
+    }
+  }, [sortedSales, products])
+
   if (isLoading) return <div>Loading...</div>
   if (isError) return <div>Error fetching sales</div>
-
-  const sortedSales = sales ? [...sales].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) : []
 
   const totalPages = Math.ceil(sortedSales.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
@@ -64,6 +100,24 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
     <Card className="overflow-hidden">
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-gray-800">Recent Sales</CardTitle>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <p className="text-sm font-medium text-blue-600">Total Sales</p>
+            <p className="text-2xl font-bold text-blue-800">{summaryStats.totalSales}</p>
+          </div>
+          <div className="bg-green-50 p-4 rounded-lg">
+            <p className="text-sm font-medium text-green-600">Total Revenue</p>
+            <p className="text-2xl font-bold text-green-800">${summaryStats.totalRevenue.toFixed(2)}</p>
+          </div>
+          <div className="bg-purple-50 p-4 rounded-lg">
+            <p className="text-sm font-medium text-purple-600">Total Profit</p>
+            <p className="text-2xl font-bold text-purple-800">${summaryStats.totalProfit.toFixed(2)}</p>
+          </div>
+          <div className="bg-yellow-50 p-4 rounded-lg">
+            <p className="text-sm font-medium text-yellow-600">Avg Profit Margin</p>
+            <p className="text-2xl font-bold text-yellow-800">{summaryStats.avgProfitMargin.toFixed(2)}%</p>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="p-0">
         <Table>
@@ -74,8 +128,10 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
               <TableHead className="font-semibold text-gray-600">Shoe</TableHead>
               <TableHead className="font-semibold text-gray-600">Size</TableHead>
               <TableHead className="font-semibold text-gray-600">Quantity</TableHead>
-              <TableHead className="font-semibold text-gray-600">Purchase Price</TableHead>
-              <TableHead className="font-semibold text-gray-600">Sold Price</TableHead>
+              <TableHead className="font-semibold text-gray-600">Purchase Price/Pair</TableHead>
+              <TableHead className="font-semibold text-gray-600">Total Purchase Price</TableHead>
+              <TableHead className="font-semibold text-gray-600">Sold Price/Pair</TableHead>
+              <TableHead className="font-semibold text-gray-600">Total Sales Price</TableHead>
               <TableHead className="font-semibold text-gray-600">Profit</TableHead>
               <TableHead className="font-semibold text-gray-600">Profit Margin</TableHead>
             </TableRow>
@@ -93,7 +149,7 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
               const purchasePrice = stock?.price || 0
               const soldPrice = sale.salesPrice
               const profit = (soldPrice - purchasePrice) * sale.quantity
-              const profitMargin = ((profit / (soldPrice * sale.quantity)) * 100).toFixed(2)
+              const profitMargin = ((profit / (sale.quantity * soldPrice)) * 100).toFixed(2)
 
               return (
                 <TableRow 
@@ -120,7 +176,9 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
                   <TableCell>{stock?.size}</TableCell>
                   <TableCell>{sale.quantity}</TableCell>
                   <TableCell className="text-gray-600">${purchasePrice.toFixed(2)}</TableCell>
+                  <TableCell className="text-gray-600">${(sale.quantity * purchasePrice).toFixed(2)}</TableCell>
                   <TableCell className="text-gray-600">${soldPrice.toFixed(2)}</TableCell>
+                  <TableCell className="text-gray-600">${(sale.quantity * soldPrice).toFixed(2)}</TableCell>
                   <TableCell className={cn(
                     "font-semibold",
                     profit > 0 ? "text-green-600" : "text-red-600"
