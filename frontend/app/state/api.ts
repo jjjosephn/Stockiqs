@@ -27,7 +27,7 @@ export interface Purchases {
    stockId?: string,
    archiveId?: string,
    timestamp: string
-   psArchive: PSArchive[]
+   psArchive: PSArchive
    productStock: ProductStock
 }
 
@@ -65,6 +65,7 @@ export interface PSArchive {
    quantity: number 
    price: number,
    timestamp: string
+   product?: Product
 }
 
 export interface Sales {

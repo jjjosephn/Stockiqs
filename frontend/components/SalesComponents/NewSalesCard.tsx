@@ -14,8 +14,11 @@ import {
   useDeleteProductStockAfterSaleMutation,
   useGetProductsQuery,
   useGetSalesQuery,
+  useCreateCustomerMutation,
 } from "@/app/state/api"
 import { Label } from "@/components/ui/label"
+import { PlusCircle } from "lucide-react"
+import AddCustomerModal from "../CustomerComponents/AddCustomerModal"
 
 type Customer = {
   userId: string
@@ -62,6 +65,16 @@ type SalesFormData = {
   timestamp: string
 }
 
+type CustomerFormData = {
+  name: string
+  phoneNumber: string
+  instagram: string
+  streetAddress: string
+  city: string
+  state: string
+  zipCode: string
+}
+
 const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
   const [selectedShoe, setSelectedShoe] = useState<Product | null>(null)
@@ -79,11 +92,20 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
   const [updateStock] = useUpdateProductStockAfterSaleMutation()
   const [deleteStock] = useDeleteProductStockAfterSaleMutation()
   const {refetch} = useGetSalesQuery()
+  const [addCustomerModalOpen, setAddCustomerModalOpen] = useState(false)
+  const [addCustomer] = useCreateCustomerMutation()
+
+  const handleAddCustomer = async (data: CustomerFormData) => {
+    await addCustomer(data)
+  }
 
   const handleCustomerSelect = (userId: string) => {
     const customer = customers.find((customer) => customer.userId === userId) || null
     setSelectedCustomer(customer)
     setFormData((prev) => ({ ...prev, userId: customer?.userId || "" }))
+    if (userId === 'new') {
+      setAddCustomerModalOpen(true)
+    }
   }
 
   const handleShoeSelect = (productId: string) => {
@@ -159,174 +181,185 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
   }
 
   return (
-    <Card className="mb-8 mt-5">
-      <CardHeader>
-      <CardTitle className="text-2xl font-bold text-gray-800">Add New Sales</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="customer-select" className={selectedCustomer ? "text-sm text-gray-500" : "sr-only"}>
-                Select Customer
-              </Label>
-              <Select onValueChange={handleCustomerSelect} value={selectedCustomer?.userId || ""}>
-                <SelectTrigger id="customer-select">
-                  <SelectValue placeholder="Select Customer" />
-                </SelectTrigger>
-                <SelectContent>
-                  {customers?.map((customer) => (
-                    <SelectItem key={customer.userId} value={customer.userId}>
-                      {customer.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="shoe-select" className={selectedShoe ? "text-sm text-gray-500" : "sr-only"}>
-                Select Shoe
-              </Label>
-              <Select onValueChange={handleShoeSelect} value={selectedShoe?.productId || ""}>
-                <SelectTrigger id="shoe-select">
-                  <SelectValue placeholder="Select Shoe" />
-                </SelectTrigger>
-                <SelectContent>
-                  {products.map((product) => (
-                    <SelectItem key={product.productId} value={product.productId}>
-                      {product.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="size-select" className={selectedSize ? "text-sm text-gray-500" : "sr-only"}>
-                Select Size
-              </Label>
-              <Select onValueChange={handleSizeSelect} value={selectedSize?.size.toString() || ""}>
-                <SelectTrigger id="size-select">
-                  <SelectValue placeholder="Select Size" />
-                </SelectTrigger>
-                <SelectContent>
-                  {selectedShoe?.stock.map((stock) => (
-                    <SelectItem key={stock.stockId} value={stock.size.toString()}>
-                      {stock.size}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex gap-4">
-              <div className="w-1/2 space-y-2">
-                <Label htmlFor="quantity-input" className={formData.quantity > 0 ? "text-sm text-gray-500" : "sr-only"}>
-                  Quantity
+    <div>
+      <Card className="mb-8 mt-5">
+        <CardHeader>
+        <CardTitle className="text-2xl font-bold text-gray-800">Add New Sales</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="customer-select" className={selectedCustomer ? "text-sm text-gray-500" : "sr-only"}>
+                  Select Customer
                 </Label>
-                <Input
-                  id="quantity-input"
-                  type="number"
-                  name="quantity"
-                  value={formData.quantity || ""}
-                  min={0}
-                  max={selectedSize?.quantity}
-                  placeholder="Quantity"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="w-1/2 space-y-2">
-                <Label htmlFor="price-input" className={formData.salesPrice > 0 ? "text-sm text-gray-500" : "sr-only"}>
-                  Sale Price/pair
-                </Label>
-                <Input
-                  id="price-input"
-                  type="number"
-                  name="salesPrice"
-                  value={formData.salesPrice || ""}
-                  placeholder="Sale Price/pair"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <Button onClick={handleSubmit} className="w-full">
-              Add Sale
-            </Button>
-          </div>
-
-          <div className="bg-gray-100 p-6 rounded-lg relative">
-            {selectedCustomer && (
-              <div className="absolute top-4 right-4 bg-primary text-primary-foreground w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl">
-                {getCustomerInitials(selectedCustomer.name)}
-              </div>
-            )}
-            {selectedShoe ? (
-              <div className="space-y-6">
-                <div className="flex items-center gap-6">
-                  <Image
-                    src="/placeholder.svg"
-                    alt={selectedShoe.name}
-                    width={100}
-                    height={100}
-                    className="rounded-lg shadow-md"
-                  />
-                  <div>
-                    <h3 className="font-bold text-xl mb-1">{selectedShoe.name}</h3>
-                    <p className="text-sm text-gray-600">ID: {selectedShoe.productId}</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4 text-sm bg-white p-4 rounded-lg shadow-sm">
-                  <div>
-                    <p className="font-semibold text-gray-600">
-                      {selectedSize ? "Purchase Price:" : "Total Stock Price:"}
-                    </p>
-                    <p className="text-lg">
-                      {selectedSize
-                        ? `$${selectedSize.price.toFixed(2)}/pair`
-                        : `$${selectedShoe.stock.reduce((curr, shoe) => curr + shoe.price * shoe.quantity, 0).toFixed(2)}`}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-600">Stock:</p>
-                    <p className="text-lg">
-                      {selectedSize
-                        ? `${selectedSize.quantity} pairs`
-                        : `${selectedShoe.stock.reduce((curr, shoe) => curr + shoe.quantity, 0)} total`}
-                    </p>
-                  </div>
-                </div>
-                <div className="bg-white p-4 rounded-lg shadow-sm">
-                  <p className="font-semibold text-gray-600 mb-2">Available Sizes:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedShoe.stock.map((stock) => (
-                      <span key={stock.stockId} className="px-2 py-1 bg-gray-200 rounded-md text-sm">
-                        {stock.size}
-                      </span>
+                <Select onValueChange={handleCustomerSelect} value={selectedCustomer?.userId || ""}>
+                  <SelectTrigger id="customer-select">
+                    <SelectValue placeholder="Select Customer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customers?.map((customer) => (
+                      <SelectItem key={customer.userId} value={customer.userId}>
+                        {customer.name}
+                      </SelectItem>
                     ))}
-                  </div>
+                    <SelectItem value="new">
+                      <p>+ Add New Customer</p>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="shoe-select" className={selectedShoe ? "text-sm text-gray-500" : "sr-only"}>
+                  Select Shoe
+                </Label>
+                <Select onValueChange={handleShoeSelect} value={selectedShoe?.productId || ""}>
+                  <SelectTrigger id="shoe-select">
+                    <SelectValue placeholder="Select Shoe" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {products.map((product) => (
+                      <SelectItem key={product.productId} value={product.productId}>
+                        {product.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="size-select" className={selectedSize ? "text-sm text-gray-500" : "sr-only"}>
+                  Select Size
+                </Label>
+                <Select onValueChange={handleSizeSelect} value={selectedSize?.size.toString() || ""}>
+                  <SelectTrigger id="size-select">
+                    <SelectValue placeholder="Select Size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {selectedShoe?.stock.map((stock) => (
+                      <SelectItem key={stock.stockId} value={stock.size.toString()}>
+                        {stock.size}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="w-1/2 space-y-2">
+                  <Label htmlFor="quantity-input" className={formData.quantity > 0 ? "text-sm text-gray-500" : "sr-only"}>
+                    Quantity
+                  </Label>
+                  <Input
+                    id="quantity-input"
+                    type="number"
+                    name="quantity"
+                    value={formData.quantity || ""}
+                    min={0}
+                    max={selectedSize?.quantity}
+                    placeholder="Quantity"
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="w-1/2 space-y-2">
+                  <Label htmlFor="price-input" className={formData.salesPrice > 0 ? "text-sm text-gray-500" : "sr-only"}>
+                    Sale Price/pair
+                  </Label>
+                  <Input
+                    id="price-input"
+                    type="number"
+                    name="salesPrice"
+                    value={formData.salesPrice || ""}
+                    placeholder="Sale Price/pair"
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
               </div>
-            ) : (
-              <div className="space-y-6">
-                <div className="flex items-center gap-6">
-                  <Skeleton className="w-[100px] h-[100px] rounded-lg" />
-                  <div className="space-y-2">
-                    <Skeleton className="h-6 w-32" />
-                    <Skeleton className="h-4 w-24" />
+
+              <Button onClick={handleSubmit} className="w-full">
+                Add Sale
+              </Button>
+            </div>
+
+            <div className="bg-gray-100 p-6 rounded-lg relative">
+              {selectedCustomer && (
+                <div className="absolute top-4 right-4 bg-primary text-primary-foreground w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl">
+                  {getCustomerInitials(selectedCustomer.name)}
+                </div>
+              )}
+              {selectedShoe ? (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-6">
+                    <Image
+                      src="/placeholder.svg"
+                      alt={selectedShoe.name}
+                      width={100}
+                      height={100}
+                      className="rounded-lg shadow-md"
+                    />
+                    <div>
+                      <h3 className="font-bold text-xl mb-1">{selectedShoe.name}</h3>
+                      <p className="text-sm text-gray-600">ID: {selectedShoe.productId}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm bg-white p-4 rounded-lg shadow-sm">
+                    <div>
+                      <p className="font-semibold text-gray-600">
+                        {selectedSize ? "Purchase Price:" : "Total Stock Price:"}
+                      </p>
+                      <p className="text-lg">
+                        {selectedSize
+                          ? `$${selectedSize.price.toFixed(2)}/pair`
+                          : `$${selectedShoe.stock.reduce((curr, shoe) => curr + shoe.price * shoe.quantity, 0).toFixed(2)}`}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-600">Stock:</p>
+                      <p className="text-lg">
+                        {selectedSize
+                          ? `${selectedSize.quantity} pairs`
+                          : `${selectedShoe.stock.reduce((curr, shoe) => curr + shoe.quantity, 0)} total`}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="bg-white p-4 rounded-lg shadow-sm">
+                    <p className="font-semibold text-gray-600 mb-2">Available Sizes:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedShoe.stock.map((stock) => (
+                        <span key={stock.stockId} className="px-2 py-1 bg-gray-200 rounded-md text-sm">
+                          {stock.size}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <Skeleton className="h-24 w-full rounded-lg" />
-                <Skeleton className="h-20 w-full rounded-lg" />
-              </div>
-            )}
+              ) : (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-6">
+                    <Skeleton className="w-[100px] h-[100px] rounded-lg" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-6 w-32" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-24 w-full rounded-lg" />
+                  <Skeleton className="h-20 w-full rounded-lg" />
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    
+      <AddCustomerModal
+        isOpen={addCustomerModalOpen}
+        onClose={() => setAddCustomerModalOpen(false)}
+        onCreate={handleAddCustomer}
+      />
+    </div>
   )
 }
 

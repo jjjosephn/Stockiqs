@@ -72,12 +72,13 @@ const RecentPurchasesCard = () => {
                                        {group.date}
                                     </TableCell>
                                  )}
-                                 <TableCell>{purchase.productStock.product?.name}</TableCell>
-                                 <TableCell>{purchase.productStock.size}</TableCell>
-                                 <TableCell>{purchase.productStock.quantity}</TableCell>
-                                 <TableCell>${purchase.productStock.price.toFixed(2)}</TableCell>
+                                 <TableCell>{purchase.productStock?.product?.name || purchase.psArchive.product?.name}</TableCell>
+                                 <TableCell>{purchase.productStock?.size || purchase.psArchive.size}</TableCell>
+                                 <TableCell>{purchase.productStock?.quantity || purchase.psArchive.quantity}</TableCell>
+                                 <TableCell>${purchase.productStock?.price.toFixed(2) || purchase.psArchive.price.toFixed(2)}</TableCell>
                                  <TableCell>
-                                    ${(purchase.productStock.price * purchase.productStock.quantity).toFixed(2)}
+                                    ${((purchase.productStock?.price * purchase.productStock?.quantity) ||
+                                       (purchase.psArchive.price * purchase.psArchive.quantity)).toFixed(2)}
                                  </TableCell>
                               </TableRow>
                            ))}
@@ -86,8 +87,9 @@ const RecentPurchasesCard = () => {
                                  Daily Total:
                               </TableCell>
                               <TableCell className="font-semibold">
-                                 ${group.purchases.reduce((total, purchase) => 
-                                    total + (purchase.productStock.price * purchase.productStock.quantity), 0).toFixed(2)}
+                                 ${(group.purchases.reduce((total, purchase) => 
+                                    total + ((purchase.productStock?.price * purchase.productStock?.quantity) || 
+                                       (purchase.psArchive.price * purchase.psArchive.quantity)), 0).toFixed(2))} 
                               </TableCell>
                            </TableRow>
                         </>
