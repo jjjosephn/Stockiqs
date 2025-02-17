@@ -76,7 +76,7 @@ const AddSneakerCard = () => {
 
    return (
       <Card className="w-full max-w-4xl mx-auto">
-         <CardHeader className="border-b bg-gray-50">
+         <CardHeader className="border-b bg-white">
             <div className="flex items-center space-x-3">
                <CardTitle className="text-2xl font-bold text-gray-900">Add New Sneaker</CardTitle>
             </div>
