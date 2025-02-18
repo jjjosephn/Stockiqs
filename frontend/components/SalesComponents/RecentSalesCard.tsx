@@ -96,6 +96,9 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
   const endIndex = startIndex + itemsPerPage
   const currentSales = sortedSales.slice(startIndex, endIndex)
 
+  const formatCurrency = (value: number) => {
+    return `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  };
   return (
     <Card className="overflow-hidden">
       <CardHeader>
@@ -114,7 +117,7 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
             <p className="text-2xl font-bold text-purple-800">${summaryStats.totalProfit.toFixed(2)}</p>
           </div>
           <div className="bg-yellow-50 p-4 rounded-lg">
-            <p className="text-sm font-medium text-yellow-600">Avg Profit Margin</p>
+            <p className="text-sm font-medium text-yellow-600">Average Profit Margin</p>
             <p className="text-2xl font-bold text-yellow-800">{summaryStats.avgProfitMargin.toFixed(2)}%</p>
           </div>
         </div>
@@ -175,15 +178,15 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
                   </TableCell>
                   <TableCell>{stock?.size}</TableCell>
                   <TableCell>{sale.quantity}</TableCell>
-                  <TableCell className="text-gray-600">${purchasePrice.toFixed(2)}</TableCell>
-                  <TableCell className="text-gray-600">${(sale.quantity * purchasePrice).toFixed(2)}</TableCell>
-                  <TableCell className="text-gray-600">${soldPrice.toFixed(2)}</TableCell>
-                  <TableCell className="text-gray-600">${(sale.quantity * soldPrice).toFixed(2)}</TableCell>
+                  <TableCell className="text-gray-600">{formatCurrency(purchasePrice)}</TableCell>
+                  <TableCell className="text-gray-600">{formatCurrency(sale.quantity * purchasePrice)}</TableCell>
+                  <TableCell className="text-gray-600">{formatCurrency(soldPrice)}</TableCell>
+                  <TableCell className="text-gray-600">{formatCurrency(sale.quantity * soldPrice)}</TableCell>
                   <TableCell className={cn(
                     "font-semibold",
                     profit > 0 ? "text-green-600" : "text-red-600"
                   )}>
-                    ${profit.toFixed(2)}
+                    {formatCurrency(profit)}
                   </TableCell>
                   <TableCell className={cn(
                     "font-semibold",
