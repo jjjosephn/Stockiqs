@@ -4,7 +4,7 @@ import { useState, useMemo } from "react"
 import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { useGetSalesQuery } from "@/app/state/api"
+import { useGetProductsArchiveQuery, useGetSalesQuery } from "@/app/state/api"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -46,29 +46,83 @@ type RecentSalesCardProps = {
 }
 
 const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
-  const { data: sales, isLoading, isError } = useGetSalesQuery()
+  const { data: sales, isLoading: salesLoading } = useGetSalesQuery()
+  const { data: productsArchive, isLoading: archiveLoading } = useGetProductsArchiveQuery()
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
+  const isLoading = salesLoading || archiveLoading || !sales || !productsArchive
+
   const sortedSales = useMemo(() => {
-    return sales ? [...sales].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) : []
-  }, [sales])
+    if (!sales || !productsArchive) return []
+    return [...sales].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+  }, [sales, productsArchive])
+
+  const getProductInfo = (sale: any) => {
+    if (sale.stockId) {
+      const stock = products
+        .flatMap((product) => product.stock)
+        .find((productStock) => productStock.stockId === sale.stockId)
+      const product = products.find((p) => p.productId === stock?.productId)
+      
+      if (stock && product) {
+        return {
+          stock,
+          product: { name: product.name, productId: product.productId }
+        }
+      }
+    }
+
+    if (sale.archiveId) {
+      const stock = products
+        .flatMap((product) => product.psArchive)
+        .find((productStock) => productStock.archiveId === sale.archiveId)
+      const product = products.find((p) => p.productId === stock?.productId)
+
+      if (stock && product) {
+        return {
+          stock,
+          product: { name: product.name, productId: product.productId }
+        }
+      }
+    }
+
+    if (sale.productsArchiveId && productsArchive) {
+      const archivedProduct = productsArchive.find(
+        (pa) => pa.productsArchiveId === sale.productsArchiveId
+      )
+      
+      if (archivedProduct && archivedProduct.psArchive) {
+        const archivedStock = sale.archiveId 
+          ? archivedProduct.psArchive.find(ps => ps.archiveId === sale.archiveId)
+          : archivedProduct.psArchive[0] 
+
+        return {
+          stock: archivedStock,
+          product: { name: archivedProduct.name, productId: archivedProduct.productId }
+        }
+      }
+    }
+
+    return { stock: null, product: null }
+  }
 
   const summaryStats = useMemo(() => {
-    if (!sortedSales.length) return { totalSales: 0, totalRevenue: 0, totalProfit: 0, avgProfitMargin: 0 }
+    if (!sortedSales.length || !productsArchive) {
+      return { 
+        totalSales: 0, 
+        totalRevenue: 0, 
+        totalProfit: 0, 
+        avgProfitMargin: 0 
+      }
+    }
 
     let totalSales = 0
     let totalRevenue = 0
     let totalProfit = 0
 
     sortedSales.forEach((sale: any) => {
-      const stock = products
-        .flatMap((product) => product.stock)
-        .find((productStock) => productStock.stockId === sale.stockId) || 
-        products
-          .flatMap((product) => product.psArchive)
-          .find((productStock) => productStock.archiveId === sale.archiveId)
-
+      const { stock } = getProductInfo(sale)
       const purchasePrice = stock?.price || 0
       const soldPrice = sale.salesPrice
       const quantity = sale.quantity
@@ -86,10 +140,9 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
       totalProfit,
       avgProfitMargin
     }
-  }, [sortedSales, products])
+  }, [sortedSales, products, productsArchive])
 
   if (isLoading) return <div>Loading...</div>
-  if (isError) return <div>Error fetching sales</div>
 
   const totalPages = Math.ceil(sortedSales.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
@@ -99,6 +152,7 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
   const formatCurrency = (value: number) => {
     return `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
+
   return (
     <Card className="overflow-hidden">
       <CardHeader>
@@ -140,24 +194,16 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentSales.map((sale: any, index: number) => {
+            {currentSales.map((sale: any) => {
               const customer = customers.find((c) => c.userId === sale.userId)
-              const stock = products
-              .flatMap((product) => product.stock)
-              .find((productStock) => productStock.stockId === sale.stockId) || 
-              products
-                .flatMap((product) => product.psArchive)
-                .find((productStock) => productStock.archiveId === sale.archiveId)
-              const product = products.find((p) => p.productId === stock?.productId)
+              const { stock, product } = getProductInfo(sale)
               const purchasePrice = stock?.price || 0
               const soldPrice = sale.salesPrice
               const profit = (soldPrice - purchasePrice) * sale.quantity
               const profitMargin = ((profit / (sale.quantity * soldPrice)) * 100).toFixed(2)
 
               return (
-                <TableRow 
-                  key={sale.saleId}
-                >
+                <TableRow key={sale.saleId}>
                   <TableCell className="font-medium">{new Date(sale.timestamp).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <Link href={`/customers/${customer?.userId}`}>

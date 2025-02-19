@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { useCreateProductMutation, useDeleteProductMutation, useGetProductsQuery } from "../state/api"
+import { useCreateProductMutation, useDeleteProductMutation, useDeleteProductStockMutation, useGetProductsArchiveQuery, useGetProductsQuery, useGetSalesQuery } from "../state/api"
 import Header from "@/components/Header"
 import { PlusCircle, Search, Loader2, ChevronLeft, ChevronRight } from 'lucide-react'
 import SneakerInfoModal from "@/components/InventoryComponents/SneakerInfoModal"
@@ -26,14 +26,17 @@ const Inventory = () => {
   const [addSneakerModalOpen, setAddSneakerModalOpen] = useState(false)
   const [sneakerInfoModalOpen, setSneakerInfoModalOpen] = useState(false)
   const { data, isError, isLoading } = useGetProductsQuery(search)
-  const [addSneaker] = useCreateProductMutation()
   const [deleteSneaker] = useDeleteProductMutation()
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const { refetch: refetchSales } = useGetSalesQuery();
+  const { refetch: refetchProductsArchive } = useGetProductsArchiveQuery();
   const itemsPerPage = 12
 
   const handleDeleteSneaker = async (productId: string) => {
     await deleteSneaker(productId)
+    await refetchSales()
+    await refetchProductsArchive()
   }
 
   const sortedAndFilteredProducts = useMemo(() => {

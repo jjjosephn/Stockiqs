@@ -38,6 +38,14 @@ export interface Product {
    psArchive: PSArchive[]
 }
 
+export interface ProductsArchive {
+   productsArchiveId: string,
+   productId: string,
+   name: string,
+   timestamp: string,
+   psArchive?: PSArchive[]
+}
+
 export interface ProductStock {
    stockId: string,
    productId: string,
@@ -73,6 +81,7 @@ export interface Sales {
    stockId: string,
    archiveId: string,
    userId: string,
+   productsArchiveId: string,
    quantity: number,
    salesPrice: number,
    timestamp: string
@@ -141,6 +150,10 @@ export const api = createApi({
             url: '/products',
             params: search ? { search } : {}
          }),
+         providesTags: ['Products']
+      }),
+      getProductsArchive: build.query<ProductsArchive[], void>({
+         query: () => '/products/archive',
          providesTags: ['Products']
       }),
       createProduct: build.mutation<Product, NewProduct>({
@@ -260,6 +273,7 @@ export const api = createApi({
 export const { 
    useGetDashboardMetricsQuery, 
    useGetProductsQuery, 
+   useGetProductsArchiveQuery,
    useCreateProductMutation, 
    useDeleteProductMutation,
    useUpdateProductMutation,

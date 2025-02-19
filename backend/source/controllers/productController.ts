@@ -74,20 +74,73 @@ export const deleteProduct = async (
 ): Promise<void> => {
    try {
       const { productId } = req.params
+
+      const product = await prisma.products.findUnique({
+         where: { productId }
+      });
+
+      if (!product) {
+         res.status(404).json({ message: 'Product not found' });
+         return;
+      }
+
+      const productArchive = await prisma.productsArchive.create({
+         data: {
+            productId: product.productId,
+            name: product.name,
+         }
+      });
+
+      const productStocks = await prisma.productStock.findMany({
+         where: { productId }
+      });
+
+      for (const stock of productStocks) {
+         const archivedStock = await prisma.pSArchive.create({
+            data: {
+               stockId: stock.stockId,
+               price: stock.price,
+               productId: stock.productId,
+               size: stock.size,
+               quantity: stock.quantity,
+               productsArchiveId: productArchive.productsArchiveId
+            }
+         });
+
+         await prisma.sales.updateMany({
+            where: { stockId: stock.stockId },
+            data: { 
+               productsArchiveId: productArchive.productsArchiveId,
+               archiveId: archivedStock.archiveId,
+            }
+         });
+      }
       
-      await prisma.productStock.deleteMany({
-         where: {
-            productId
-         }
-      })
-      await prisma.products.delete({
-         where: {
-            productId
-         }
-      })
-      res.status(201).json({ message: 'Product deleted' })
+      await prisma.productStock.deleteMany({ where: { productId } });
+      await prisma.products.delete({ where: { productId } });
+
+      res.status(201).json({ message: 'Product deleted' });
    } catch (error) {
+      console.error(error);
       res.status(500).json({ message: 'Error deleting product' });
+   }
+};
+
+
+export const getProductsArchive = async (
+   req: Request,
+   res: Response
+): Promise<void> => {
+   try {
+      const productsArchive = await prisma.productsArchive.findMany({
+         include: {
+            psArchive: true
+         }
+      })
+      res.json(productsArchive)
+   }
+   catch (error) {
+      res.status(500).json({ message: 'Error retrieving products archive' });
    }
 }
 
@@ -163,15 +216,43 @@ export const deleteProductStock = async (
    try {
       const { productId, stockId } = req.params;
 
-      const deletedStock = await prisma.productStock.delete({
+      const archiveStock = await prisma.productStock.findUnique({
          where: { stockId },
       });
+      
+      if (!archiveStock) {
+         res.status(404).json({ message: 'Stock item not found' });
+         return;
+      }
 
-      res.status(200).json({ message: 'Stock item deleted successfully', deletedStock });
+      const archived = await prisma.pSArchive.create({
+         data: {
+            stockId: archiveStock.stockId,
+            price: archiveStock.price,
+            productId: archiveStock.productId,
+            size: archiveStock.size,
+            quantity: archiveStock.quantity
+         }
+      });
+
+      await prisma.sales.updateMany({
+         where: { stockId },
+         data: {
+            archiveId: archived.archiveId,  
+            stockId: null,
+         },
+      });
+
+      await prisma.productStock.delete({
+         where: { stockId }
+      });
+
+      res.status(200).json({ message: 'Stock item deleted successfully', archived });
    } catch (error) {
       res.status(500).json({ error: 'Failed to delete stock item', details: error });
    }
 };
+
 
 export const updateProductStockAfterSale = async (
    req: Request,

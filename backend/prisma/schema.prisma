@@ -32,6 +32,15 @@ model Products {
   psArchive PSArchive[]
 }
 
+model ProductsArchive {
+  productsArchiveId String      @id @default(uuid())
+  productId         String
+  name              String
+  timestamp         DateTime    @default(now())
+  psArchive         PSArchive[]
+  Sales             Sales[]
+}
+
 model ProductStock {
   stockId   String      @id @default(uuid())
   price     Float
@@ -44,29 +53,33 @@ model ProductStock {
 }
 
 model PSArchive {
-  archiveId String      @id @default(uuid())
-  stockId   String
-  price     Float
-  productId String
-  size      Float
-  quantity  Int
-  timestamp DateTime    @default(now())
-  product   Products    @relation(fields: [productId], references: [productId])
-  Sales     Sales[]
-  Purchases Purchases[]
+  archiveId         String           @id @default(uuid())
+  stockId           String
+  price             Float
+  productId         String
+  productsArchiveId String?
+  size              Float
+  quantity          Int
+  timestamp         DateTime         @default(now())
+  product           Products         @relation(fields: [productId], references: [productId])
+  Sales             Sales[]
+  Purchases         Purchases[]
+  ProductsArchive   ProductsArchive? @relation(fields: [productsArchiveId], references: [productsArchiveId])
 }
 
 model Sales {
-  saleId       String        @id
-  stockId      String?
-  archiveId    String?
-  userId       String
-  timestamp    DateTime
-  quantity     Int
-  salesPrice   Float
-  customers    Customers     @relation(fields: [userId], references: [userId])
-  productStock ProductStock? @relation(fields: [stockId], references: [stockId])
-  psArchive    PSArchive?    @relation(fields: [archiveId], references: [archiveId])
+  saleId            String           @id
+  stockId           String?
+  archiveId         String?
+  userId            String
+  productsArchiveId String?
+  timestamp         DateTime
+  quantity          Int
+  salesPrice        Float
+  customers         Customers        @relation(fields: [userId], references: [userId])
+  productStock      ProductStock?    @relation(fields: [stockId], references: [stockId])
+  psArchive         PSArchive?       @relation(fields: [archiveId], references: [archiveId])
+  productsArchive   ProductsArchive? @relation(fields: [productsArchiveId], references: [productsArchiveId])
 }
 
 model Purchases {

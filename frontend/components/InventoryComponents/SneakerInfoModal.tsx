@@ -1,13 +1,12 @@
 "use client"
 
-import type React from "react"
-import { useState } from "react"
-import { X, DollarSign, Package, Edit, Plus } from "lucide-react"
+import React, { useState, useEffect, useCallback } from "react"
+import { X, DollarSign, Package, Edit, Plus } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useDeleteProductStockMutation, useUpdateProductMutation } from "@/app/state/api"
+import { useDeleteProductStockMutation, useGetProductsQuery, useGetSalesQuery, useUpdateProductMutation } from "@/app/state/api"
 import { v4 } from "uuid"
 
 type StockItem = {
@@ -38,7 +37,32 @@ const [editedProduct, setEditedProduct] = useState<Product>(product)
 const [updateProduct] = useUpdateProductMutation()
 const [newStock, setNewStock] = useState<Partial<StockItem>>({ size: 0, quantity: 0, price: 0 })
 const [deleteProductStock] = useDeleteProductStockMutation()
+const { data: productsData, refetch: refetchProducts } = useGetProductsQuery()
+const { data: salesData, refetch: refetchSales } = useGetSalesQuery()
 
+const refreshData = useCallback(async () => {
+   if (refetchProducts) {
+      await refetchProducts()
+   }
+   if (refetchSales) {
+      await refetchSales()
+   }
+}, [refetchProducts, refetchSales])
+
+useEffect(() => {
+   if (isOpen) {
+      refreshData()
+   }
+}, [isOpen, refreshData])
+
+useEffect(() => {
+   if (productsData) {
+      const updatedProduct = productsData.find(p => p.productId === product.productId)
+      if (updatedProduct) {
+      setEditedProduct(updatedProduct)
+      }
+   }
+}, [productsData, product.productId])
 
 if (!isOpen) return null
 
@@ -57,19 +81,35 @@ const selectedStockItem = selectedSize
 
 const handleDeleteSize = async () => {
    if (!selectedStockItem?.stockId || !editedProduct?.productId) {
-      console.error("Missing productId or stockId.");
-      return;
+      console.error("Missing productId or stockId.")
+      return
    }
 
    try {
       await deleteProductStock({ 
-         productId: editedProduct.productId, 
-         stockId: selectedStockItem.stockId 
-      });
+      productId: editedProduct.productId, 
+      stockId: selectedStockItem.stockId 
+      })
+      
+      await refreshData()
+
+      const updatedStock = editedProduct.stock.filter(item => item.stockId !== selectedStockItem.stockId)
+      setEditedProduct(prev => ({
+      ...prev,
+      stock: updatedStock
+      }))
+
+      if (updatedStock.length > 0) {
+      const sortedSizes = updatedStock.map(item => item.size).sort((a, b) => a - b)
+      const nextSize = sortedSizes.find(size => size > selectedStockItem.size) || sortedSizes[0]
+      setSelectedSize(nextSize.toString())
+      } else {
+      setSelectedSize(null)
+      }
    } catch (error) {
-      console.error("Error deleting stock item:", error);
+      console.error("Error deleting stock item:", error)
    }
-};
+}
 
 const handleEdit = () => {
    setIsEditing(true)
@@ -91,6 +131,8 @@ const handleSave = async () => {
       })),
       }).unwrap()
 
+      await refreshData()
+
       setIsEditing(false)
       setSelectedSize(null)
       onClose()
@@ -110,7 +152,7 @@ const handleStockItemChange = (stockId: string, field: keyof StockItem, value: s
       stock: prev.stock.map((item) =>
       item.stockId === stockId
          ? { ...item, [field]: field === "size" ? Number.parseFloat(value) : Number.parseInt(value, 10) }
-         : item,
+         : item
       ),
    }))
 }
@@ -125,21 +167,20 @@ const handleNewStockChange = (field: keyof StockItem, value: string) => {
 const handleAddNewStock = () => {
    if (newStock.size && newStock.quantity && newStock.price) {
       const newStockItem: StockItem = {
-         productId: editedProduct.productId,
-         stockId: v4(), 
-         size: newStock.size,
-         quantity: newStock.quantity,
-         price: newStock.price,
+      productId: editedProduct.productId,
+      stockId: v4(), 
+      size: newStock.size,
+      quantity: newStock.quantity,
+      price: newStock.price,
       }
       setEditedProduct((prev) => ({
-         ...prev,
-         stock: [...prev.stock, newStockItem],
-      }));
+      ...prev,
+      stock: [...prev.stock, newStockItem],
+      }))
 
-      setNewStock({ size: 0, quantity: 0, price: 0 });
+      setNewStock({ size: 0, quantity: 0, price: 0 })
    }
 }
-
 
 return (
    <div className="fixed inset-0 bg-[#475569] bg-opacity-50 overflow-y-auto h-full w-full z-20 flex items-center justify-center">
@@ -226,10 +267,7 @@ return (
                </SelectContent>
             </Select>
             {isEditing && selectedSize && (
-               <Button variant="destructive" size="sm" onClick={() => {
-                  handleDeleteSize()
-                  onClose()
-               }}>
+               <Button variant="destructive" size="sm" onClick={handleDeleteSize}>
                   Delete Size
                </Button>
             )}

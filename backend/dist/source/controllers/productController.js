@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProductStockAfterSale = exports.updateProductStockAfterSale = exports.deleteProductStock = exports.updateProductStock = exports.updateProduct = exports.deleteProduct = exports.createProduct = exports.getProducts = void 0;
+exports.deleteProductStockAfterSale = exports.updateProductStockAfterSale = exports.deleteProductStock = exports.updateProductStock = exports.updateProduct = exports.getProductsArchive = exports.deleteProduct = exports.createProduct = exports.getProducts = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -73,23 +73,65 @@ exports.createProduct = createProduct;
 const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { productId } = req.params;
-        yield prisma.productStock.deleteMany({
-            where: {
-                productId
+        const product = yield prisma.products.findUnique({
+            where: { productId }
+        });
+        if (!product) {
+            res.status(404).json({ message: 'Product not found' });
+            return;
+        }
+        const productArchive = yield prisma.productsArchive.create({
+            data: {
+                productId: product.productId,
+                name: product.name,
             }
         });
-        yield prisma.products.delete({
-            where: {
-                productId
-            }
+        const productStocks = yield prisma.productStock.findMany({
+            where: { productId }
         });
+        for (const stock of productStocks) {
+            const archivedStock = yield prisma.pSArchive.create({
+                data: {
+                    stockId: stock.stockId,
+                    price: stock.price,
+                    productId: stock.productId,
+                    size: stock.size,
+                    quantity: stock.quantity,
+                    productsArchiveId: productArchive.productsArchiveId
+                }
+            });
+            yield prisma.sales.updateMany({
+                where: { stockId: stock.stockId },
+                data: {
+                    productsArchiveId: productArchive.productsArchiveId,
+                    archiveId: archivedStock.archiveId,
+                }
+            });
+        }
+        yield prisma.productStock.deleteMany({ where: { productId } });
+        yield prisma.products.delete({ where: { productId } });
         res.status(201).json({ message: 'Product deleted' });
     }
     catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Error deleting product' });
     }
 });
 exports.deleteProduct = deleteProduct;
+const getProductsArchive = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const productsArchive = yield prisma.productsArchive.findMany({
+            include: {
+                psArchive: true
+            }
+        });
+        res.json(productsArchive);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Error retrieving products archive' });
+    }
+});
+exports.getProductsArchive = getProductsArchive;
 const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { productId } = req.params;
@@ -145,10 +187,33 @@ exports.updateProductStock = updateProductStock;
 const deleteProductStock = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { productId, stockId } = req.params;
-        const deletedStock = yield prisma.productStock.delete({
+        const archiveStock = yield prisma.productStock.findUnique({
             where: { stockId },
         });
-        res.status(200).json({ message: 'Stock item deleted successfully', deletedStock });
+        if (!archiveStock) {
+            res.status(404).json({ message: 'Stock item not found' });
+            return;
+        }
+        const archived = yield prisma.pSArchive.create({
+            data: {
+                stockId: archiveStock.stockId,
+                price: archiveStock.price,
+                productId: archiveStock.productId,
+                size: archiveStock.size,
+                quantity: archiveStock.quantity
+            }
+        });
+        yield prisma.sales.updateMany({
+            where: { stockId },
+            data: {
+                archiveId: archived.archiveId,
+                stockId: null,
+            },
+        });
+        yield prisma.productStock.delete({
+            where: { stockId }
+        });
+        res.status(200).json({ message: 'Stock item deleted successfully', archived });
     }
     catch (error) {
         res.status(500).json({ error: 'Failed to delete stock item', details: error });
