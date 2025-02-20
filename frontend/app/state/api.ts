@@ -69,6 +69,7 @@ export interface PSArchive {
    archiveId: string,
    stockId: string,
    productId: string,
+   productsArchiveId: string,
    size: number,
    quantity: number 
    price: number,

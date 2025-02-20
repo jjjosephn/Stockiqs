@@ -60,7 +60,7 @@ const InventoryDisplay = () => {
             quantity: totalQuantity,
             value: totalValue,
             avgPrice: averagePrice,
-            lowStock: totalQuantity < 10 // Assuming 10 is low stock threshold
+            lowStock: totalQuantity < 5 
           }
         })
         .sort((a, b) => b.value - a.value)

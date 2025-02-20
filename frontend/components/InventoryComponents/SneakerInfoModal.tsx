@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useDeleteProductStockMutation, useGetProductsQuery, useGetSalesQuery, useUpdateProductMutation } from "@/app/state/api"
+import { useCreateProductMutation, useDeleteProductStockMutation, useGetProductsQuery, useGetPurchasesQuery, useGetSalesQuery, useUpdateProductMutation } from "@/app/state/api"
 import { v4 } from "uuid"
 
 type StockItem = {
@@ -39,6 +39,7 @@ const [newStock, setNewStock] = useState<Partial<StockItem>>({ size: 0, quantity
 const [deleteProductStock] = useDeleteProductStockMutation()
 const { data: productsData, refetch: refetchProducts } = useGetProductsQuery()
 const { data: salesData, refetch: refetchSales } = useGetSalesQuery()
+const {refetch: refetchPurchases} = useGetPurchasesQuery()
 
 const refreshData = useCallback(async () => {
    if (refetchProducts) {
@@ -131,6 +132,7 @@ const handleSave = async () => {
       })),
       }).unwrap()
 
+      await refetchPurchases()
       await refreshData()
 
       setIsEditing(false)
@@ -167,11 +169,11 @@ const handleNewStockChange = (field: keyof StockItem, value: string) => {
 const handleAddNewStock = () => {
    if (newStock.size && newStock.quantity && newStock.price) {
       const newStockItem: StockItem = {
-      productId: editedProduct.productId,
-      stockId: v4(), 
-      size: newStock.size,
-      quantity: newStock.quantity,
-      price: newStock.price,
+         productId: editedProduct.productId,
+         stockId: v4(), 
+         size: newStock.size,
+         quantity: newStock.quantity,
+         price: newStock.price,
       }
       setEditedProduct((prev) => ({
       ...prev,

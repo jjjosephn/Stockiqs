@@ -95,6 +95,8 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
   const [addCustomerModalOpen, setAddCustomerModalOpen] = useState(false)
   const [addCustomer] = useCreateCustomerMutation()
 
+  console.log(selectedShoe)
+
   const handleAddCustomer = async (data: CustomerFormData) => {
     await addCustomer(data)
   }
@@ -144,7 +146,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
     } else {
       await updateStock({
         stockId: selectedSize.stockId,
-        quantity: selectedSize.quantity - formData.quantity,
+        quantity: formData.quantity,
       })
     }
 

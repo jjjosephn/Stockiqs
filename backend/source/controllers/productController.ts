@@ -114,6 +114,13 @@ export const deleteProduct = async (
                archiveId: archivedStock.archiveId,
             }
          });
+
+         await prisma.purchases.updateMany({
+            where: { stockId: stock.stockId },
+            data: { 
+               archiveId: archivedStock.archiveId,
+            }
+         });
       }
       
       await prisma.productStock.deleteMany({ where: { productId } });
@@ -144,43 +151,54 @@ export const getProductsArchive = async (
    }
 }
 
-export const updateProduct = async (
-   req: Request,
-   res: Response
-): Promise<void> => {
+export const updateProduct = async (req: Request, res: Response): Promise<void> => {
    try {
-      const { productId } = req.params
-      const { name, stock } = req.body
+      const { productId } = req.params;
+      const { name, stock } = req.body;
 
       if (!name || !Array.isArray(stock)) {
          res.status(400).json({ message: 'Name and stock array are required' });
          return;
       }
 
-      const updatedProduct = await prisma.products.update({
-         where: {
-            productId
-         },
-         data: {
-            name,
-            stock: {
-               upsert: stock.map(({ stockId, size, quantity, price }) => ({
-                  where: { stockId },
-                  update: { size, quantity, price },
-                  create: { size, quantity, price }
-               }))
-            }
-         },
-         include: {
-            stock: true
-         }
-      })
+      const existingStockIds = new Set(
+         (await prisma.productStock.findMany({
+            where: { productId },
+            select: { stockId: true }
+         })).map(stock => stock.stockId)
+      );
 
-      res.status(201).json(updatedProduct)
+      const upsertedStock = await Promise.all(
+         stock.map(async ({ stockId, size, quantity, price }) => {
+            const createdStock = await prisma.productStock.upsert({
+               where: { stockId },
+               update: { size, quantity, price },
+               create: { size, quantity, price, productId }
+            });
+            return createdStock;
+         })
+      );
+
+      const newStock = upsertedStock.filter(({ stockId }) => !existingStockIds.has(stockId));
+
+      if (newStock.length > 0) {
+         await prisma.purchases.createMany({
+            data: newStock.map(({ stockId }) => ({ stockId }))
+         });
+      }
+
+      const updatedProduct = await prisma.products.findUnique({
+         where: { productId },
+         include: { stock: true }
+      });
+
+      res.status(201).json(updatedProduct);
    } catch (error) {
+      console.error(error);
       res.status(500).json({ message: 'Error updating product' });
    }
-}
+};
+
 
 export const updateProductStock = async (
    req: Request,
@@ -236,6 +254,14 @@ export const deleteProductStock = async (
       });
 
       await prisma.sales.updateMany({
+         where: { stockId },
+         data: {
+            archiveId: archived.archiveId,  
+            stockId: null,
+         },
+      });
+
+      await prisma.purchases.updateMany({
          where: { stockId },
          data: {
             archiveId: archived.archiveId,  

@@ -56,12 +56,12 @@ model PSArchive {
   archiveId         String           @id @default(uuid())
   stockId           String
   price             Float
-  productId         String
+  productId         String?
   productsArchiveId String?
   size              Float
   quantity          Int
   timestamp         DateTime         @default(now())
-  product           Products         @relation(fields: [productId], references: [productId])
+  product           Products?         @relation(fields: [productId], references: [productId])
   Sales             Sales[]
   Purchases         Purchases[]
   ProductsArchive   ProductsArchive? @relation(fields: [productsArchiveId], references: [productsArchiveId])

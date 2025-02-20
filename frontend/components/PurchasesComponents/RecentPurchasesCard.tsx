@@ -3,12 +3,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useGetPurchasesQuery } from '@/app/state/api'
+import { useGetProductsArchiveQuery, useGetPurchasesQuery } from '@/app/state/api'
 
 const RecentPurchasesCard = () => {
    const { data: purchases, isLoading, isError } = useGetPurchasesQuery()
+   const { data: productsArchive } = useGetProductsArchiveQuery()
    const [currentPage, setCurrentPage] = useState(1)
    const itemsPerPage = 5
+
+   const findProductInArchive = (productsArchiveId: string, stockId: string) => {
+      const product = productsArchive?.find(p => p.productsArchiveId === productsArchiveId)
+      if (product) {
+         const stock = product.psArchive?.find(s => s.stockId === stockId)
+         if (stock) {
+            return {
+               name: product.name,
+               ...stock
+            }
+         }
+      }
+      return null
+   }
 
    const groupedPurchases = useMemo(() => {
       if (!purchases) return []
@@ -63,38 +78,66 @@ const RecentPurchasesCard = () => {
                   </TableHeader>
                   <TableBody>
                      {currentPurchases.map((group) => (
-                        <>
-                           {group.purchases.map((purchase, index) => (
-                              <TableRow key={purchase.purchaseId}>
-                                 {index === 0 && (
-                                    <TableCell 
-                                       className="font-medium" 
-                                       rowSpan={group.purchases.length}
-                                    >
-                                       {group.date}
+                        <React.Fragment key={group.date}>
+                           {group.purchases.map((purchase, index) => {
+                              let productData;
+                              if (purchase.productStock) {
+                                 productData = {
+                                    name: purchase.productStock.product?.name,
+                                    size: purchase.productStock.size,
+                                    quantity: purchase.productStock.quantity,
+                                    price: purchase.productStock.price
+                                 }
+                              } else if (purchase.psArchive?.productsArchiveId && purchase.psArchive?.stockId) {
+                                 productData = findProductInArchive(purchase.psArchive.productsArchiveId, purchase.psArchive.stockId)
+                              } else {
+                                 productData = {
+                                    name: purchase.psArchive?.product?.name,
+                                    size: purchase.psArchive?.size,
+                                    quantity: purchase.psArchive?.quantity,
+                                    price: purchase.psArchive?.price
+                                 }
+                              }
+
+                              return (
+                                 <TableRow key={purchase.purchaseId}>
+                                    {index === 0 && (
+                                       <TableCell 
+                                          className="font-medium" 
+                                          rowSpan={group.purchases.length}
+                                       >
+                                          {group.date}
+                                       </TableCell>
+                                    )}
+                                    <TableCell>{productData?.name || 'N/A'}</TableCell>
+                                    <TableCell>{productData?.size || 'N/A'}</TableCell>
+                                    <TableCell>{productData?.quantity || 'N/A'}</TableCell>
+                                    <TableCell>${productData?.price?.toFixed(2) || 'N/A'}</TableCell>
+                                    <TableCell>
+                                       ${((productData?.price || 0) * (productData?.quantity || 0)).toFixed(2)}
                                     </TableCell>
-                                 )}
-                                 <TableCell>{purchase.productStock?.product?.name || purchase.psArchive.product?.name}</TableCell>
-                                 <TableCell>{purchase.productStock?.size || purchase.psArchive.size}</TableCell>
-                                 <TableCell>{purchase.productStock?.quantity || purchase.psArchive.quantity}</TableCell>
-                                 <TableCell>${purchase.productStock?.price.toFixed(2) || purchase.psArchive.price.toFixed(2)}</TableCell>
-                                 <TableCell>
-                                    ${((purchase.productStock?.price * purchase.productStock?.quantity) ||
-                                       (purchase.psArchive.price * purchase.psArchive.quantity)).toFixed(2)}
-                                 </TableCell>
-                              </TableRow>
-                           ))}
+                                 </TableRow>
+                              )
+                           })}
                            <TableRow className="border-t-2 bg-gray-100">
                               <TableCell colSpan={5} className="text-right font-semibold">
                                  Daily Total:
                               </TableCell>
                               <TableCell className="font-semibold">
-                                 ${(group.purchases.reduce((total, purchase) => 
-                                    total + ((purchase.productStock?.price * purchase.productStock?.quantity) || 
-                                       (purchase.psArchive.price * purchase.psArchive.quantity)), 0).toFixed(2))} 
+                                 ${group.purchases.reduce((total, purchase) => {
+                                    let productData;
+                                    if (purchase.productStock) {
+                                       productData = purchase.productStock
+                                    } else if (purchase.psArchive?.productsArchiveId && purchase.psArchive?.stockId) {
+                                       productData = findProductInArchive(purchase.psArchive.productsArchiveId, purchase.psArchive.stockId)
+                                    } else {
+                                       productData = purchase.psArchive
+                                    }
+                                    return total + ((productData?.price || 0) * (productData?.quantity || 0))
+                                 }, 0).toFixed(2)}
                               </TableCell>
                            </TableRow>
-                        </>
+                        </React.Fragment>
                      ))}
                   </TableBody>
                </Table>

@@ -16,6 +16,7 @@ CREATE TABLE "Customers" (
 CREATE TABLE "Products" (
     "productId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'active',
 
     CONSTRAINT "Products_pkey" PRIMARY KEY ("productId")
 );
@@ -46,7 +47,7 @@ CREATE TABLE "PSArchive" (
     "archiveId" TEXT NOT NULL,
     "stockId" TEXT NOT NULL,
     "price" DOUBLE PRECISION NOT NULL,
-    "productId" TEXT NOT NULL,
+    "productId" TEXT,
     "productsArchiveId" TEXT,
     "size" DOUBLE PRECISION NOT NULL,
     "quantity" INTEGER NOT NULL,
@@ -133,7 +134,7 @@ CREATE TABLE "ExpenseByCategory" (
 ALTER TABLE "ProductStock" ADD CONSTRAINT "ProductStock_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Products"("productId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PSArchive" ADD CONSTRAINT "PSArchive_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Products"("productId") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "PSArchive" ADD CONSTRAINT "PSArchive_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Products"("productId") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "PSArchive" ADD CONSTRAINT "PSArchive_productsArchiveId_fkey" FOREIGN KEY ("productsArchiveId") REFERENCES "ProductsArchive"("productsArchiveId") ON DELETE SET NULL ON UPDATE CASCADE;

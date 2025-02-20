@@ -107,6 +107,12 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                     archiveId: archivedStock.archiveId,
                 }
             });
+            yield prisma.purchases.updateMany({
+                where: { stockId: stock.stockId },
+                data: {
+                    archiveId: archivedStock.archiveId,
+                }
+            });
         }
         yield prisma.productStock.deleteMany({ where: { productId } });
         yield prisma.products.delete({ where: { productId } });
@@ -140,27 +146,32 @@ const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             res.status(400).json({ message: 'Name and stock array are required' });
             return;
         }
-        const updatedProduct = yield prisma.products.update({
-            where: {
-                productId
-            },
-            data: {
-                name,
-                stock: {
-                    upsert: stock.map(({ stockId, size, quantity, price }) => ({
-                        where: { stockId },
-                        update: { size, quantity, price },
-                        create: { size, quantity, price }
-                    }))
-                }
-            },
-            include: {
-                stock: true
-            }
+        const existingStockIds = new Set((yield prisma.productStock.findMany({
+            where: { productId },
+            select: { stockId: true }
+        })).map(stock => stock.stockId));
+        const upsertedStock = yield Promise.all(stock.map((_a) => __awaiter(void 0, [_a], void 0, function* ({ stockId, size, quantity, price }) {
+            const createdStock = yield prisma.productStock.upsert({
+                where: { stockId },
+                update: { size, quantity, price },
+                create: { size, quantity, price, productId }
+            });
+            return createdStock;
+        })));
+        const newStock = upsertedStock.filter(({ stockId }) => !existingStockIds.has(stockId));
+        if (newStock.length > 0) {
+            yield prisma.purchases.createMany({
+                data: newStock.map(({ stockId }) => ({ stockId }))
+            });
+        }
+        const updatedProduct = yield prisma.products.findUnique({
+            where: { productId },
+            include: { stock: true }
         });
         res.status(201).json(updatedProduct);
     }
     catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Error updating product' });
     }
 });
@@ -204,6 +215,13 @@ const deleteProductStock = (req, res) => __awaiter(void 0, void 0, void 0, funct
             }
         });
         yield prisma.sales.updateMany({
+            where: { stockId },
+            data: {
+                archiveId: archived.archiveId,
+                stockId: null,
+            },
+        });
+        yield prisma.purchases.updateMany({
             where: { stockId },
             data: {
                 archiveId: archived.archiveId,
