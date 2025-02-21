@@ -84,12 +84,18 @@ export const deleteProduct = async (
          return;
       }
 
-      const productArchive = await prisma.productsArchive.create({
-         data: {
-            productId: product.productId,
-            name: product.name,
-         }
+      let productArchive = await prisma.productsArchive.findFirst({
+         where: { productId: product.productId }
       });
+
+      if (!productArchive) {
+         productArchive = await prisma.productsArchive.create({
+            data: {
+               productId: product.productId,
+               name: product.name
+            }
+         });
+      }
 
       const productStocks = await prisma.productStock.findMany({
          where: { productId }
@@ -322,6 +328,28 @@ export const deleteProductStockAfterSale = async (
          return;
       }
 
+      let productArchive = await prisma.productsArchive.findFirst({
+         where: { productId: stockToArchive.productId },
+      });
+
+      if (!productArchive) {
+         const product = await prisma.products.findUnique({
+            where: { productId: stockToArchive?.productId },
+         });
+
+         if (!product) {
+            res.status(404).json({ message: 'Associated product not found' });
+            return;
+         }
+
+         productArchive = await prisma.productsArchive.create({
+            data: {
+               productId: product.productId,
+               name: product.name
+            },
+         });
+      }
+
       const archivedStock = await prisma.pSArchive.create({
          data: {
             stockId: stockToArchive.stockId, 
@@ -329,6 +357,7 @@ export const deleteProductStockAfterSale = async (
             productId: stockToArchive.productId,
             size: stockToArchive.size,
             quantity: stockToArchive.quantity,
+            productsArchiveId: productArchive.productsArchiveId
          },
       });
 
@@ -337,6 +366,7 @@ export const deleteProductStockAfterSale = async (
             stockId: stockId 
          },
          data: { 
+            productsArchiveId: productArchive.productsArchiveId,
             archiveId: archivedStock.archiveId, 
             stockId: null 
          },

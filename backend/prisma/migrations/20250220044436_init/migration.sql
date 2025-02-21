@@ -16,7 +16,6 @@ CREATE TABLE "Customers" (
 CREATE TABLE "Products" (
     "productId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'active',
 
     CONSTRAINT "Products_pkey" PRIMARY KEY ("productId")
 );

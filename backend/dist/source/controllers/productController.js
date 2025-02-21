@@ -80,12 +80,17 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             res.status(404).json({ message: 'Product not found' });
             return;
         }
-        const productArchive = yield prisma.productsArchive.create({
-            data: {
-                productId: product.productId,
-                name: product.name,
-            }
+        let productArchive = yield prisma.productsArchive.findFirst({
+            where: { productId: product.productId }
         });
+        if (!productArchive) {
+            productArchive = yield prisma.productsArchive.create({
+                data: {
+                    productId: product.productId,
+                    name: product.name
+                }
+            });
+        }
         const productStocks = yield prisma.productStock.findMany({
             where: { productId }
         });
@@ -270,6 +275,24 @@ const deleteProductStockAfterSale = (req, res) => __awaiter(void 0, void 0, void
             res.status(404).json({ message: 'Stock item not found' });
             return;
         }
+        let productArchive = yield prisma.productsArchive.findFirst({
+            where: { productId: stockToArchive.productId },
+        });
+        if (!productArchive) {
+            const product = yield prisma.products.findUnique({
+                where: { productId: stockToArchive === null || stockToArchive === void 0 ? void 0 : stockToArchive.productId },
+            });
+            if (!product) {
+                res.status(404).json({ message: 'Associated product not found' });
+                return;
+            }
+            productArchive = yield prisma.productsArchive.create({
+                data: {
+                    productId: product.productId,
+                    name: product.name
+                },
+            });
+        }
         const archivedStock = yield prisma.pSArchive.create({
             data: {
                 stockId: stockToArchive.stockId,
@@ -277,6 +300,7 @@ const deleteProductStockAfterSale = (req, res) => __awaiter(void 0, void 0, void
                 productId: stockToArchive.productId,
                 size: stockToArchive.size,
                 quantity: stockToArchive.quantity,
+                productsArchiveId: productArchive.productsArchiveId
             },
         });
         yield prisma.sales.updateMany({
@@ -284,6 +308,7 @@ const deleteProductStockAfterSale = (req, res) => __awaiter(void 0, void 0, void
                 stockId: stockId
             },
             data: {
+                productsArchiveId: productArchive.productsArchiveId,
                 archiveId: archivedStock.archiveId,
                 stockId: null
             },

@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { useDeleteCustomerMutation, useGetCustomerQuery, useGetSalesQuery, useUpdateCustomerMutation } from '../../state/api'
+import { useDeleteCustomerMutation, useGetCustomerQuery, useGetProductsArchiveQuery, useGetSalesQuery, useUpdateCustomerMutation } from '../../state/api'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -39,6 +39,7 @@ const CustomerDetail = () => {
   const router = useRouter()
   const { data: customer, isLoading, isError } = useGetCustomerQuery(userId as string)
   const { data: sales, isLoading: salesLoading } = useGetSalesQuery()
+  const { data: productsArchive, isLoading: productsArchiveLoading } = useGetProductsArchiveQuery()
   const [ deleteCustomer ] = useDeleteCustomerMutation()
   const [isDeleting, setIsDeleting] = useState(false)
   const [ isEditModalOpen, setIsEditModalOpen ] = useState(false)
@@ -62,7 +63,26 @@ const CustomerDetail = () => {
     currentPage * ITEMS_PER_PAGE
   )
 
-  if (isLoading || salesLoading) {
+  const getProductInfo = (sale: any) => {
+    if (sale.productStock) {
+      return {
+        name: sale.productStock.product.name,
+        size: sale.productStock.size,
+        price: sale.productStock.price
+      }
+    } else if (sale.psArchive) {
+      const archivedProduct = productsArchive?.find(p => p.productsArchiveId === sale.psArchive.productsArchiveId)
+      const archivedStock = archivedProduct?.psArchive?.find(s => s.archiveId === sale.psArchive.archiveId)
+      return {
+        name: archivedProduct?.name || 'Unknown Product',
+        size: archivedStock?.size || 'N/A',
+        price: archivedStock?.price || 0
+      }
+    }
+    return { name: 'Unknown Product', size: 'N/A', price: 0 }
+  }
+
+  if (isLoading || salesLoading || productsArchiveLoading) {
     return (
       <div className="container mx-auto p-4">
         <Card>
@@ -230,15 +250,15 @@ const CustomerDetail = () => {
               </TableHeader>
               <TableBody>
                 {paginatedSales.map((sale) => {
-                  const stock = sale.productStock || sale.psArchive
-                  const product = stock?.product
+                  const productInfo = getProductInfo(sale)
+                  
                   return (
                     <TableRow key={sale.saleId} className="hover:bg-gray-50">
                       <TableCell>{new Date(sale.timestamp).toLocaleDateString()}</TableCell>
-                      <TableCell className="font-medium">{product?.name}</TableCell>
-                      <TableCell>{stock.size}</TableCell>
+                      <TableCell className="font-medium">{productInfo.name}</TableCell>
+                      <TableCell>{productInfo.size}</TableCell>
                       <TableCell>{sale.quantity}</TableCell>
-                      <TableCell>${stock.price.toFixed(2)}</TableCell>
+                      <TableCell>${productInfo.price.toFixed(2)}</TableCell>
                       <TableCell>${sale.salesPrice.toFixed(2)}</TableCell>
                       <TableCell className="font-semibold">${(sale.salesPrice * sale.quantity).toFixed(2)}</TableCell>
                     </TableRow>

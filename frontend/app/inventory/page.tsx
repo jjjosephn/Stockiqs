@@ -26,7 +26,7 @@ const Inventory = () => {
   const [addSneakerModalOpen, setAddSneakerModalOpen] = useState(false)
   const [sneakerInfoModalOpen, setSneakerInfoModalOpen] = useState(false)
   const { data, isError, isLoading } = useGetProductsQuery(search)
-  const [deleteSneaker] = useDeleteProductMutation()
+  const [deleteProduct] = useDeleteProductMutation()
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const { refetch: refetchSales } = useGetSalesQuery();
@@ -34,7 +34,7 @@ const Inventory = () => {
   const itemsPerPage = 12
 
   const handleDeleteSneaker = async (productId: string) => {
-    await deleteSneaker(productId)
+    await deleteProduct(productId)
     await refetchSales()
     await refetchProductsArchive()
   }
