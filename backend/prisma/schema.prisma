@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Customers {
-  userId        String  @id
+  customerId    String  @id
   phoneNumber   String
   name          String
   instagram     String?
@@ -28,6 +28,7 @@ model Customers {
 model Products {
   productId String         @id @default(uuid())
   name      String
+  image     String?
   stock     ProductStock[]
   psArchive PSArchive[]
 }
@@ -61,7 +62,7 @@ model PSArchive {
   size              Float
   quantity          Int
   timestamp         DateTime         @default(now())
-  product           Products?         @relation(fields: [productId], references: [productId])
+  product           Products?        @relation(fields: [productId], references: [productId])
   Sales             Sales[]
   Purchases         Purchases[]
   ProductsArchive   ProductsArchive? @relation(fields: [productsArchiveId], references: [productsArchiveId])
@@ -71,12 +72,12 @@ model Sales {
   saleId            String           @id
   stockId           String?
   archiveId         String?
-  userId            String
+  customerId        String
   productsArchiveId String?
   timestamp         DateTime
   quantity          Int
   salesPrice        Float
-  customers         Customers        @relation(fields: [userId], references: [userId])
+  customers         Customers        @relation(fields: [customerId], references: [customerId])
   productStock      ProductStock?    @relation(fields: [stockId], references: [stockId])
   psArchive         PSArchive?       @relation(fields: [archiveId], references: [archiveId])
   productsArchive   ProductsArchive? @relation(fields: [productsArchiveId], references: [productsArchiveId])

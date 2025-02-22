@@ -4,9 +4,9 @@ import { createCustomer, deleteCustomer, getCustomer, getCustomers, updateCustom
 const router = Router();
 
 router.get('/', getCustomers);
-router.get('/:userId', getCustomer);
+router.get('/:customerId', getCustomer);
 router.post('/', createCustomer);
-router.delete('/:userId', deleteCustomer);
-router.put('/:userId', updateCustomer);
+router.delete('/:customerId', deleteCustomer);
+router.put('/:customerId', updateCustomer);
 
 export default router;

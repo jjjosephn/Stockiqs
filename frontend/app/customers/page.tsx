@@ -99,7 +99,7 @@ const Customers = () => {
             </TableHeader>
             <TableBody>
               {currentCustomers.map((customer) => (
-                <TableRow key={customer.userId} className='hover:bg-gray-100 border-gray-300'>
+                <TableRow key={customer.customerId} className='hover:bg-gray-100 border-gray-300'>
                   <TableCell className="font-medium text-gray-900">
                     <div className="flex items-center">
                       <Avatar className="h-8 w-8 mr-2">
@@ -110,10 +110,10 @@ const Customers = () => {
                     </div>
                   </TableCell>
                   <TableCell className='text-gray-800'>{customer.phoneNumber}</TableCell>
-                  <TableCell className='text-gray-800'>{customer.userId}</TableCell>
+                  <TableCell className='text-gray-800'>{customer.customerId}</TableCell>
                   <TableCell className='text-gray-900'>
                     <Button className='hover:bg-gray-300'variant="ghost" asChild>
-                      <Link href={`/customers/${customer.userId}`}>
+                      <Link href={`/customers/${customer.customerId}`}>
                         <p className='text-gray-900'>View Details</p>
                       </Link>
                     </Button>

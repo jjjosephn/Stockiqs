@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Plus, Minus } from 'lucide-react'
 import { v4 as uuidv4 } from 'uuid'
 import { useCreateProductMutation, useGetPurchasesQuery } from "@/app/state/api"
+import Image from 'next/image'
 
 type StockItem = {
    stockId: string
@@ -17,19 +18,80 @@ type StockItem = {
 type ProductFormData = {
    productId: string
    name: string
+   image: string
    stock: StockItem[]
 }
- 
+
+type SneakerSuggestion = {
+   title: string
+   image: string
+}
+
 const AddSneakerCard = () => {
    const [addSneaker] = useCreateProductMutation()
    const {refetch} = useGetPurchasesQuery()
-
    const [formData, setFormData] = useState<ProductFormData>({
       productId: uuidv4(),
       name: '',
+      image: '',
       stock: [{ stockId: uuidv4(), price: 0, size: 0, quantity: 0 }]
    })
-   
+   const [suggestions, setSuggestions] = useState<SneakerSuggestion[]>([])
+   const [showSuggestions, setShowSuggestions] = useState(false)
+   const suggestionRef = useRef<HTMLDivElement>(null)
+
+   console.log(formData)
+   useEffect(() => {
+      if (formData.name.length > 2) {
+         fetchSuggestions(formData.name)
+      } else {
+         setSuggestions([])
+         setShowSuggestions(false)
+      }
+   }, [formData.name])
+
+   useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+         if (suggestionRef.current && !suggestionRef.current.contains(event.target as Node)) {
+            setShowSuggestions(false)
+         }
+      }
+
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+         document.removeEventListener('mousedown', handleClickOutside)
+      }
+   }, [])
+
+   const fetchSuggestions = async (query: string) => {
+      const encodedQuery = query.replace(/ /g, '%20')
+      const options = {
+        method: 'GET',
+        headers: { Authorization: process.env.NEXT_PUBLIC_SNEAKERS_API_KEY ?? '' }
+      }
+    
+      try {
+        const response = await fetch(`https://api.sneakersapi.dev/api/v3/stockx/products?query=${encodedQuery}`, options)
+        const responseData = await response.json()
+        console.log('API Response:', responseData)
+    
+        if (responseData.status === 'success' && Array.isArray(responseData.data)) {
+          setSuggestions(responseData.data.map((item: any) => ({ 
+            title: item.title,
+            image: item.image
+          })))
+          setShowSuggestions(true)
+        } else {
+          setSuggestions([])
+          setShowSuggestions(false)
+        }
+      } catch (err) {
+        console.error('Error fetching suggestions:', err)
+        setSuggestions([])
+        setShowSuggestions(false)
+      }
+    }
+
    const handleAddSneaker = async (e: React.FormEvent) => {
       e.preventDefault()
       await addSneaker(formData)
@@ -39,6 +101,7 @@ const AddSneakerCard = () => {
       setFormData({
          productId: uuidv4(),
          name: '',
+         image: '',
          stock: [{ stockId: uuidv4(), price: 0, size: 0, quantity: 0 }]
       })
    }
@@ -74,6 +137,16 @@ const AddSneakerCard = () => {
       }))
    }
 
+   const handleSuggestionClick = (suggestion: SneakerSuggestion) => {
+      setFormData(prev => ({ ...prev, name: suggestion.title, image: suggestion.image }))
+      setShowSuggestions(false)
+   }
+
+   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+      const target = e.target as HTMLImageElement;
+      target.src = '/placeholder.svg';
+    };
+
    return (
       <Card className="w-full max-w-4xl mx-auto">
          <CardHeader className="border-b bg-white">
@@ -82,20 +155,42 @@ const AddSneakerCard = () => {
             </div>
          </CardHeader>
          <CardContent className="p-6">
-            <form onSubmit={handleAddSneaker} className="space-y-8">
-               <div className="space-y-3">
+            <form onSubmit={handleAddSneaker} onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()} className="space-y-8">
+               <div className="space-y-3 relative">
                   <Label htmlFor="name" className="text-lg font-medium">
-                     Sneaker Name
+                  Sneaker Name
                   </Label>
                   <Input
-                     id="name"
-                     name="name"
-                     placeholder="Enter sneaker name"
-                     value={formData.name}
-                     onChange={handleChange}
-                     required
-                     className="w-full h-12 text-lg"
+                  id="name"
+                  name="name"
+                  placeholder="Enter sneaker name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full h-12 text-lg"
                   />
+                  {showSuggestions && suggestions.length > 0 && (
+                  <div ref={suggestionRef} className="absolute z-10 w-full bg-white border border-gray-300 mt-1 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                     {suggestions.map((suggestion, index) => (
+                        <div
+                        key={index}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                        onClick={() => handleSuggestionClick(suggestion)}
+                        >
+                        <div className="w-[50px] h-[50px] relative mr-4">
+                           <Image
+                              src={suggestion.image || "/placeholder.svg"}
+                              alt={suggestion.title}
+                              fill
+                              className="object-contain"
+                              onError={handleImageError}
+                           />
+                        </div>
+                        <span className="flex-1">{suggestion.title}</span>
+                        </div>
+                     ))}
+                  </div>
+                  )}
                </div>
 
                <div className="space-y-4">

@@ -1,7 +1,9 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
 
-const nextConfig: NextConfig = {
-  /* config options here */
+const nextConfig = {
+  images: {
+    domains: ['images.stockx.com', 'stockx-assets.imgix.net'],
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

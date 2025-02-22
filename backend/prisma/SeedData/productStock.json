@@ -61,19 +61,5 @@
     "size": 6.5,
     "quantity": 7,
     "price": 104.00
-  },
-  {
-    "stockId": "ac65a160-ae16-42a1-8a6d-d2aca4a8f0e4",
-    "productId": "86e3bb1c-2f5d-4774-98f3-4df7cddd0a0f",
-    "size": 9.5,
-    "quantity": 4,
-    "price": 235.15
-  },
-  {
-    "stockId": "7d076a1e-fa38-4958-8f7a-a59dcd9006e2",
-    "productId": "86e3bb1c-2f5d-4774-98f3-4df7cddd0a0f",
-    "size": 10.0,
-    "quantity": 11,
-    "price": 234.17
   }
 ]

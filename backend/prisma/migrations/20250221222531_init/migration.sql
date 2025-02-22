@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "Customers" (
-    "userId" TEXT NOT NULL,
+    "customerId" TEXT NOT NULL,
     "phoneNumber" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "instagram" TEXT,
@@ -9,13 +9,14 @@ CREATE TABLE "Customers" (
     "state" TEXT,
     "zipCode" TEXT,
 
-    CONSTRAINT "Customers_pkey" PRIMARY KEY ("userId")
+    CONSTRAINT "Customers_pkey" PRIMARY KEY ("customerId")
 );
 
 -- CreateTable
 CREATE TABLE "Products" (
     "productId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "image" TEXT,
 
     CONSTRAINT "Products_pkey" PRIMARY KEY ("productId")
 );
@@ -60,7 +61,7 @@ CREATE TABLE "Sales" (
     "saleId" TEXT NOT NULL,
     "stockId" TEXT,
     "archiveId" TEXT,
-    "userId" TEXT NOT NULL,
+    "customerId" TEXT NOT NULL,
     "productsArchiveId" TEXT,
     "timestamp" TIMESTAMP(3) NOT NULL,
     "quantity" INTEGER NOT NULL,
@@ -139,7 +140,7 @@ ALTER TABLE "PSArchive" ADD CONSTRAINT "PSArchive_productId_fkey" FOREIGN KEY ("
 ALTER TABLE "PSArchive" ADD CONSTRAINT "PSArchive_productsArchiveId_fkey" FOREIGN KEY ("productsArchiveId") REFERENCES "ProductsArchive"("productsArchiveId") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Sales" ADD CONSTRAINT "Sales_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Customers"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Sales" ADD CONSTRAINT "Sales_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "Customers"("customerId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Sales" ADD CONSTRAINT "Sales_stockId_fkey" FOREIGN KEY ("stockId") REFERENCES "ProductStock"("stockId") ON DELETE SET NULL ON UPDATE CASCADE;

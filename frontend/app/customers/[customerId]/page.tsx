@@ -35,9 +35,9 @@ type CustomerDetailProps = {
 const ITEMS_PER_PAGE = 5
 
 const CustomerDetail = () => {
-  const { userId } = useParams()
+  const { customerId } = useParams()
   const router = useRouter()
-  const { data: customer, isLoading, isError } = useGetCustomerQuery(userId as string)
+  const { data: customer, isLoading, isError } = useGetCustomerQuery(customerId as string)
   const { data: sales, isLoading: salesLoading } = useGetSalesQuery()
   const { data: productsArchive, isLoading: productsArchiveLoading } = useGetProductsArchiveQuery()
   const [ deleteCustomer ] = useDeleteCustomerMutation()
@@ -47,9 +47,9 @@ const CustomerDetail = () => {
   const [currentPage, setCurrentPage] = useState(1)
 
   const customerSales = useMemo(() => 
-    (sales?.filter(sale => sale.userId === userId) || [])
+    (sales?.filter(sale => sale.customerId === customerId) || [])
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()),
-    [sales, userId]
+    [sales, customerId]
   )
 
   const totalPurchases = useMemo(() => 
@@ -124,7 +124,7 @@ const CustomerDetail = () => {
   const handleDelete = async () => {
     setIsDeleting(true)
     try {
-      await deleteCustomer(userId as string).unwrap()
+      await deleteCustomer(customerId as string).unwrap()
       router.back()
     } catch (error) {
       console.error('Failed to delete customer:', error)
@@ -133,7 +133,7 @@ const CustomerDetail = () => {
   }
 
   const handleSubmit = async (data: CustomerDetailProps) => {
-    await updateCustomer({ userId: userId as string, ...data })
+    await updateCustomer({ customerId: customerId as string, ...data })
   }
 
   return (
@@ -185,7 +185,7 @@ const CustomerDetail = () => {
             <Button 
               className='bg-white border-gray-300 hover:bg-gray-200 md:hidden' 
               variant="outline" 
-              onClick={() => router.push(`/customers/${userId}/details`)}
+              onClick={() => router.push(`/customers/${customerId}/details`)}
             >
               <p className='text-gray-900'>View Details</p>
               <ChevronRight className="ml-2 h-4 w-4 text-gray-900" />

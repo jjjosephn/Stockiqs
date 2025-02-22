@@ -31,8 +31,8 @@ export const createProduct = async (
    req: Request,
    res: Response
 ): Promise<void> => {
-   try{
-      const { name, stock } = req.body; 
+   try {
+      const { name, image, stock } = req.body;
 
       if (!name || !Array.isArray(stock)) {
          res.status(400).json({ message: 'Name and stock array are required' });
@@ -42,6 +42,7 @@ export const createProduct = async (
       const product = await prisma.products.create({
          data: {
             name,
+            image,  
             stock: {
                create: stock.map(({ size, quantity, price }) => ({
                   size,
@@ -54,19 +55,21 @@ export const createProduct = async (
             stock: true
          }
       });
-      
-      console.log(product)
+
+      console.log(product);
       const purchases = await prisma.purchases.createMany({
          data: product.stock.map(({ stockId }) => ({
             stockId
          }))
-      })
+      });
 
-      res.status(201).json({product, purchases});
+      res.status(201).json({ product, purchases });
    } catch (error) {
+      console.error(error);
       res.status(500).json({ message: 'Error creating product' });
    }
-}
+};
+
 
 export const deleteProduct = async (
    req: Request,

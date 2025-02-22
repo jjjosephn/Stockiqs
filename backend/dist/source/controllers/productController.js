@@ -37,7 +37,7 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getProducts = getProducts;
 const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, stock } = req.body;
+        const { name, image, stock } = req.body;
         if (!name || !Array.isArray(stock)) {
             res.status(400).json({ message: 'Name and stock array are required' });
             return;
@@ -45,6 +45,7 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const product = yield prisma.products.create({
             data: {
                 name,
+                image,
                 stock: {
                     create: stock.map(({ size, quantity, price }) => ({
                         size,
@@ -66,6 +67,7 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(201).json({ product, purchases });
     }
     catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Error creating product' });
     }
 });

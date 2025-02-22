@@ -24,12 +24,13 @@ const getCustomers = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.getCustomers = getCustomers;
 const getCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { userId } = req.params;
+        const { customerId } = req.params;
         const customer = yield prisma.customers.findUnique({
             where: {
-                userId
+                customerId
             }
         });
+        console.log(customer);
         res.status(200).json(customer);
     }
     catch (error) {
@@ -39,10 +40,10 @@ const getCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getCustomer = getCustomer;
 const createCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { userId, phoneNumber, name, instagram, streetAddress, city, state, zipCode } = req.body;
+        const { customerId, phoneNumber, name, instagram, streetAddress, city, state, zipCode } = req.body;
         const customer = yield prisma.customers.create({
             data: {
-                userId,
+                customerId,
                 name,
                 phoneNumber,
                 instagram,
@@ -61,10 +62,10 @@ const createCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.createCustomer = createCustomer;
 const deleteCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { userId } = req.params;
+        const { customerId } = req.params;
         yield prisma.customers.delete({
             where: {
-                userId
+                customerId
             }
         });
         res.status(200).json({ message: 'User deleted' });
@@ -76,11 +77,11 @@ const deleteCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.deleteCustomer = deleteCustomer;
 const updateCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { userId } = req.params;
+        const { customerId } = req.params;
         const { phoneNumber, name, instagram, streetAddress, city, state, zipCode } = req.body;
         const customer = yield prisma.customers.update({
             where: {
-                userId
+                customerId
             },
             data: {
                 name,

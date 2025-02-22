@@ -21,7 +21,7 @@ import { PlusCircle } from "lucide-react"
 import AddCustomerModal from "../CustomerComponents/AddCustomerModal"
 
 type Customer = {
-  userId: string
+  customerId: string
   name: string
 }
 
@@ -59,7 +59,7 @@ type SalesFormData = {
   saleId: string
   archiveId: string
   stockId: string
-  userId: string
+  customerId: string
   quantity: number
   salesPrice: number
   timestamp: string
@@ -83,7 +83,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
     saleId: v4(),
     archiveId: '',
     stockId: selectedSize?.stockId || "",
-    userId: selectedCustomer?.userId || "",
+    customerId: selectedCustomer?.customerId || "",
     quantity: 0,
     salesPrice: 0,
     timestamp: new Date().toISOString(),
@@ -101,11 +101,11 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
     await addCustomer(data)
   }
 
-  const handleCustomerSelect = (userId: string) => {
-    const customer = customers.find((customer) => customer.userId === userId) || null
+  const handleCustomerSelect = (customerId: string) => {
+    const customer = customers.find((customer) => customer.customerId === customerId) || null
     setSelectedCustomer(customer)
-    setFormData((prev) => ({ ...prev, userId: customer?.userId || "" }))
-    if (userId === 'new') {
+    setFormData((prev) => ({ ...prev, customerId: customer?.customerId || "" }))
+    if (customerId === 'new') {
       setAddCustomerModalOpen(true)
     }
   }
@@ -154,7 +154,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
       saleId: v4(),
       archiveId: '',
       stockId: "",
-      userId: "",
+      customerId: "",
       quantity: 0,
       salesPrice: 0,
       timestamp: new Date().toISOString(),
@@ -168,7 +168,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      userId: selectedCustomer?.userId || "",
+      customerId: selectedCustomer?.customerId || "",
       stockId: selectedSize?.stockId || "",
     }))
   }, [selectedCustomer, selectedSize])
@@ -195,13 +195,13 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
                 <Label htmlFor="customer-select" className={selectedCustomer ? "text-sm text-gray-500" : "sr-only"}>
                   Select Customer
                 </Label>
-                <Select onValueChange={handleCustomerSelect} value={selectedCustomer?.userId || ""}>
+                <Select onValueChange={handleCustomerSelect} value={selectedCustomer?.customerId || ""}>
                   <SelectTrigger id="customer-select">
                     <SelectValue placeholder="Select Customer" />
                   </SelectTrigger>
                   <SelectContent>
                     {customers?.map((customer) => (
-                      <SelectItem key={customer.userId} value={customer.userId}>
+                      <SelectItem key={customer.customerId} value={customer.customerId}>
                         {customer.name}
                       </SelectItem>
                     ))}

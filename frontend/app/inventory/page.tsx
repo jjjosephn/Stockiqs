@@ -23,7 +23,6 @@ type ProductFormData = {
 
 const Inventory = () => {
   const [search, setSearch] = useState("")
-  const [addSneakerModalOpen, setAddSneakerModalOpen] = useState(false)
   const [sneakerInfoModalOpen, setSneakerInfoModalOpen] = useState(false)
   const { data, isError, isLoading } = useGetProductsQuery(search)
   const [deleteProduct] = useDeleteProductMutation()
@@ -103,7 +102,9 @@ const Inventory = () => {
           >
             <div className="p-4">
               <div className="bg-gray-200 h-48 mb-4 rounded-md flex items-center justify-center">
-                <span className="text-gray-500">Image Placeholder</span>
+                <span className="text-gray-500">
+                  <img src={product.image} alt={product.name}/>
+                </span>
               </div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">{product.name}</h3>
               <p className="text-2xl font-bold text-blue-600 mb-2">${(product.stock.reduce((sum, item) => sum + (item.price * item.quantity), 0)).toFixed(2)}</p>

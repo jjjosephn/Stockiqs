@@ -11,7 +11,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from "next/link"
 
 type Customer = {
-  userId: string
+  customerId: string
   name: string
 }
 
@@ -195,7 +195,7 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
           </TableHeader>
           <TableBody>
             {currentSales.map((sale: any) => {
-              const customer = customers.find((c) => c.userId === sale.userId)
+              const customer = customers.find((c) => c.customerId === sale.customerId)
               const { stock, product } = getProductInfo(sale)
               const purchasePrice = stock?.price || 0
               const soldPrice = sale.salesPrice
@@ -206,19 +206,12 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
                 <TableRow key={sale.saleId}>
                   <TableCell className="font-medium">{new Date(sale.timestamp).toLocaleDateString()}</TableCell>
                   <TableCell>
-                    <Link href={`/customers/${customer?.userId}`}>
+                    <Link href={`/customers/${customer?.customerId}`}>
                       {customer?.name}
                     </Link>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Image
-                        src={`/placeholder.svg?height=50&width=50`}
-                        alt={product?.name || "Shoe"}
-                        width={50}
-                        height={50}
-                        className="rounded-md"
-                      />
                       <span className="font-medium">{product?.name || "Unknown Shoe"}</span>
                     </div>
                   </TableCell>

@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import exp from "constants";
 
 export interface Customers {
-   userId: string,
+   customerId: string,
    name: string,
    phoneNumber: string,
    instagram: string,
@@ -34,6 +34,7 @@ export interface Purchases {
 export interface Product {
    productId: string,
    name: string,
+   image?: string,
    stock: ProductStock[]
    psArchive: PSArchive[]
 }
@@ -58,6 +59,7 @@ export interface ProductStock {
 export interface NewProduct {
    name: string;
    productId?: string;
+   image?: string;
    stock: {
       size: number;
       quantity: number;
@@ -81,7 +83,7 @@ export interface Sales {
    saleId: string,
    stockId: string,
    archiveId: string,
-   userId: string,
+   customerId: string,
    productsArchiveId: string,
    quantity: number,
    salesPrice: number,
@@ -93,7 +95,7 @@ export interface Sales {
 export interface NewSale {
    stockId: string,
    archiveId: string,
-   userId: string,
+   customerId: string,
    quantity: number,
    salesPrice: number,
    timestamp: string
@@ -163,7 +165,8 @@ export const api = createApi({
             method: 'POST',
             body: {
                name: newProduct.name,
-               stock: newProduct.stock
+               stock: newProduct.stock,
+               image: newProduct.image
             }
          }),
          invalidatesTags: ['Products']
@@ -222,7 +225,7 @@ export const api = createApi({
          providesTags: ['Customers']
       }),
       getCustomer: build.query<Customers, string>({
-         query: (userId) => `/customers/${userId}`,
+         query: (customerId) => `/customers/${customerId}`,
          providesTags: ['Customers']
       }),
       createCustomer: build.mutation<Customers[], NewCustomer>({
@@ -234,15 +237,15 @@ export const api = createApi({
          invalidatesTags: ['Customers']
       }),
       deleteCustomer: build.mutation<void, string>({
-         query: (userId) => ({
-            url: `/customers/${userId}`,
+         query: (customerId) => ({
+            url: `/customers/${customerId}`,
             method: 'DELETE'
          }),
          invalidatesTags: ['Customers']
       }),
       updateCustomer: build.mutation<Customers, Partial<Customers>>({
-         query: ({ userId, ...updatedFields }) => ({
-            url: `/customers/${userId}`,
+         query: ({ customerId, ...updatedFields }) => ({
+            url: `/customers/${customerId}`,
             method: 'PUT',
             body: updatedFields
          }),

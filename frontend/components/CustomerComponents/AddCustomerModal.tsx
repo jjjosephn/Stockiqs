@@ -26,7 +26,7 @@ type AddCustomerModalProps = {
 
 const AddCustomerModal = ({ isOpen, onClose, onCreate }: AddCustomerModalProps) => {
   const [formData, setFormData] = useState({
-    userId: v4(),
+    customerId: v4(),
     name: '',
     phoneNumber: '',
     instagram: '',
@@ -40,7 +40,7 @@ const AddCustomerModal = ({ isOpen, onClose, onCreate }: AddCustomerModalProps) 
     e.preventDefault()
     onCreate(formData)
     setFormData({
-      userId: v4(),
+      customerId: v4(),
       name: '',
       phoneNumber: '',
       instagram: '',

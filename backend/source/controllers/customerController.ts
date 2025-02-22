@@ -20,12 +20,14 @@ export const getCustomer = async (
    res: Response
 ): Promise<void> => {
    try {
-      const { userId } = req.params
+      const { customerId } = req.params
       const customer = await prisma.customers.findUnique({
          where: {
-            userId
+            customerId
          }
       })
+
+      console.log(customer)
       res.status(200).json(customer);
    } catch (error) {
       res.status(500).json({ message: 'Error retrieving customer' });
@@ -37,10 +39,10 @@ export const createCustomer = async (
    res: Response
 ): Promise<void> => {
    try {
-      const { userId, phoneNumber, name, instagram, streetAddress, city, state, zipCode } = req.body
+      const { customerId, phoneNumber, name, instagram, streetAddress, city, state, zipCode } = req.body
       const customer = await prisma.customers.create({
          data: {
-            userId,
+            customerId,
             name,
             phoneNumber,
             instagram,
@@ -61,10 +63,10 @@ export const deleteCustomer = async (
    res: Response  
 ): Promise<void> => {
    try {
-      const { userId } = req.params
+      const { customerId } = req.params
       await prisma.customers.delete({
          where: {
-            userId
+            customerId
          }
       })
       res.status(200).json({ message: 'User deleted' });
@@ -79,11 +81,11 @@ export const updateCustomer = async (
    res: Response
 ): Promise<void> => {
    try {
-      const { userId } = req.params
+      const { customerId } = req.params
       const { phoneNumber, name, instagram, streetAddress, city, state, zipCode } = req.body
       const customer = await prisma.customers.update({
          where: {
-            userId
+            customerId
          },
          data: {
             name,
