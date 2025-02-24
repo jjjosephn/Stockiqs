@@ -2,8 +2,11 @@ import { useAppDispatch, useAppSelector } from '../app/redux'
 import { setIsSideBarCollapsed } from '../app/state'
 import { Archive, Icon, Layout, Menu, Users, ClipboardList , CircleDollarSign } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import logo from '../assets/businesslogo.png';
 import React from 'react'
+import { Sigmar } from 'next/font/google'
 
 interface SidebarLinkProps {
    href: string
@@ -11,6 +14,11 @@ interface SidebarLinkProps {
    label: string
    isCollapsed: boolean
 }
+
+const sigmar = Sigmar({
+   weight: '400',
+   subsets: ['latin'],
+ })
 
 const SidebarLink = ({ href, icon: Icon, label, isCollapsed }: SidebarLinkProps) => {
    const pathname = usePathname()
@@ -56,8 +64,8 @@ const Sidebar = () => {
          <div className={`flex gap-3 justify-between md:justify-normal items-center pt-8 
             ${isSideBarCollapsed ? 'px-5' : 'px-8'}`}
          >
-            <div>logo</div>
-            <h1 className={`font-extrabold text-2xl
+            <Image src={logo} alt='logo' width={40} height={40}/>
+            <h1 className={`${sigmar.className} text-2xl
                ${isSideBarCollapsed ? 'hidden' : 'block'}`}
             >
                Stockiqs
@@ -70,7 +78,6 @@ const Sidebar = () => {
             </button>
          </div>
 
-         {/* Link */}
          <div className='flex-grow mt-8'>
             <SidebarLink 
                href='/dashboard' 

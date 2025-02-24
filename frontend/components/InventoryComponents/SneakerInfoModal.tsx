@@ -20,6 +20,7 @@ price: number
 type Product = {
 productId: string
 name: string
+image?: string
 stock: StockItem[]
 }
 
@@ -212,8 +213,8 @@ return (
          )}
       </CardHeader>
       <CardContent className="space-y-4">
-         <div className="aspect-square overflow-hidden rounded-md bg-gray-100 flex items-center justify-center">
-            <span className="text-gray-400">Image Placeholder</span>
+         <div className="aspect-square overflow-hidden rounded-md flex items-center justify-center">
+            <img src={product.image} alt={editedProduct.name} />
          </div>
          <div className="grid grid-cols-2 gap-4 text-[#334155]">
             <div className="flex items-center">

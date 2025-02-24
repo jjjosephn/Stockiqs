@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Azeret_Mono as Geist_Mono } from 'next/font/google';
 import "@/app/globals.css";
-
+import { ClerkProvider } from "@clerk/nextjs";
 import DashboardWrapper from "./dashboardwrapper";
 import React from "react";
 
@@ -30,9 +30,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {<DashboardWrapper>
-          {children}
-        </DashboardWrapper>}
+        <ClerkProvider>
+          <DashboardWrapper>
+            {children}
+          </DashboardWrapper>
+        </ClerkProvider>
       </body>
     </html>
   );

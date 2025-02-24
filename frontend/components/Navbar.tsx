@@ -3,6 +3,13 @@ import { Menu, Bell, Sun, Settings, Moon } from 'lucide-react'
 import Link from 'next/link'
 import { useAppDispatch, useAppSelector } from '../app/redux'
 import { setIsDarkMode, setIsSideBarCollapsed } from '../app/state'
+import { UserButton } from '@clerk/nextjs'
+import { Sigmar } from 'next/font/google'
+
+const sigmar = Sigmar({
+  weight: '400',
+  subsets: ['latin'],
+})
 
 const Navbar = () => {
    const dispatch = useAppDispatch()
@@ -35,6 +42,8 @@ const Navbar = () => {
             </button>
          </div>
 
+         <h1 className={`${sigmar.className} text-5xl`}>Stockiqs</h1>
+
          <div className='flex justify-between items-center gap-5'>
             <div className='md:flex justify-between items-center gap-5'>
                <div>
@@ -48,13 +57,20 @@ const Navbar = () => {
                </div>
                <hr className='w-0 h-7 border border-solid border-l border-gray-300 mx-3'/>
                <div className='flex items-center gap-3 cursor-pointer'>
-                  <div className='w-9 h-9'>image</div>
-                  <span className='font-semibold'>Joseph Nguyen</span>
+                  <UserButton 
+                     showName={true} 
+                     appearance={{
+                        elements: {
+                           userButtonAvatarBox: "w-10 h-10", 
+                           userButtonPopoverCard: "bg-blue-100", 
+                           userButtonPopoverActionButton: "text-red-600",
+                        },
+                        variables: {
+                           fontSize: '1rem'
+                        }
+                     }}/>
                </div>
             </div>
-            <Link href='/settings'>
-               <Settings className='cursor-pointer text-gray-500' size={24} />
-            </Link>
          </div>
       </div>
    )
