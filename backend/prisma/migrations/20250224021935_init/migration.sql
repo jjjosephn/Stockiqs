@@ -80,56 +80,6 @@ CREATE TABLE "Purchases" (
     CONSTRAINT "Purchases_pkey" PRIMARY KEY ("purchaseId")
 );
 
--- CreateTable
-CREATE TABLE "Expenses" (
-    "expenseId" TEXT NOT NULL,
-    "category" TEXT NOT NULL,
-    "amount" DOUBLE PRECISION NOT NULL,
-    "timestamp" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Expenses_pkey" PRIMARY KEY ("expenseId")
-);
-
--- CreateTable
-CREATE TABLE "SalesSummary" (
-    "salesSummaryId" TEXT NOT NULL,
-    "totalValue" DOUBLE PRECISION NOT NULL,
-    "changePercentage" DOUBLE PRECISION,
-    "date" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "SalesSummary_pkey" PRIMARY KEY ("salesSummaryId")
-);
-
--- CreateTable
-CREATE TABLE "PurchaseSummary" (
-    "purchaseSummaryId" TEXT NOT NULL,
-    "totalPurchased" DOUBLE PRECISION NOT NULL,
-    "changePercentage" DOUBLE PRECISION,
-    "date" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "PurchaseSummary_pkey" PRIMARY KEY ("purchaseSummaryId")
-);
-
--- CreateTable
-CREATE TABLE "ExpenseSummary" (
-    "expenseSummaryId" TEXT NOT NULL,
-    "totalExpenses" DOUBLE PRECISION NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "ExpenseSummary_pkey" PRIMARY KEY ("expenseSummaryId")
-);
-
--- CreateTable
-CREATE TABLE "ExpenseByCategory" (
-    "expenseByCategoryId" TEXT NOT NULL,
-    "expenseSummaryId" TEXT NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL,
-    "category" TEXT NOT NULL,
-    "amount" BIGINT NOT NULL,
-
-    CONSTRAINT "ExpenseByCategory_pkey" PRIMARY KEY ("expenseByCategoryId")
-);
-
 -- AddForeignKey
 ALTER TABLE "ProductStock" ADD CONSTRAINT "ProductStock_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Products"("productId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -156,6 +106,3 @@ ALTER TABLE "Purchases" ADD CONSTRAINT "Purchases_stockId_fkey" FOREIGN KEY ("st
 
 -- AddForeignKey
 ALTER TABLE "Purchases" ADD CONSTRAINT "Purchases_archiveId_fkey" FOREIGN KEY ("archiveId") REFERENCES "PSArchive"("archiveId") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ExpenseByCategory" ADD CONSTRAINT "ExpenseByCategory_expenseSummaryId_fkey" FOREIGN KEY ("expenseSummaryId") REFERENCES "ExpenseSummary"("expenseSummaryId") ON DELETE RESTRICT ON UPDATE CASCADE;

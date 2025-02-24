@@ -27,7 +27,6 @@ export const getCustomer = async (
          }
       })
 
-      console.log(customer)
       res.status(200).json(customer);
    } catch (error) {
       res.status(500).json({ message: 'Error retrieving customer' });

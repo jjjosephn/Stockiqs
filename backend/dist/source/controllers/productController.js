@@ -58,7 +58,6 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 stock: true
             }
         });
-        console.log(product);
         const purchases = yield prisma.purchases.createMany({
             data: product.stock.map(({ stockId }) => ({
                 stockId
@@ -269,7 +268,6 @@ exports.updateProductStockAfterSale = updateProductStockAfterSale;
 const deleteProductStockAfterSale = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { stockId } = req.params;
-        console.log('Archiving and deleting stock:', stockId);
         const stockToArchive = yield prisma.productStock.findUnique({
             where: { stockId: stockId },
         });

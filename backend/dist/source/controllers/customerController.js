@@ -30,7 +30,6 @@ const getCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 customerId
             }
         });
-        console.log(customer);
         res.status(200).json(customer);
     }
     catch (error) {

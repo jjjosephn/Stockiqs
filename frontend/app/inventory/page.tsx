@@ -143,12 +143,6 @@ const Inventory = () => {
         </div>
       </div>
 
-      {/* <AddSneakerModal
-        isOpen={addSneakerModalOpen}
-        onClose={() => setAddSneakerModalOpen(false)}
-        onCreate={handleAddSneaker}
-      /> */}
-
       {selectedProduct && (
         <SneakerInfoModal
           isOpen={sneakerInfoModalOpen}

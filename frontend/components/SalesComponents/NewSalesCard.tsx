@@ -95,7 +95,6 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
   const [addCustomerModalOpen, setAddCustomerModalOpen] = useState(false)
   const [addCustomer] = useCreateCustomerMutation()
 
-  console.log(selectedShoe)
 
   const handleAddCustomer = async (data: CustomerFormData) => {
     await addCustomer(data)

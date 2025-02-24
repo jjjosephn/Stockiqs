@@ -40,7 +40,6 @@ const AddSneakerCard = () => {
    const [showSuggestions, setShowSuggestions] = useState(false)
    const suggestionRef = useRef<HTMLDivElement>(null)
 
-   console.log(formData)
    useEffect(() => {
       if (formData.name.length > 2) {
          fetchSuggestions(formData.name)
@@ -73,7 +72,6 @@ const AddSneakerCard = () => {
       try {
         const response = await fetch(`https://api.sneakersapi.dev/api/v3/stockx/products?query=${encodedQuery}`, options)
         const responseData = await response.json()
-        console.log('API Response:', responseData)
     
         if (responseData.status === 'success' && Array.isArray(responseData.data)) {
           setSuggestions(responseData.data.map((item: any) => ({ 
@@ -96,7 +94,6 @@ const AddSneakerCard = () => {
       e.preventDefault()
       await addSneaker(formData)
       await refetch()
-      console.log('New sneaker data:', formData)
       
       setFormData({
          productId: uuidv4(),

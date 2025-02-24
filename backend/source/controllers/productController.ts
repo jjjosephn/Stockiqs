@@ -56,7 +56,6 @@ export const createProduct = async (
          }
       });
 
-      console.log(product);
       const purchases = await prisma.purchases.createMany({
          data: product.stock.map(({ stockId }) => ({
             stockId
@@ -320,7 +319,6 @@ export const deleteProductStockAfterSale = async (
 ): Promise<void> => {
    try {
       const { stockId } = req.params;
-      console.log('Archiving and deleting stock:', stockId);
 
       const stockToArchive = await prisma.productStock.findUnique({
          where: { stockId: stockId },

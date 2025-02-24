@@ -14,7 +14,6 @@ async function deleteAllData(orderedFileNames: string[]) {
     const model: any = prisma[modelName as keyof typeof prisma];
     if (model) {
       await model.deleteMany({});
-      console.log(`Cleared data from ${modelName}`);
     } else {
       console.error(`Model ${modelName} not found. Please ensure the model name is correctly specified.`);
     }
@@ -30,13 +29,8 @@ async function main() {
     "productsArchive.json",
     "productStock.json",
     "customers.json",
-    "expenseSummary.json",
     "sales.json",
     "purchases.json",
-    "salesSummary.json",
-    "purchaseSummary.json",
-    "expenses.json",
-    "expenseByCategory.json",
   ];
 
   await deleteAllData(orderedFileNames);
@@ -57,8 +51,6 @@ async function main() {
         data,
       });
     }
-
-    console.log(`Seeded ${modelName} with data from ${fileName}`);
   }
 }
 

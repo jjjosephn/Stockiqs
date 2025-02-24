@@ -14,7 +14,6 @@ export const newSale = async (
          res.status(400).json({ message: "Quantity must be at least 1" });
          return;
       }
-      console.log('sale data', req.body);
 
       const sale = await prisma.sales.create({
          data: {

@@ -10,7 +10,6 @@ const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 const morgan_1 = __importDefault(require("morgan"));
 /* Route Imports */
-const dashboardRoutes_1 = __importDefault(require("./routes/dashboardRoutes"));
 const productRoutes_1 = __importDefault(require("./routes/productRoutes"));
 const customerRoutes_1 = __importDefault(require("./routes/customerRoutes"));
 const salesRoutes_1 = __importDefault(require("./routes/salesRoutes"));
@@ -26,7 +25,6 @@ app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 app.use((0, cors_1.default)());
 /* Routes */
-app.use('/dashboard', dashboardRoutes_1.default);
 app.use('/products', productRoutes_1.default);
 app.use('/customers', customerRoutes_1.default);
 app.use('/sales', salesRoutes_1.default);

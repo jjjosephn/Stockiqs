@@ -19,7 +19,6 @@ const newSale = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(400).json({ message: "Quantity must be at least 1" });
             return;
         }
-        console.log('sale data', req.body);
         const sale = yield prisma.sales.create({
             data: {
                 saleId,

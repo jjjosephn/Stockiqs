@@ -27,7 +27,6 @@ function deleteAllData(orderedFileNames) {
             const model = prisma[modelName];
             if (model) {
                 yield model.deleteMany({});
-                console.log(`Cleared data from ${modelName}`);
             }
             else {
                 console.error(`Model ${modelName} not found. Please ensure the model name is correctly specified.`);
@@ -44,13 +43,8 @@ function main() {
             "productsArchive.json",
             "productStock.json",
             "customers.json",
-            "expenseSummary.json",
             "sales.json",
             "purchases.json",
-            "salesSummary.json",
-            "purchaseSummary.json",
-            "expenses.json",
-            "expenseByCategory.json",
         ];
         yield deleteAllData(orderedFileNames);
         for (const fileName of orderedFileNames) {
@@ -67,7 +61,6 @@ function main() {
                     data,
                 });
             }
-            console.log(`Seeded ${modelName} with data from ${fileName}`);
         }
     });
 }

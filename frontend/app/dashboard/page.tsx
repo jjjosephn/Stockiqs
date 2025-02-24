@@ -7,7 +7,7 @@ import PurchaseSummary from "@/components/DashboardComponents/PurchaseSummary"
 import Header from "@/components/Header"
 
 
-export default async function Dashboard() {
+export default function Dashboard() {
    return (
       <>
          <Header name="Dashboard" />

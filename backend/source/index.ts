@@ -6,7 +6,6 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 
 /* Route Imports */
-import dashboardRoutes from './routes/dashboardRoutes'
 import productRoutes from './routes/productRoutes'
 import customerRoutes from './routes/customerRoutes'
 import salesRoutes from './routes/salesRoutes'
@@ -24,7 +23,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors())
 
 /* Routes */
-app.use('/dashboard', dashboardRoutes)
 app.use('/products', productRoutes)
 app.use('/customers', customerRoutes)
 app.use('/sales', salesRoutes)
