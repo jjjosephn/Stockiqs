@@ -8,6 +8,7 @@ import SneakerInfoModal from "@/components/InventoryComponents/SneakerInfoModal"
 import { motion } from "framer-motion"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@clerk/nextjs"
 
 type StockItem = {
   stockId: string
@@ -22,9 +23,10 @@ type ProductFormData = {
 }
 
 const Inventory = () => {
+  const {userId} = useAuth()
   const [search, setSearch] = useState("")
   const [sneakerInfoModalOpen, setSneakerInfoModalOpen] = useState(false)
-  const { data, isError, isLoading } = useGetProductsQuery(search)
+  const { data, isError, isLoading } = useGetProductsQuery({ search: search || '', userId: userId || '' })
   const [deleteProduct] = useDeleteProductMutation()
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [currentPage, setCurrentPage] = useState(1)

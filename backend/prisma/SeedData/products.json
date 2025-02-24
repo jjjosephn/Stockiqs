@@ -1,21 +1,25 @@
 [
   {
     "productId": "d35623ee-bef6-42b2-8776-2f99f8bb4782",
+    "userId": "user_2tQNlAL7LVUBVPspAYZxQEP8qEo",
     "image": "https://images.stockx.com/images/Air-Jordan-4-Retro-Red-Thunder-GS-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
     "name": "Jordan 4 Red Thunder gs"
   },
   {
     "productId": "8ac1ac77-7358-425e-be16-0bdde9f02e59",
+    "userId": "user_2tQNlAL7LVUBVPspAYZxQEP8qEo",
     "image": "https://images.stockx.com/images/Nike-Dunk-Low-Retro-White-Black-2021-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
     "name": "Nike Dunk Low Panda"
   },
   {
     "productId": "1afc136b-4d9f-4e8e-aace-8e1df908a404",
+    "userId": "user_2tQNlAL7LVUBVPspAYZxQEP8qEo",
     "image": "https://images.stockx.com/images/Crocs-Classic-Clog-Lightning-McQueen-Product_V2.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
     "name": "Lightning McQueen Crocs"
   },
   {
     "productId": "af84cc12-4fea-4f58-aece-f2ce92ca9580",
+    "userId": "user_2tQNlAL7LVUBVPspAYZxQEP8qEo",
     "image": "https://images.stockx.com/images/adidas-Yeezy-Slide-Slate-Marine-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1738193358",
     "name": "Yeezy Slide Slate Marine"
   }

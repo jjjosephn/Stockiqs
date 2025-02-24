@@ -1,6 +1,7 @@
 [
   {
     "saleId": "4a2575dd-8861-46ce-80ad-74f488d79a5a",
+    "userId": "user_2tQNlAL7LVUBVPspAYZxQEP8qEo",
     "stockId": "54b8f836-0fe5-4b09-91be-558b6514c888",
     "customerId": "4d5e6f7g-4567-8901-23de-f45678901234",
     "quantity": 1,
@@ -9,6 +10,7 @@
   },
   {
     "saleId": "6d4ab0ae-5d49-4731-b099-d8e155fb49d1",
+    "userId": "user_2tQNlAL7LVUBVPspAYZxQEP8qEo",
     "stockId": "aab5fa44-a00d-4ac7-993c-933414c1ee25",
     "customerId": "1a2b3c4d-1234-5678-90ab-cdef12345678",
     "quantity": 1,
@@ -17,6 +19,7 @@
   },
   {
     "saleId": "81aa20f8-591f-47e6-8bad-7ad3e3003f81",
+    "userId": "user_2tQNlAL7LVUBVPspAYZxQEP8qEo",
     "stockId": "df7fcfa8-4e5a-4462-a6e6-78f84256b9b3",
     "customerId": "2b3c4d5e-2345-6789-01bc-def234567890",
     "quantity": 1,
@@ -25,6 +28,7 @@
   },
   {
     "saleId": "a93e6a0c-d178-4889-b2ae-ba0325d9051f",
+    "userId": "user_2tQNlAL7LVUBVPspAYZxQEP8qEo",
     "stockId": "b629cdcc-0a5b-4cd8-b628-2ad5702c5ae7",
     "customerId": "3c4d5e6f-3456-7890-12cd-ef3456789012",
     "quantity": 1,

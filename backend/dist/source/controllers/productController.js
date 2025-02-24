@@ -15,9 +15,11 @@ const prisma = new client_1.PrismaClient();
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
+        const { userId } = req.params;
         const search = (_a = req.query.search) === null || _a === void 0 ? void 0 : _a.toString();
         const products = yield prisma.products.findMany({
             where: {
+                userId,
                 name: {
                     contains: search,
                     mode: 'insensitive'
@@ -37,7 +39,7 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getProducts = getProducts;
 const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, image, stock } = req.body;
+        const { name, userId, image, stock } = req.body;
         if (!name || !Array.isArray(stock)) {
             res.status(400).json({ message: 'Name and stock array are required' });
             return;
@@ -52,7 +54,8 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                         quantity,
                         price
                     }))
-                }
+                },
+                user: { connect: { userId: userId } },
             },
             include: {
                 stock: true
@@ -60,7 +63,8 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         });
         const purchases = yield prisma.purchases.createMany({
             data: product.stock.map(({ stockId }) => ({
-                stockId
+                stockId,
+                userId
             }))
         });
         res.status(201).json({ product, purchases });
@@ -73,7 +77,7 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.createProduct = createProduct;
 const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { productId } = req.params;
+        const { productId, userId } = req.params;
         const product = yield prisma.products.findUnique({
             where: { productId }
         });
@@ -88,7 +92,8 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             productArchive = yield prisma.productsArchive.create({
                 data: {
                     productId: product.productId,
-                    name: product.name
+                    name: product.name,
+                    user: { connect: { userId: userId } },
                 }
             });
         }
@@ -147,7 +152,7 @@ exports.getProductsArchive = getProductsArchive;
 const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { productId } = req.params;
-        const { name, stock } = req.body;
+        const { name, stock, userId } = req.body;
         if (!name || !Array.isArray(stock)) {
             res.status(400).json({ message: 'Name and stock array are required' });
             return;
@@ -167,7 +172,10 @@ const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const newStock = upsertedStock.filter(({ stockId }) => !existingStockIds.has(stockId));
         if (newStock.length > 0) {
             yield prisma.purchases.createMany({
-                data: newStock.map(({ stockId }) => ({ stockId }))
+                data: newStock.map(({ stockId }) => ({
+                    stockId,
+                    userId
+                }))
             });
         }
         const updatedProduct = yield prisma.products.findUnique({
@@ -267,7 +275,7 @@ const updateProductStockAfterSale = (req, res) => __awaiter(void 0, void 0, void
 exports.updateProductStockAfterSale = updateProductStockAfterSale;
 const deleteProductStockAfterSale = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { stockId } = req.params;
+        const { stockId, userId } = req.params;
         const stockToArchive = yield prisma.productStock.findUnique({
             where: { stockId: stockId },
         });
@@ -289,7 +297,8 @@ const deleteProductStockAfterSale = (req, res) => __awaiter(void 0, void 0, void
             productArchive = yield prisma.productsArchive.create({
                 data: {
                     productId: product.productId,
-                    name: product.name
+                    name: product.name,
+                    user: { connect: { userId: userId } },
                 },
             });
         }

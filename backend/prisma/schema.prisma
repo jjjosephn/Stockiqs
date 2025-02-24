@@ -13,8 +13,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Users {
+  userId          String            @id
+  timestamp       DateTime          @default(now())
+  customers       Customers[]
+  products        Products[]
+  productsArchive ProductsArchive[]
+  sales           Sales[]
+  purchases       Purchases[]
+}
+
 model Customers {
-  customerId    String  @id
+  customerId    String  @id @default(uuid())
+  userId        String
   phoneNumber   String
   name          String
   instagram     String?
@@ -23,23 +34,28 @@ model Customers {
   state         String?
   zipCode       String?
   Sales         Sales[]
+  user          Users   @relation(fields: [userId], references: [userId])
 }
 
 model Products {
   productId String         @id @default(uuid())
+  userId    String
   name      String
   image     String?
   stock     ProductStock[]
   psArchive PSArchive[]
+  user      Users          @relation(fields: [userId], references: [userId])
 }
 
 model ProductsArchive {
   productsArchiveId String      @id @default(uuid())
   productId         String
+  userId            String
   name              String
   timestamp         DateTime    @default(now())
   psArchive         PSArchive[]
   Sales             Sales[]
+  user              Users       @relation(fields: [userId], references: [userId])
 }
 
 model ProductStock {
@@ -69,7 +85,8 @@ model PSArchive {
 }
 
 model Sales {
-  saleId            String           @id
+  saleId            String           @id @default(uuid())
+  userId            String
   stockId           String?
   archiveId         String?
   customerId        String
@@ -81,14 +98,16 @@ model Sales {
   productStock      ProductStock?    @relation(fields: [stockId], references: [stockId])
   psArchive         PSArchive?       @relation(fields: [archiveId], references: [archiveId])
   productsArchive   ProductsArchive? @relation(fields: [productsArchiveId], references: [productsArchiveId])
+  user              Users            @relation(fields: [userId], references: [userId])
 }
 
 model Purchases {
   purchaseId   String        @id @default(uuid())
+  userId       String
   stockId      String?
   archiveId    String?
   timestamp    DateTime      @default(now())
   productStock ProductStock? @relation(fields: [stockId], references: [stockId])
   psArchive    PSArchive?    @relation(fields: [archiveId], references: [archiveId])
+  user         Users         @relation(fields: [userId], references: [userId])
 }
-

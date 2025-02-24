@@ -1,6 +1,15 @@
 -- CreateTable
+CREATE TABLE "Users" (
+    "userId" TEXT NOT NULL,
+    "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Users_pkey" PRIMARY KEY ("userId")
+);
+
+-- CreateTable
 CREATE TABLE "Customers" (
     "customerId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "phoneNumber" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "instagram" TEXT,
@@ -15,6 +24,7 @@ CREATE TABLE "Customers" (
 -- CreateTable
 CREATE TABLE "Products" (
     "productId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "image" TEXT,
 
@@ -25,6 +35,7 @@ CREATE TABLE "Products" (
 CREATE TABLE "ProductsArchive" (
     "productsArchiveId" TEXT NOT NULL,
     "productId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -59,6 +70,7 @@ CREATE TABLE "PSArchive" (
 -- CreateTable
 CREATE TABLE "Sales" (
     "saleId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "stockId" TEXT,
     "archiveId" TEXT,
     "customerId" TEXT NOT NULL,
@@ -73,12 +85,22 @@ CREATE TABLE "Sales" (
 -- CreateTable
 CREATE TABLE "Purchases" (
     "purchaseId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "stockId" TEXT,
     "archiveId" TEXT,
     "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Purchases_pkey" PRIMARY KEY ("purchaseId")
 );
+
+-- AddForeignKey
+ALTER TABLE "Customers" ADD CONSTRAINT "Customers_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Products" ADD CONSTRAINT "Products_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ProductsArchive" ADD CONSTRAINT "ProductsArchive_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ProductStock" ADD CONSTRAINT "ProductStock_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Products"("productId") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -102,7 +124,13 @@ ALTER TABLE "Sales" ADD CONSTRAINT "Sales_archiveId_fkey" FOREIGN KEY ("archiveI
 ALTER TABLE "Sales" ADD CONSTRAINT "Sales_productsArchiveId_fkey" FOREIGN KEY ("productsArchiveId") REFERENCES "ProductsArchive"("productsArchiveId") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Sales" ADD CONSTRAINT "Sales_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Purchases" ADD CONSTRAINT "Purchases_stockId_fkey" FOREIGN KEY ("stockId") REFERENCES "ProductStock"("stockId") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Purchases" ADD CONSTRAINT "Purchases_archiveId_fkey" FOREIGN KEY ("archiveId") REFERENCES "PSArchive"("archiveId") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Purchases" ADD CONSTRAINT "Purchases_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;

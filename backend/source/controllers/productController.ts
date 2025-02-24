@@ -8,9 +8,11 @@ export const getProducts = async (
    res: Response
 ): Promise<void> => {
    try {
+      const {userId} = req.params
       const search = req.query.search?.toString()
       const products = await prisma.products.findMany({
          where: {
+            userId,
             name: {
                contains: search,
                mode: 'insensitive'
@@ -32,7 +34,7 @@ export const createProduct = async (
    res: Response
 ): Promise<void> => {
    try {
-      const { name, image, stock } = req.body;
+      const { name, userId, image, stock } = req.body;
 
       if (!name || !Array.isArray(stock)) {
          res.status(400).json({ message: 'Name and stock array are required' });
@@ -49,7 +51,8 @@ export const createProduct = async (
                   quantity,
                   price
                }))
-            }
+            },
+            user: { connect: { userId: userId } },
          },
          include: {
             stock: true
@@ -58,7 +61,8 @@ export const createProduct = async (
 
       const purchases = await prisma.purchases.createMany({
          data: product.stock.map(({ stockId }) => ({
-            stockId
+            stockId,
+            userId 
          }))
       });
 
@@ -75,7 +79,7 @@ export const deleteProduct = async (
    res: Response
 ): Promise<void> => {
    try {
-      const { productId } = req.params
+      const { productId, userId } = req.params
 
       const product = await prisma.products.findUnique({
          where: { productId }
@@ -94,7 +98,8 @@ export const deleteProduct = async (
          productArchive = await prisma.productsArchive.create({
             data: {
                productId: product.productId,
-               name: product.name
+               name: product.name,
+               user: { connect: { userId: userId } },
             }
          });
       }
@@ -162,7 +167,7 @@ export const getProductsArchive = async (
 export const updateProduct = async (req: Request, res: Response): Promise<void> => {
    try {
       const { productId } = req.params;
-      const { name, stock } = req.body;
+      const { name, stock, userId } = req.body;
 
       if (!name || !Array.isArray(stock)) {
          res.status(400).json({ message: 'Name and stock array are required' });
@@ -191,7 +196,10 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
 
       if (newStock.length > 0) {
          await prisma.purchases.createMany({
-            data: newStock.map(({ stockId }) => ({ stockId }))
+            data: newStock.map(({ stockId }) => ({
+               stockId,
+               userId 
+            }))
          });
       }
 
@@ -318,7 +326,7 @@ export const deleteProductStockAfterSale = async (
    res: Response
 ): Promise<void> => {
    try {
-      const { stockId } = req.params;
+      const { stockId, userId } = req.params;
 
       const stockToArchive = await prisma.productStock.findUnique({
          where: { stockId: stockId },
@@ -346,7 +354,8 @@ export const deleteProductStockAfterSale = async (
          productArchive = await prisma.productsArchive.create({
             data: {
                productId: product.productId,
-               name: product.name
+               name: product.name,
+               user: { connect: { userId: userId } },
             },
          });
       }

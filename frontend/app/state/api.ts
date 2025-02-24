@@ -1,8 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import exp from "constants";
 
+
+export interface Users {
+   userId: String,
+   timestamp: String,
+}
+
 export interface Customers {
    customerId: string,
+   userId: string,
    name: string,
    phoneNumber: string,
    instagram: string,
@@ -14,6 +21,7 @@ export interface Customers {
 
 export interface NewCustomer {
    name: string,
+   userId: string,
    phoneNumber: string,
    instagram: string,
    streetAddress: string,
@@ -24,6 +32,7 @@ export interface NewCustomer {
 
 export interface Purchases {
    purchaseId: string,
+   userId: string,
    stockId?: string,
    archiveId?: string,
    timestamp: string
@@ -33,6 +42,7 @@ export interface Purchases {
 
 export interface Product {
    productId: string,
+   userId: string,
    name: string,
    image?: string,
    stock: ProductStock[]
@@ -58,6 +68,7 @@ export interface ProductStock {
 
 export interface NewProduct {
    name: string;
+   userId: string,
    productId?: string;
    image?: string;
    stock: {
@@ -81,6 +92,7 @@ export interface PSArchive {
 
 export interface Sales {
    saleId: string,
+   userId: string,
    stockId: string,
    archiveId: string,
    customerId: string,
@@ -94,6 +106,7 @@ export interface Sales {
 
 export interface NewSale {
    stockId: string,
+   userId: string,
    archiveId: string,
    customerId: string,
    quantity: number,
@@ -107,10 +120,10 @@ export const api = createApi({
    tagTypes: [ 'Products', 'Customers', 'Sales', 'Purchases'],
    endpoints: (build) => ({
       // Products
-      getProducts: build.query<Product[], string | void>({
-         query: (search) => ({
-            url: '/products',
-            params: search ? { search } : {}
+      getProducts: build.query<Product[], { search?: string; userId: string }>({
+         query: ({ search, userId }) => ({
+            url: `/products/${userId}`,  
+            params: search ? { search } : {} 
          }),
          providesTags: ['Products']
       }),
@@ -179,14 +192,18 @@ export const api = createApi({
       }),
 
       // Customers
-      getCustomers: build.query<Customers[], void>({
-         query: () => '/customers',
+      getCustomers: build.query<Customers[], { userId: string }>({
+         query: ({ userId }) => ({
+            url: `/customers/${userId}`, 
+         }),
          providesTags: ['Customers']
       }),
-      getCustomer: build.query<Customers, string>({
-         query: (customerId) => `/customers/${customerId}`,
-         providesTags: ['Customers']
+      getCustomer: build.query<Customers, { userId: string; customerId: string }>({
+         query: ({ userId, customerId }) => ({
+            url: `/customers/${userId}/${customerId}`,
+         }),
       }),
+      
       createCustomer: build.mutation<Customers[], NewCustomer>({
          query: (newCustomer) => ({
             url: '/customers',

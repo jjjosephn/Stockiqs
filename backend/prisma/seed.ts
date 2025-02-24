@@ -24,6 +24,7 @@ async function main() {
   const dataDirectory = path.join(__dirname, "seedData");
 
   const orderedFileNames = [
+    "users.json",
     "products.json",
     "pSArchive.json",
     "productsArchive.json",

@@ -3,8 +3,8 @@ import { createCustomer, deleteCustomer, getCustomer, getCustomers, updateCustom
 
 const router = Router();
 
-router.get('/', getCustomers);
-router.get('/:customerId', getCustomer);
+router.get('/:userId', getCustomers);
+router.get('/:userId/:customerId', getCustomer);
 router.post('/', createCustomer);
 router.delete('/:customerId', deleteCustomer);
 router.put('/:customerId', updateCustomer);

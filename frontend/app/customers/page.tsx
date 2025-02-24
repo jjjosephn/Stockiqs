@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, UserPlus, ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import AddCustomerModal from '@/components/CustomerComponents/AddCustomerModal'
+import { useAuth } from '@clerk/nextjs'
 
 type CustomerFormData = {
   name: string
@@ -22,16 +23,19 @@ type CustomerFormData = {
 }
 
 const Customers = () => {
-  const { data, isError, isLoading } = useGetCustomersQuery()
+  const {userId, isLoaded} = useAuth() 
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [addCustomerModalOpen, setAddCustomerModalOpen] = useState(false)
   const [addCustomer] = useCreateCustomerMutation()
-
+  if (!isLoaded || !userId) {
+    return <div className="flex justify-center items-center h-screen">Loading auth...</div>
+  }
+  const { data, isError, isLoading } = useGetCustomersQuery({userId})
   const itemsPerPage = 10
-
+  console.log(data)
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>
+    return <div className="flex justify-center items-center h-screen">Loading customers...</div>
   }
 
   if (isError || !data) {
@@ -56,6 +60,7 @@ const Customers = () => {
     await addCustomer(data)
   }
 
+  console.log(window.location.href);
   return (
     <div className="container mx-auto p-4">
       <Card>
@@ -112,7 +117,7 @@ const Customers = () => {
                   <TableCell className='text-gray-800'>{customer.phoneNumber}</TableCell>
                   <TableCell className='text-gray-800'>{customer.customerId}</TableCell>
                   <TableCell className='text-gray-900'>
-                    <Button className='hover:bg-gray-300'variant="ghost" asChild>
+                    <Button className='hover:bg-gray-300'variant="ghost" asChild onClick={() => {console.log(customer.customerId)}}>
                       <Link href={`/customers/${customer.customerId}`}>
                         <p className='text-gray-900'>View Details</p>
                       </Link>

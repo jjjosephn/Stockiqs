@@ -1,6 +1,7 @@
 [
   {
     "customerId": "1a2b3c4d-1234-5678-90ab-cdef12345678",
+    "userId": "user_2tQNlAL7LVUBVPspAYZxQEP8qEo",
     "name": "Carly",
     "phoneNumber": "(123)555-1234",
     "instagram": "carly_gram",
@@ -11,6 +12,7 @@
   },
   {
     "customerId": "2b3c4d5e-2345-6789-01bc-def234567890",
+    "userId": "user_2tQNlAL7LVUBVPspAYZxQEP8qEo",
     "name": "Inesita",
     "phoneNumber": "(123)555-5678",
     "instagram": "ines_gram",
@@ -21,6 +23,7 @@
   },
   {
     "customerId": "3c4d5e6f-3456-7890-12cd-ef3456789012",
+    "userId": "user_2tQNlAL7LVUBVPspAYZxQEP8qEo",
     "name": "Tulley",
     "phoneNumber": "(123)555-9012",
     "instagram": "tulley_snap",
@@ -31,6 +34,7 @@
   },
   {
     "customerId": "4d5e6f7g-4567-8901-23de-f45678901234",
+    "userId": "user_2tQNlAL7LVUBVPspAYZxQEP8qEo",
     "name": "Amelia",
     "phoneNumber": "(123)555-3456",
     "instagram": null,
@@ -41,6 +45,7 @@
   },
   {
     "customerId": "5e6f7g8h-5678-9012-34ef-567890123456",
+    "userId": "user_2tQNlAL7LVUBVPspAYZxQEP8qEo",
     "name": "Bucky",
     "phoneNumber": "(123)555-7890",
     "instagram": "bucky_thebest",

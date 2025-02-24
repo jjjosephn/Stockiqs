@@ -8,7 +8,12 @@ export const getCustomers = async (
    res: Response
 ): Promise<void> => {
    try {
-      const customers = await prisma.customers.findMany()
+      const { userId } = req.params
+      const customers = await prisma.customers.findMany({
+         where: {
+            userId
+         }
+      })
       res.json(customers)
    } catch (error) {
       res.status(500).json({ message: 'Error retrieving customers' });
@@ -20,12 +25,15 @@ export const getCustomer = async (
    res: Response
 ): Promise<void> => {
    try {
-      const { customerId } = req.params
+      const { userId, customerId } = req.params;
+
+      if (!userId || !customerId) {
+         res.status(400).json({ message: "Missing userId or customerId" });
+      }
+
       const customer = await prisma.customers.findUnique({
-         where: {
-            customerId
-         }
-      })
+         where: { customerId, userId }
+      });
 
       res.status(200).json(customer);
    } catch (error) {
@@ -38,7 +46,12 @@ export const createCustomer = async (
    res: Response
 ): Promise<void> => {
    try {
-      const { customerId, phoneNumber, name, instagram, streetAddress, city, state, zipCode } = req.body
+      const { customerId, userId, phoneNumber, name, instagram, streetAddress, city, state, zipCode } = req.body;
+
+      if (!userId) {
+         res.status(400).json({ message: 'User ID is required' });
+      }
+
       const customer = await prisma.customers.create({
          data: {
             customerId,
@@ -48,14 +61,19 @@ export const createCustomer = async (
             streetAddress,
             city,
             state,
-            zipCode  
+            zipCode,
+            user: { connect: { userId: userId } } 
          }
-      })
-   res.status(201).json({ message: 'User created', customer });
+      });
+
+      res.status(201).json({ message: 'Customer created successfully', customer });
+
    } catch (error) {
-      res.status(500).json({ message: 'Error creating user' });
+      console.error(error); 
+      res.status(500).json({ message: 'Error creating customer', error });
    }
 }
+
 
 export const deleteCustomer = async (
    req: Request,

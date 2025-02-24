@@ -14,7 +14,12 @@ const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getCustomers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const customers = yield prisma.customers.findMany();
+        const { userId } = req.params;
+        const customers = yield prisma.customers.findMany({
+            where: {
+                userId
+            }
+        });
         res.json(customers);
     }
     catch (error) {
@@ -24,11 +29,12 @@ const getCustomers = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.getCustomers = getCustomers;
 const getCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { customerId } = req.params;
+        const { userId, customerId } = req.params;
+        if (!userId || !customerId) {
+            res.status(400).json({ message: "Missing userId or customerId" });
+        }
         const customer = yield prisma.customers.findUnique({
-            where: {
-                customerId
-            }
+            where: { customerId, userId }
         });
         res.status(200).json(customer);
     }
@@ -39,7 +45,10 @@ const getCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getCustomer = getCustomer;
 const createCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { customerId, phoneNumber, name, instagram, streetAddress, city, state, zipCode } = req.body;
+        const { customerId, userId, phoneNumber, name, instagram, streetAddress, city, state, zipCode } = req.body;
+        if (!userId) {
+            res.status(400).json({ message: 'User ID is required' });
+        }
         const customer = yield prisma.customers.create({
             data: {
                 customerId,
@@ -49,13 +58,15 @@ const createCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 streetAddress,
                 city,
                 state,
-                zipCode
+                zipCode,
+                user: { connect: { userId: userId } }
             }
         });
-        res.status(201).json({ message: 'User created', customer });
+        res.status(201).json({ message: 'Customer created successfully', customer });
     }
     catch (error) {
-        res.status(500).json({ message: 'Error creating user' });
+        console.error(error);
+        res.status(500).json({ message: 'Error creating customer', error });
     }
 });
 exports.createCustomer = createCustomer;

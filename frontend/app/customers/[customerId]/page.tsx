@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import EditCustomerModal from '@/components/CustomerComponents/EditCustomerModal'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useAuth } from '@clerk/nextjs'
 
 type CustomerDetailProps = {
   name: string
@@ -35,9 +36,10 @@ type CustomerDetailProps = {
 const ITEMS_PER_PAGE = 5
 
 const CustomerDetail = () => {
+  const {userId} = useAuth()
   const { customerId } = useParams()
   const router = useRouter()
-  const { data: customer, isLoading, isError } = useGetCustomerQuery(customerId as string)
+  const { data: customer, isLoading, isError } = useGetCustomerQuery({userId: userId || '', customerId: customerId as string})
   const { data: sales, isLoading: salesLoading } = useGetSalesQuery()
   const { data: productsArchive, isLoading: productsArchiveLoading } = useGetProductsArchiveQuery()
   const [ deleteCustomer ] = useDeleteCustomerMutation()
@@ -46,6 +48,7 @@ const CustomerDetail = () => {
   const [updateCustomer] = useUpdateCustomerMutation()
   const [currentPage, setCurrentPage] = useState(1)
 
+  console.log(customer)
   const customerSales = useMemo(() => 
     (sales?.filter(sale => sale.customerId === customerId) || [])
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()),
