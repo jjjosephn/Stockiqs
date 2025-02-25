@@ -1,10 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import exp from "constants";
+import { create } from "domain";
 
 
 export interface Users {
    userId: String,
-   timestamp: String,
+}
+
+export interface NewUser {
+   userId: String,
 }
 
 export interface Customers {
@@ -246,6 +250,15 @@ export const api = createApi({
          query: () => '/purchases',
          providesTags: ['Purchases']
       }),
+
+      //Users
+      createOrUpdateUser: build.mutation<Users, NewUser>({
+         query: (newUser) => ({
+            url: '/dashboard',
+            method: 'POST',
+            body: newUser
+         })
+      })
    }),
 })
 
@@ -266,5 +279,6 @@ export const {
    useUpdateCustomerMutation,
    useNewSaleMutation,
    useGetSalesQuery,
-   useGetPurchasesQuery
+   useGetPurchasesQuery,
+   useCreateOrUpdateUserMutation
 } = api;

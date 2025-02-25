@@ -19,6 +19,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { PlusCircle } from "lucide-react"
 import AddCustomerModal from "../CustomerComponents/AddCustomerModal"
+import { useAuth } from "@clerk/nextjs"
 
 type Customer = {
   customerId: string
@@ -57,6 +58,7 @@ type NewSalesCardProps = {
 
 type SalesFormData = {
   saleId: string
+  userId: string
   archiveId: string
   stockId: string
   customerId: string
@@ -67,6 +69,7 @@ type SalesFormData = {
 
 type CustomerFormData = {
   name: string
+  userId: string
   phoneNumber: string
   instagram: string
   streetAddress: string
@@ -76,12 +79,14 @@ type CustomerFormData = {
 }
 
 const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
+  const {userId} = useAuth()
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
   const [selectedShoe, setSelectedShoe] = useState<Product | null>(null)
   const [selectedSize, setSelectedSize] = useState<ProductStock | null>(null)
   const [formData, setFormData] = useState<SalesFormData>({
     saleId: v4(),
     archiveId: '',
+    userId: userId || '',
     stockId: selectedSize?.stockId || "",
     customerId: selectedCustomer?.customerId || "",
     quantity: 0,
@@ -151,6 +156,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
 
     setFormData({
       saleId: v4(),
+      userId: userId || '',
       archiveId: '',
       stockId: "",
       customerId: "",

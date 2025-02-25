@@ -10,6 +10,7 @@ import productRoutes from './routes/productRoutes'
 import customerRoutes from './routes/customerRoutes'
 import salesRoutes from './routes/salesRoutes'
 import purchasesRoutes from './routes/purchasesRoutes'
+import userRoutes from './routes/userRoutes'
 
 /* Configs */
 dotenv.config()
@@ -27,6 +28,7 @@ app.use('/products', productRoutes)
 app.use('/customers', customerRoutes)
 app.use('/sales', salesRoutes)
 app.use('/purchases', purchasesRoutes)
+app.use('/dashboard', userRoutes)
 
 /* Server */
 const port = process.env.PORT || 3001
