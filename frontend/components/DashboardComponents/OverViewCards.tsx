@@ -4,6 +4,7 @@ import { Users, DollarSign, Package, TrendingUp, TrendingDown } from "lucide-rea
 import { useGetCustomersQuery, useGetProductsQuery, useGetSalesQuery } from '@/app/state/api'
 import { link } from 'fs'
 import Link from 'next/link'
+import { useAuth } from '@clerk/nextjs'
 
 const isCurrentWeek = (dateString: string) => {
   const now = new Date()
@@ -31,17 +32,18 @@ const formatCurrency = (value: number) => {
  };
 
 const OverviewCards = () => {
-   const { data: customers } = useGetCustomersQuery()
-   const { data: sales, isLoading, isError } = useGetSalesQuery()
-   const { data: products } = useGetProductsQuery()
+  const {userId} = useAuth()
+  const { data: customers } = useGetCustomersQuery({userId: userId || ''})
+  const { data: sales, isLoading, isError } = useGetSalesQuery({userId: userId || ''})
+  const { data: products } = useGetProductsQuery({userId: userId || ''})
 
-   const totalRevenue = sales?.reduce((acc, sale) => acc + (sale.quantity * sale.salesPrice), 0) || 0  
-   const totalPrice = products?.reduce((total, product) => 
+  const totalRevenue = sales?.reduce((acc, sale) => acc + (sale.quantity * sale.salesPrice), 0) || 0  
+  const totalPrice = products?.reduce((total, product) => 
       total + product.stock.reduce((sum, item) => sum + (item.quantity * item.price), 0), 0) || 0
-   
-   const revenueChange = sales ? getRevenueChange(sales) : 0
+  
+  const revenueChange = sales ? getRevenueChange(sales) : 0
 
-   const overviewCards = [
+  const overviewCards = [
       {
         title: "Total Customers",
         link: "/customers",
@@ -74,18 +76,18 @@ const OverviewCards = () => {
         gradient: "from-purple-500 to-purple-600"
       },
     ]
-   
-   if (isLoading) {
-     return <div className="grid gap-6 mb-6 md:grid-cols-3">
-       {[1, 2, 3].map(i => (
-         <Card key={i} className="animate-pulse bg-gray-100">
-           <div className="h-32"></div>
-         </Card>
-       ))}
-     </div>
-   }
+  
+  if (isLoading) {
+    return <div className="grid gap-6 mb-6 md:grid-cols-3">
+      {[1, 2, 3].map(i => (
+        <Card key={i} className="animate-pulse bg-gray-100">
+          <div className="h-32"></div>
+        </Card>
+      ))}
+    </div>
+  }
 
-   return (
+  return (
       <div className="grid gap-6 mb-6 md:grid-cols-3">
         {overviewCards.map((card) => (
           <Link href={card.link} key={card.title}>
@@ -131,7 +133,7 @@ const OverviewCards = () => {
           </Link>
         ))}
       </div>
-   )
+  )
 }
 
 export default OverviewCards

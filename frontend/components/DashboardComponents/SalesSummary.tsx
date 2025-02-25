@@ -4,6 +4,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useGetSalesQuery } from "@/app/state/api"
 import { Loader2 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useAuth } from "@clerk/nextjs"
 
 const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
@@ -88,7 +89,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 }
 
 const SalesSummary = () => {
-  const { data: sales, isLoading, isError } = useGetSalesQuery()
+  const {userId} = useAuth()
+  const { data: sales, isLoading, isError } = useGetSalesQuery({userId: userId || ''})
 
   if (isLoading) {
     return (

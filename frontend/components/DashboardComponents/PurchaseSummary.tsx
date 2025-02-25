@@ -4,6 +4,7 @@ import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Ba
 import { useGetPurchasesQuery } from "@/app/state/api"
 import { Loader2, AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useAuth } from "@clerk/nextjs"
 
 const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
@@ -43,7 +44,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 }
 
 const PurchaseSummary = () => {
-  const { data: purchases, isLoading, isError } = useGetPurchasesQuery()
+  const {userId} = useAuth()
+  const { data: purchases, isLoading, isError } = useGetPurchasesQuery({userId: userId || ''})
 
   const purchaseSummaryData = useMemo(() => {
     if (!purchases) return []

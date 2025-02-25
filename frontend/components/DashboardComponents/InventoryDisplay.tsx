@@ -5,9 +5,11 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { ShoppingBag, Package, Loader2, AlertCircle } from "lucide-react"
 import { useGetProductsQuery } from "@/app/state/api"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useAuth } from '@clerk/nextjs';
 
 const InventoryDisplay = () => {
-  const { data: sneakers, isLoading, isError } = useGetProductsQuery()
+  const {userId} = useAuth()
+  const { data: sneakers, isLoading, isError } = useGetProductsQuery({userId: userId || ''})
 
   if (isLoading) {
     return (
