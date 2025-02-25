@@ -1,15 +1,17 @@
 'use client'
 
-import React, { ChangeEvent, FormEvent, useState } from 'react'
+import React, { ChangeEvent, FormEvent, use, useState } from 'react'
 import { v4 } from 'uuid'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { X } from 'lucide-react'
+import { useAuth } from '@clerk/nextjs'
 
 type CustomerFormData = {
   name: string
+  userId: string
   phoneNumber: string
   instagram: string
   streetAddress: string
@@ -25,8 +27,10 @@ type AddCustomerModalProps = {
 }
 
 const AddCustomerModal = ({ isOpen, onClose, onCreate }: AddCustomerModalProps) => {
+  const {userId} = useAuth()
   const [formData, setFormData] = useState({
     customerId: v4(),
+    userId: userId || '',
     name: '',
     phoneNumber: '',
     instagram: '',
@@ -41,6 +45,7 @@ const AddCustomerModal = ({ isOpen, onClose, onCreate }: AddCustomerModalProps) 
     onCreate(formData)
     setFormData({
       customerId: v4(),
+      userId: userId || '',
       name: '',
       phoneNumber: '',
       instagram: '',

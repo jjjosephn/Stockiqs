@@ -14,6 +14,7 @@ import { useAuth } from '@clerk/nextjs'
 
 type CustomerFormData = {
   name: string
+  userId: string
   phoneNumber: string
   instagram: string
   streetAddress: string
@@ -33,7 +34,6 @@ const Customers = () => {
   }
   const { data, isError, isLoading } = useGetCustomersQuery({userId})
   const itemsPerPage = 10
-  console.log(data)
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen">Loading customers...</div>
   }
