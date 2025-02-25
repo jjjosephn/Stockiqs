@@ -120,13 +120,13 @@ export const api = createApi({
    tagTypes: [ 'Products', 'Customers', 'Sales', 'Purchases'],
    endpoints: (build) => ({
       // Products
-      getProducts: build.query<Product[], { search?: string; userId: string }>({
-         query: ({ search, userId }) => ({
-            url: `/products/${userId}`,  
-            params: search ? { search } : {} 
+      getProducts: build.query<Product[], { search?: string; userId?: string }>({
+         query: ({ search, userId } = {}) => ({
+           url: `/products/${userId ?? ''}`,  
+           params: search ? { search } : {} 
          }),
          providesTags: ['Products']
-      }),
+       }),
       getProductsArchive: build.query<ProductsArchive[], void>({
          query: () => '/products/archive',
          providesTags: ['Products']
@@ -192,18 +192,17 @@ export const api = createApi({
       }),
 
       // Customers
-      getCustomers: build.query<Customers[], { userId: string }>({
-         query: ({ userId }) => ({
-            url: `/customers/${userId}`, 
+      getCustomers: build.query<Customers[], { userId?: string }>({
+         query: ({ userId = '' } = {}) => ({
+           url: `/customers/${userId}`,
          }),
-         providesTags: ['Customers']
-      }),
+         providesTags: ['Customers'],
+       }),
       getCustomer: build.query<Customers, { userId: string; customerId: string }>({
          query: ({ userId, customerId }) => ({
             url: `/customers/${userId}/${customerId}`,
          }),
       }),
-      
       createCustomer: build.mutation<Customers[], NewCustomer>({
          query: (newCustomer) => ({
             url: '/customers',
