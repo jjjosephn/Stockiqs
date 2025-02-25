@@ -62,6 +62,7 @@ function main() {
                     data,
                 });
             }
+            console.log("seeded" + fileName);
         }
     });
 }

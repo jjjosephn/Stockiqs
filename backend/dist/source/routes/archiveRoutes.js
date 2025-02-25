@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const salesController_1 = require("../controllers/salesController");
+const archiveController_1 = require("../controllers/archiveController");
 const router = (0, express_1.Router)();
-router.post('/', salesController_1.newSale);
-router.get('/:userId', salesController_1.getSales);
+router.get('/', archiveController_1.getProductsArchive);
 exports.default = router;

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProductStockAfterSale = exports.updateProductStockAfterSale = exports.deleteProductStock = exports.updateProductStock = exports.updateProduct = exports.getProductsArchive = exports.deleteProduct = exports.createProduct = exports.getProducts = void 0;
+exports.deleteProductStockAfterSale = exports.updateProductStockAfterSale = exports.deleteProductStock = exports.updateProductStock = exports.updateProduct = exports.deleteProduct = exports.createProduct = exports.getProducts = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -93,6 +93,7 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 data: {
                     productId: product.productId,
                     name: product.name,
+                    image: product.image,
                     user: { connect: { userId: userId } },
                 }
             });
@@ -135,20 +136,6 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.deleteProduct = deleteProduct;
-const getProductsArchive = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const productsArchive = yield prisma.productsArchive.findMany({
-            include: {
-                psArchive: true
-            }
-        });
-        res.json(productsArchive);
-    }
-    catch (error) {
-        res.status(500).json({ message: 'Error retrieving products archive' });
-    }
-});
-exports.getProductsArchive = getProductsArchive;
 const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { productId } = req.params;

@@ -37,6 +37,7 @@ CREATE TABLE "ProductsArchive" (
     "productId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "image" TEXT,
     "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "ProductsArchive_pkey" PRIMARY KEY ("productsArchiveId")

@@ -14,7 +14,7 @@ const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const newSale = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { saleId, stockId, customerId, quantity, salesPrice, timestamp } = req.body;
+        const { saleId, userId, stockId, customerId, quantity, salesPrice, timestamp } = req.body;
         if (quantity < 1) {
             res.status(400).json({ message: "Quantity must be at least 1" });
             return;
@@ -22,6 +22,7 @@ const newSale = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const sale = yield prisma.sales.create({
             data: {
                 saleId,
+                userId,
                 stockId,
                 customerId,
                 quantity: parseInt(quantity),
@@ -38,7 +39,11 @@ const newSale = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.newSale = newSale;
 const getSales = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const { userId } = req.params;
         const sales = yield prisma.sales.findMany({
+            where: {
+                userId
+            },
             include: {
                 customers: true,
                 productStock: {

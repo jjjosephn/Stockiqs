@@ -8,7 +8,7 @@ export const newSale = async (
    res: Response
    ): Promise<void> => {
    try {
-      const {saleId, stockId, customerId, quantity, salesPrice, timestamp} = req.body;
+      const {saleId, userId, stockId, customerId, quantity, salesPrice, timestamp} = req.body;
 
       if (quantity < 1) {
          res.status(400).json({ message: "Quantity must be at least 1" });
@@ -18,6 +18,7 @@ export const newSale = async (
       const sale = await prisma.sales.create({
          data: {
             saleId,
+            userId,
             stockId,
             customerId,
             quantity: parseInt(quantity),
@@ -33,7 +34,11 @@ export const newSale = async (
 
 export const getSales = async (req: Request, res: Response): Promise<void> => {
    try {
+      const {userId} = req.params;
       const sales = await prisma.sales.findMany({
+         where: {
+            userId
+         },
          include: {
             customers: true,
             productStock: {

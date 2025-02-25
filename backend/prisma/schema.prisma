@@ -52,6 +52,7 @@ model ProductsArchive {
   productId         String
   userId            String
   name              String
+  image             String?
   timestamp         DateTime    @default(now())
   psArchive         PSArchive[]
   Sales             Sales[]

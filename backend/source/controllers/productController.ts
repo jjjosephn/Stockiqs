@@ -99,6 +99,7 @@ export const deleteProduct = async (
             data: {
                productId: product.productId,
                name: product.name,
+               image: product.image,
                user: { connect: { userId: userId } },
             }
          });
@@ -145,24 +146,6 @@ export const deleteProduct = async (
       res.status(500).json({ message: 'Error deleting product' });
    }
 };
-
-
-export const getProductsArchive = async (
-   req: Request,
-   res: Response
-): Promise<void> => {
-   try {
-      const productsArchive = await prisma.productsArchive.findMany({
-         include: {
-            psArchive: true
-         }
-      })
-      res.json(productsArchive)
-   }
-   catch (error) {
-      res.status(500).json({ message: 'Error retrieving products archive' });
-   }
-}
 
 export const updateProduct = async (req: Request, res: Response): Promise<void> => {
    try {
