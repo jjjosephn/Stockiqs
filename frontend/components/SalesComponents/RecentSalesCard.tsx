@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from "next/link"
+import { useAuth } from "@clerk/nextjs"
 
 type Customer = {
   customerId: string
@@ -46,10 +47,13 @@ type RecentSalesCardProps = {
 }
 
 const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
-  const { data: sales, isLoading: salesLoading } = useGetSalesQuery()
+  const {userId} = useAuth()
+  const { data: sales, isLoading: salesLoading } = useGetSalesQuery({userId: userId || ''})
   const { data: productsArchive, isLoading: archiveLoading } = useGetProductsArchiveQuery()
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
+
+  console.log(sales)
 
   const isLoading = salesLoading || archiveLoading || !sales || !productsArchive
 

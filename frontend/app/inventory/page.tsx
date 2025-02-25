@@ -30,12 +30,12 @@ const Inventory = () => {
   const [deleteProduct] = useDeleteProductMutation()
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const { refetch: refetchSales } = useGetSalesQuery();
+  const { refetch: refetchSales } = useGetSalesQuery({ userId: userId || '' });
   const { refetch: refetchProductsArchive } = useGetProductsArchiveQuery();
   const itemsPerPage = 12
 
   const handleDeleteSneaker = async (productId: string) => {
-    await deleteProduct(productId)
+    await deleteProduct({ productId, userId: userId || '' })
     await refetchSales()
     await refetchProductsArchive()
   }

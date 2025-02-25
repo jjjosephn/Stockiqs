@@ -14,7 +14,11 @@ const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getPurchases = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const { userId } = req.params;
         const purchases = yield prisma.purchases.findMany({
+            where: {
+                userId
+            },
             include: {
                 productStock: {
                     include: {

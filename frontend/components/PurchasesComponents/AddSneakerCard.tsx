@@ -7,6 +7,7 @@ import { Plus, Minus } from 'lucide-react'
 import { v4 as uuidv4 } from 'uuid'
 import { useCreateProductMutation, useGetPurchasesQuery } from "@/app/state/api"
 import Image from 'next/image'
+import { useAuth } from '@clerk/nextjs'
 
 type StockItem = {
    stockId: string
@@ -17,6 +18,7 @@ type StockItem = {
 
 type ProductFormData = {
    productId: string
+   userId: string
    name: string
    image: string
    stock: StockItem[]
@@ -28,10 +30,12 @@ type SneakerSuggestion = {
 }
 
 const AddSneakerCard = () => {
+   const {userId} = useAuth()
    const [addSneaker] = useCreateProductMutation()
-   const {refetch} = useGetPurchasesQuery()
+   const {refetch} = useGetPurchasesQuery({userId: userId || ''})
    const [formData, setFormData] = useState<ProductFormData>({
       productId: uuidv4(),
+      userId: userId || '',
       name: '',
       image: '',
       stock: [{ stockId: uuidv4(), price: 0, size: 0, quantity: 0 }]
@@ -97,6 +101,7 @@ const AddSneakerCard = () => {
       
       setFormData({
          productId: uuidv4(),
+         userId: userId || '',
          name: '',
          image: '',
          stock: [{ stockId: uuidv4(), price: 0, size: 0, quantity: 0 }]

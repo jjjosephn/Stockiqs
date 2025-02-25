@@ -4,12 +4,16 @@ import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useGetProductsArchiveQuery, useGetPurchasesQuery } from '@/app/state/api'
+import { useAuth } from '@clerk/nextjs'
 
 const RecentPurchasesCard = () => {
-   const { data: purchases, isLoading, isError } = useGetPurchasesQuery()
+   const {userId} = useAuth()
+   const { data: purchases, isLoading, isError } = useGetPurchasesQuery({userId: userId || ''})
    const { data: productsArchive } = useGetProductsArchiveQuery()
    const [currentPage, setCurrentPage] = useState(1)
    const itemsPerPage = 5
+
+   console.log(userId)
 
    const findProductInArchive = (productsArchiveId: string, stockId: string) => {
       const product = productsArchive?.find(p => p.productsArchiveId === productsArchiveId)

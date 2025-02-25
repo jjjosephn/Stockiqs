@@ -53,10 +53,23 @@ export interface Product {
    psArchive: PSArchive[]
 }
 
+export interface NewProduct {
+   name: string;
+   userId: string,
+   productId?: string;
+   image?: string;
+   stock: {
+      size: number;
+      quantity: number;
+      price: number;
+   }[];
+}
+
 export interface ProductsArchive {
    productsArchiveId: string,
    productId: string,
    name: string,
+   image: string,
    timestamp: string,
    psArchive?: PSArchive[]
 }
@@ -68,18 +81,6 @@ export interface ProductStock {
    quantity: number 
    price: number,
    product?: Product
-}
-
-export interface NewProduct {
-   name: string;
-   userId: string,
-   productId?: string;
-   image?: string;
-   stock: {
-      size: number;
-      quantity: number;
-      price: number;
-   }[];
 }
 
 export interface PSArchive {
@@ -131,8 +132,11 @@ export const api = createApi({
          }),
          providesTags: ['Products']
        }),
-      getProductsArchive: build.query<ProductsArchive[], void>({
-         query: () => '/products/archive',
+       getProductsArchive: build.query<ProductsArchive[], void>({
+         query: () => ({
+            url: '/archive',
+            method: 'GET',
+         }),
          providesTags: ['Products']
       }),
       createProduct: build.mutation<Product, NewProduct>({
@@ -141,15 +145,16 @@ export const api = createApi({
             method: 'POST',
             body: {
                name: newProduct.name,
+               userId: newProduct.userId,
                stock: newProduct.stock,
                image: newProduct.image
             }
          }),
          invalidatesTags: ['Products']
       }),
-      deleteProduct: build.mutation<void, string>({
-         query: (productId) => ({
-            url: `/products/${productId}`,
+      deleteProduct: build.mutation<void, { productId: string, userId?: string}>({
+         query: ({productId, userId}) => ({
+            url: `/products/${productId}/${userId}`,
             method: 'DELETE'
          }),
          invalidatesTags: ['Products']
@@ -240,15 +245,19 @@ export const api = createApi({
          }),
          invalidatesTags: ['Sales'],
       }),
-      getSales: build.query<Sales[], void>({
-         query: () => '/sales',
+      getSales: build.query<Sales[], {userId?: string}>({
+         query: ({userId} = {}) => ({
+            url: `/sales/${userId}`,
+         }),
          providesTags: ['Sales'],
       }),
 
       //Purchases
-      getPurchases: build.query<Purchases[], void>({
-         query: () => '/purchases',
-         providesTags: ['Purchases']
+      getPurchases: build.query<Purchases[], {userId?: string}>({
+         query: ({userId} = {}) => ({
+            url: `/purchases/${userId}`,
+            providesTags: ['Purchases']
+         }),
       }),
 
       //Users

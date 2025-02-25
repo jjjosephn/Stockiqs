@@ -3,6 +3,6 @@ import { getPurchases } from '../controllers/purchasesController';
 
 const router = Router();
 
-router.get('/', getPurchases)
+router.get('/:userId', getPurchases)
 
 export default router;

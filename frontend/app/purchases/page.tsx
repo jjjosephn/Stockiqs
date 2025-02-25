@@ -5,7 +5,6 @@ import AddSneakerCard from '@/components/PurchasesComponents/AddSneakerCard'
 import RecentPurchasesCard from '@/components/PurchasesComponents/RecentPurchasesCard'
 
 const PurchasePage = () => {
-  const itemsPerPage = 5
 
   return (
     <div className="container mx-auto p-4 space-y-8">

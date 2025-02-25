@@ -40,7 +40,7 @@ const CustomerDetail = () => {
   const { customerId } = useParams()
   const router = useRouter()
   const { data: customer, isLoading, isError } = useGetCustomerQuery({userId: userId || '', customerId: customerId as string})
-  const { data: sales, isLoading: salesLoading } = useGetSalesQuery()
+  const { data: sales, isLoading: salesLoading } = useGetSalesQuery({userId: userId || ''})
   const { data: productsArchive, isLoading: productsArchiveLoading } = useGetProductsArchiveQuery()
   const [ deleteCustomer ] = useDeleteCustomerMutation()
   const [isDeleting, setIsDeleting] = useState(false)

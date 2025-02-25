@@ -8,7 +8,11 @@ export const getPurchases = async (
   res: Response
 ): Promise<void> => {
   try {
+    const {userId} = req.params;
     const purchases = await prisma.purchases.findMany({
+      where: {
+        userId
+      },
       include: {
         productStock: {
           include: {

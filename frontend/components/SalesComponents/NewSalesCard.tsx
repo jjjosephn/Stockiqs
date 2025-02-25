@@ -38,6 +38,7 @@ type PSArchive = {
 
 type Product = {
   productId: string
+  image: string
   name: string
   stock: ProductStock[]
   psArchive: PSArchive[]
@@ -96,7 +97,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
   const [addNewSale] = useNewSaleMutation()
   const [updateStock] = useUpdateProductStockAfterSaleMutation()
   const [deleteStock] = useDeleteProductStockAfterSaleMutation()
-  const {refetch} = useGetSalesQuery()
+  const {refetch} = useGetSalesQuery({userId: userId || ''})
   const [addCustomerModalOpen, setAddCustomerModalOpen] = useState(false)
   const [addCustomer] = useCreateCustomerMutation()
 
@@ -301,7 +302,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
                 <div className="space-y-6">
                   <div className="flex items-center gap-6">
                     <Image
-                      src="/placeholder.svg"
+                      src={selectedShoe.image || "/sneaker-placeholder.png"}
                       alt={selectedShoe.name}
                       width={100}
                       height={100}
