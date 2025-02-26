@@ -43,6 +43,19 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null
 }
 
+const getNiceRoundedMax = (value: number) => {
+  if (value <= 0) return 100;
+  
+  const magnitude = Math.pow(10, Math.floor(Math.log10(value)))
+  const nextNiceNumber = Math.ceil(value / magnitude) * magnitude
+  
+  if (nextNiceNumber / value < 1.1) {
+    return nextNiceNumber
+  }
+  
+  return Math.ceil(value / (magnitude / 4)) * (magnitude / 4)
+}
+
 const PurchaseSummary = () => {
   const {userId} = useAuth()
   const { data: purchases, isLoading, isError } = useGetPurchasesQuery({userId: userId || ''})
@@ -82,9 +95,22 @@ const PurchaseSummary = () => {
     const thisWeekTotal = purchaseSummaryData.reduce((sum, day) => sum + day.thisWeek, 0)
     const pastWeekTotal = purchaseSummaryData.reduce((sum, day) => sum + day.pastWeek, 0)
 
-
     return { thisWeekTotal, pastWeekTotal }
   }, [purchaseSummaryData])
+
+  const maxValue = useMemo(() => {
+    if (!purchaseSummaryData.length) return 100;
+    
+    return Math.max(
+      ...purchaseSummaryData.map((day) => Math.max(day.thisWeek, day.pastWeek))
+    );
+  }, [purchaseSummaryData]);
+  
+  const roundedMaxValue = getNiceRoundedMax(maxValue);
+  
+  const yAxisTicks = useMemo(() => {
+    return Array.from({ length: 6 }, (_, i) => Math.round(i * roundedMaxValue / 5));
+  }, [roundedMaxValue]);
 
   if (isLoading) {
     return (
@@ -134,7 +160,7 @@ const PurchaseSummary = () => {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={purchaseSummaryData}
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              margin={{ top: 10, right: 30, left: 20, bottom: 0 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis
@@ -145,9 +171,12 @@ const PurchaseSummary = () => {
               />
               <YAxis
                 stroke="#6b7280"
-                tickFormatter={formatCurrency}
+                tickFormatter={(value) => `$${value.toLocaleString()}`}
                 tick={{ fill: "#6b7280" }}
                 tickLine={{ stroke: "#6b7280" }}
+                domain={[0, roundedMaxValue]}
+                width={80}
+                ticks={yAxisTicks}
               />
               <Tooltip content={<CustomTooltip />} />
               <Legend

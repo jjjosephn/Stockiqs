@@ -168,11 +168,11 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
           </div>
           <div className="bg-green-50 p-4 rounded-lg">
             <p className="text-sm font-medium text-green-600">Total Revenue</p>
-            <p className="text-2xl font-bold text-green-800">${summaryStats.totalRevenue.toFixed(2)}</p>
+            <p className="text-2xl font-bold text-green-800">{formatCurrency(summaryStats.totalRevenue)}</p>
           </div>
           <div className="bg-purple-50 p-4 rounded-lg">
             <p className="text-sm font-medium text-purple-600">Total Profit</p>
-            <p className="text-2xl font-bold text-purple-800">${summaryStats.totalProfit.toFixed(2)}</p>
+            <p className="text-2xl font-bold text-purple-800">{formatCurrency(summaryStats.totalProfit)}</p>
           </div>
           <div className="bg-yellow-50 p-4 rounded-lg">
             <p className="text-sm font-medium text-yellow-600">Average Profit Margin</p>

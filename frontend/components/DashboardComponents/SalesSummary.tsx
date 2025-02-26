@@ -88,6 +88,17 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null
 }
 
+const getNiceRoundedMax = (value: number) => {
+  const magnitude = Math.pow(10, Math.floor(Math.log10(value)))
+  const nextNiceNumber = Math.ceil(value / magnitude) * magnitude
+  
+  if (nextNiceNumber / value < 1.1) {
+    return nextNiceNumber
+  }
+  
+  return Math.ceil(value / (magnitude / 4)) * (magnitude / 4)
+}
+
 const SalesSummary = () => {
   const {userId} = useAuth()
   const { data: sales, isLoading, isError } = useGetSalesQuery({userId: userId || ''})
@@ -123,6 +134,12 @@ const SalesSummary = () => {
   const weeklySalesData = groupSalesByWeekday(sales || [])
   const totalThisWeek = weeklySalesData.reduce((sum, day) => sum + day.thisWeek, 0)
   const totalPastWeek = weeklySalesData.reduce((sum, day) => sum + day.pastWeek, 0)
+  
+  const maxValue = Math.max(
+    ...weeklySalesData.map((d) => Math.max(d.thisWeek, d.pastWeek))
+  )
+  
+  const roundedMaxValue = getNiceRoundedMax(maxValue)
 
   return (
     <Card className="md:col-span-2">
@@ -140,15 +157,19 @@ const SalesSummary = () => {
       <CardContent>
         <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={weeklySalesData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <AreaChart data={weeklySalesData} margin={{ top: 10, right: 30, left: 20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="day" stroke="#6b7280" tick={{ fill: "#6b7280" }} tickLine={{ stroke: "#6b7280" }} />
               <YAxis
                 stroke="#6b7280"
-                tickFormatter={formatCurrency}
+                tickFormatter={(value) => `$${value.toLocaleString()}`}
                 tick={{ fill: "#6b7280" }}
                 tickLine={{ stroke: "#6b7280" }}
-              />
+                domain={[0, roundedMaxValue]}
+                width={80}
+                // Use ticks to control the exact values shown on the y-axis
+                ticks={Array.from({ length: 6 }, (_, i) => Math.round(i * roundedMaxValue / 5))}
+                />
               <Tooltip content={<CustomTooltip />} />
               <Legend
                 wrapperStyle={{

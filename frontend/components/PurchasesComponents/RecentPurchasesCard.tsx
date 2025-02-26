@@ -54,6 +54,10 @@ const RecentPurchasesCard = () => {
    const totalPages = Math.ceil(sortedPurchases.length / itemsPerPage)
    const currentPurchases = sortedPurchases.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
+   const formatCurrency = (value: any) => {
+      return `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    }
+
    return (
       <Card>
          <CardHeader className="border-b bg-white">
@@ -116,9 +120,9 @@ const RecentPurchasesCard = () => {
                                     <TableCell>{productData?.name || 'N/A'}</TableCell>
                                     <TableCell>{productData?.size || 'N/A'}</TableCell>
                                     <TableCell>{productData?.quantity || 'N/A'}</TableCell>
-                                    <TableCell>${productData?.price?.toFixed(2) || 'N/A'}</TableCell>
+                                    <TableCell>{formatCurrency(productData?.price) || 'N/A'}</TableCell>
                                     <TableCell>
-                                       ${((productData?.price || 0) * (productData?.quantity || 0)).toFixed(2)}
+                                       {formatCurrency((productData?.price || 0) * (productData?.quantity || 0))}
                                     </TableCell>
                                  </TableRow>
                               )
@@ -128,7 +132,7 @@ const RecentPurchasesCard = () => {
                                  Daily Total:
                               </TableCell>
                               <TableCell className="font-semibold">
-                                 ${group.purchases.reduce((total, purchase) => {
+                                 {formatCurrency(group.purchases.reduce((total, purchase) => {
                                     let productData;
                                     if (purchase.productStock) {
                                        productData = purchase.productStock
@@ -138,7 +142,7 @@ const RecentPurchasesCard = () => {
                                        productData = purchase.psArchive
                                     }
                                     return total + ((productData?.price || 0) * (productData?.quantity || 0))
-                                 }, 0).toFixed(2)}
+                                 }, 0))}
                               </TableCell>
                            </TableRow>
                         </React.Fragment>

@@ -140,21 +140,37 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-
+  
     if (!selectedSize || !selectedCustomer || formData.quantity <= 0) return
-
-    await addNewSale(formData)
-
-    if (selectedSize.quantity === formData.quantity) {
-      await deleteStock({ stockId: selectedSize.stockId })
-      await refetch()
+  
+    if (formData.quantity > selectedSize.quantity) {
+      setFormData(prev => ({
+        ...prev,
+        quantity: selectedSize.quantity
+      }));
+      
+      const adjustedFormData = {
+        ...formData,
+        quantity: selectedSize.quantity
+      };
+      
+      await addNewSale(adjustedFormData);
+      await deleteStock({ stockId: selectedSize.stockId });
     } else {
-      await updateStock({
-        stockId: selectedSize.stockId,
-        quantity: formData.quantity,
-      })
+      await addNewSale(formData);
+      
+      if (selectedSize.quantity === formData.quantity) {
+        await deleteStock({ stockId: selectedSize.stockId });
+      } else {
+        await updateStock({
+          stockId: selectedSize.stockId,
+          quantity: formData.quantity,
+        });
+      }
     }
-
+  
+    await refetch();
+  
     setFormData({
       saleId: v4(),
       userId: userId || '',
@@ -164,11 +180,11 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
       quantity: 0,
       salesPrice: 0,
       timestamp: new Date().toISOString(),
-    })
-
-    setSelectedCustomer(null)
-    setSelectedShoe(null)
-    setSelectedSize(null)
+    });
+  
+    setSelectedCustomer(null);
+    setSelectedShoe(null);
+    setSelectedSize(null);
   }
 
   useEffect(() => {
