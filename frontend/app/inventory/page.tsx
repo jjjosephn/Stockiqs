@@ -70,9 +70,6 @@ const Inventory = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <Header name="Inventory" />
-      </div>
 
       <div className="mb-8">
         <div className="relative">
@@ -103,10 +100,8 @@ const Inventory = () => {
             }}
           >
             <div className="p-4">
-              <div className="bg-gray-200 h-48 mb-4 rounded-md flex items-center justify-center">
-                <span className="text-gray-500">
-                  <img src={product.image} alt={product.name}/>
-                </span>
+              <div className="bg-gray-200 h-48 mb-10 mt-6 rounded-md flex items-center justify-center">
+                <img src={product.image} alt={product.name}/>
               </div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">{product.name}</h3>
               <p className="text-2xl font-bold text-blue-600 mb-2">${(product.stock.reduce((sum, item) => sum + (item.price * item.quantity), 0)).toFixed(2)}</p>

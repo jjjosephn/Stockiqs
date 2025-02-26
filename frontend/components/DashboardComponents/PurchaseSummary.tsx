@@ -141,7 +141,7 @@ const PurchaseSummary = () => {
   }
 
   return (
-    <Card className="md:col-span-2">
+    <Card className="md:col-span-2 shadow-md">
       <CardHeader>
         <CardTitle className="text-gray-700">Purchase Summary</CardTitle>
         <CardDescription className="flex gap-8">

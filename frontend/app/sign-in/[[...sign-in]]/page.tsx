@@ -17,7 +17,7 @@ export default function SignInPage() {
           <div className="flex flex-col items-center gap-4">
             <div className="flex items-center gap-2">
               <Image src={logo} alt="logo" width={60} height={60} />
-              <span className={`${sigmar.className} text-4xl`}>Stockiqs</span> 
+              <span className={`${sigmar.className} text-4xl !text-gray-900`}>Stockiqs</span> 
             </div>
             <SignIn />
           </div>

@@ -7,9 +7,7 @@ import RecentPurchasesCard from '@/components/PurchasesComponents/RecentPurchase
 const PurchasePage = () => {
 
   return (
-    <div className="container mx-auto p-4 space-y-8">
-      <h1 className="text-3xl font-bold mb-6">Purchase Management</h1>
-      
+    <div className="container mx-auto p-4 space-y-8">      
       <AddSneakerCard />
       <RecentPurchasesCard />
     </div>

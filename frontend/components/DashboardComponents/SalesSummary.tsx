@@ -142,7 +142,7 @@ const SalesSummary = () => {
   const roundedMaxValue = getNiceRoundedMax(maxValue)
 
   return (
-    <Card className="md:col-span-2">
+    <Card className="md:col-span-2 shadow-md">
       <CardHeader>
         <CardTitle className="text-gray-700">Weekly Sales</CardTitle>
         <CardDescription className="flex items-center gap-8">

@@ -15,8 +15,6 @@ export default function SalesPage() {
   if (isError) return <div>Error fetching customers</div>
   return (
     <div className="container mx-auto p-4">
-      <Header name='Sales Management' />
-
       <NewSalesCard 
         customers={customers || []} 
         products={products || []} 

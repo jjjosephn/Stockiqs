@@ -158,7 +158,7 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
   };
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden shadow-lg">
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-gray-800">Recent Sales</CardTitle>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">

@@ -42,7 +42,9 @@ const Navbar = () => {
             </button>
          </div>
 
-         <h1 className={`${sigmar.className} text-5xl`}>Stockiqs</h1>
+         <Link href='/dashboard'>
+            <h1 className={`${sigmar.className} text-5xl`}>Stockiqs</h1>
+         </Link>
 
          <div className='flex justify-between items-center gap-5'>
             <div className='md:flex justify-between items-center gap-5'>
@@ -64,11 +66,12 @@ const Navbar = () => {
                            userButtonAvatarBox: "w-10 h-10", 
                            userButtonPopoverCard: "bg-blue-100", 
                            userButtonPopoverActionButton: "text-red-600",
+                           userButtonText: "text-gray-900"
                         },
                         variables: {
-                           fontSize: '1rem'
-                        }
-                     }}/>
+                           fontSize: '1rem'                        }
+                     }}
+                  />
                </div>
             </div>
          </div>

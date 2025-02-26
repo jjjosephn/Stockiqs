@@ -93,7 +93,7 @@ const OverviewCards = () => {
           <Link href={card.link} key={card.title}>
             <Card 
               key={card.title} 
-              className="relative overflow-hidden transition-all duration-300 hover:shadow-lg group"
+              className="relative overflow-hidden transition-all duration-300 hover:shadow-lg group shadow-md"
             >
               <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r ${card.gradient} transition-opacity duration-300`} />
               

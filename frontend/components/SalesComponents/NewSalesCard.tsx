@@ -38,7 +38,7 @@ type PSArchive = {
 
 type Product = {
   productId: string
-  image: string
+  image?: string
   name: string
   stock: ProductStock[]
   psArchive: PSArchive[]
@@ -206,7 +206,7 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
 
   return (
     <div>
-      <Card className="mb-8 mt-5">
+      <Card className="mb-8 mt-5 shadow-lg">
         <CardHeader>
         <CardTitle className="text-2xl font-bold text-gray-800">Add New Sales</CardTitle>
         </CardHeader>

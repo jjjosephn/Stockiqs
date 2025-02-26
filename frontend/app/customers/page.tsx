@@ -63,7 +63,7 @@ const Customers = () => {
   console.log(window.location.href);
   return (
     <div className="container mx-auto p-4">
-      <Card>
+      <Card className='shadow-lg'>
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>

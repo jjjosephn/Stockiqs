@@ -71,7 +71,7 @@ const InventoryDisplay = () => {
   const totalPairs = sneakersInventory.reduce((sum, item) => sum + item.quantity, 0)
 
   return (
-    <Card className="md:col-span-1 md:row-span-2">
+    <Card className="md:col-span-1 md:row-span-2 shadow-md">
       <CardHeader>
         <CardTitle className="text-gray-700 flex items-center justify-between">
           <span>Sneakers Inventory</span>
