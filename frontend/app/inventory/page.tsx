@@ -1,25 +1,20 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { useCreateProductMutation, useDeleteProductMutation, useDeleteProductStockMutation, useGetProductsArchiveQuery, useGetProductsQuery, useGetSalesQuery } from "../state/api"
-import Header from "@/components/Header"
-import { PlusCircle, Search, Loader2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useDeleteProductMutation, useGetProductsArchiveQuery, useGetProductsQuery, useGetSalesQuery } from "../state/api"
+import { Search, Loader2, ChevronLeft, ChevronRight } from 'lucide-react'
 import SneakerInfoModal from "@/components/InventoryComponents/SneakerInfoModal"
 import { motion } from "framer-motion"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@clerk/nextjs"
+import Image from 'next/image'
 
 type StockItem = {
   stockId: string
   price: number
   size: number
   quantity: number
-}
-
-type ProductFormData = {
-  name: string
-  stock: StockItem[]
 }
 
 const Inventory = () => {
@@ -89,7 +84,7 @@ const Inventory = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {currentProducts.map((product) => (
+        {currentProducts.map((product, index) => (
           <motion.div
             key={product.productId}
             className="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
@@ -100,8 +95,15 @@ const Inventory = () => {
             }}
           >
             <div className="p-4">
-              <div className="bg-gray-200 h-48 mb-10 mt-6 rounded-md flex items-center justify-center">
-                <img src={product.image} alt={product.name}/>
+              <div className="h-48 mb-10 mt-6 rounded-md flex items-center justify-center">
+              <Image 
+                src={product.image || 'logo.png'} 
+                alt={product.name}
+                width={200}
+                height={200}
+                className="object-contain"
+                priority={index < 4}
+              />
               </div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">{product.name}</h3>
               <p className="text-2xl font-bold text-blue-600 mb-2">${(product.stock.reduce((sum, item) => sum + (item.price * item.quantity), 0)).toFixed(2)}</p>

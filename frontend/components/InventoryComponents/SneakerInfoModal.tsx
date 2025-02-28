@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useCreateProductMutation, useDeleteProductStockMutation, useGetProductsQuery, useGetPurchasesQuery, useGetSalesQuery, useUpdateProductMutation } from "@/app/state/api"
+import { useDeleteProductStockMutation, useGetProductsQuery, useGetPurchasesQuery, useGetSalesQuery, useUpdateProductMutation } from "@/app/state/api"
 import { v4 } from "uuid"
 import { useAuth } from "@clerk/nextjs"
 
@@ -41,7 +41,7 @@ const SneakerInfoModal = ({ isOpen, onClose, onDelete, product }: SneakerInfoMod
    const [newStock, setNewStock] = useState<Partial<StockItem>>({ size: 0, quantity: 0, price: 0 })
    const [deleteProductStock] = useDeleteProductStockMutation()
    const { data: productsData, refetch: refetchProducts } = useGetProductsQuery({ userId: userId || '' })
-   const { data: salesData, refetch: refetchSales } = useGetSalesQuery({ userId: userId || '' })
+   const { refetch: refetchSales } = useGetSalesQuery({ userId: userId || '' })
    const {refetch: refetchPurchases} = useGetPurchasesQuery()
 
    const refreshData = useCallback(async () => {

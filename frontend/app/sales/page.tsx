@@ -1,6 +1,5 @@
 "use client"
 
-import Header from "@/components/Header"
 import NewSalesCard from "@/components/SalesComponents/NewSalesCard"
 import {useGetCustomersQuery, useGetProductsQuery } from "../state/api"
 import RecentSalesCard from "@/components/SalesComponents/RecentSalesCard"

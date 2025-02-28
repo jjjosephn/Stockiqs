@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo } from "react"
-import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useGetProductsArchiveQuery, useGetSalesQuery } from "@/app/state/api"

@@ -4,8 +4,7 @@ import React, { useEffect } from 'react'
 import Navbar from '@/components/Navbar'
 import Sidebar from '@/components/Sidebar'
 import StoreProvider, { useAppSelector } from './redux'
-import { RedirectToSignIn, SignedIn, SignedOut, SignInButton, SignUpButton, useUser } from "@clerk/nextjs"
-import { Sign } from 'crypto'
+import { SignedIn, SignedOut } from "@clerk/nextjs"
 
 const DashboardLayout = ({ children } : { children: React.ReactNode}) => {
   const isSideBarCollapsed = useAppSelector((state) => 

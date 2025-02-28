@@ -33,6 +33,27 @@ type CustomerDetailProps = {
   zipCode: string
 }
 
+type ProductStock = {
+  product?: {  
+    name: string;
+  };
+  size: number;
+  price: number;
+};
+
+type Sale = {
+  saleId: string;
+  timestamp: string;
+  quantity: number;
+  salesPrice: number;
+  customerId: string;
+  productStock?: ProductStock;  
+  psArchive?: {
+    productsArchiveId: string;
+    archiveId: string;
+  };
+};
+
 const ITEMS_PER_PAGE = 5
 
 const CustomerDetail = () => {
@@ -65,16 +86,16 @@ const CustomerDetail = () => {
     currentPage * ITEMS_PER_PAGE
   )
 
-  const getProductInfo = (sale: any) => {
+  const getProductInfo = (sale: Sale) => {
     if (sale.productStock) {
       return {
-        name: sale.productStock.product.name,
+        name: sale.productStock.product?.name,
         size: sale.productStock.size,
         price: sale.productStock.price
       }
     } else if (sale.psArchive) {
-      const archivedProduct = productsArchive?.find(p => p.productsArchiveId === sale.psArchive.productsArchiveId)
-      const archivedStock = archivedProduct?.psArchive?.find(s => s.archiveId === sale.psArchive.archiveId)
+      const archivedProduct = productsArchive?.find(p => p.productsArchiveId === sale.psArchive?.productsArchiveId)
+      const archivedStock = archivedProduct?.psArchive?.find(s => s.archiveId === sale.psArchive?.archiveId)
       return {
         name: archivedProduct?.name || 'Unknown Product',
         size: archivedStock?.size || 'N/A',

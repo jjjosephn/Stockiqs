@@ -2,7 +2,6 @@ import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, DollarSign, Package, TrendingUp, TrendingDown } from "lucide-react"
 import { useGetCustomersQuery, useGetProductsQuery, useGetSalesQuery } from '@/app/state/api'
-import { link } from 'fs'
 import Link from 'next/link'
 import { useAuth } from '@clerk/nextjs'
 
@@ -34,7 +33,7 @@ const formatCurrency = (value: number) => {
 const OverviewCards = () => {
   const {userId} = useAuth()
   const { data: customers } = useGetCustomersQuery({userId: userId || ''})
-  const { data: sales, isLoading, isError } = useGetSalesQuery({userId: userId || ''})
+  const { data: sales, isLoading } = useGetSalesQuery({userId: userId || ''})
   const { data: products } = useGetProductsQuery({userId: userId || ''})
 
   const totalRevenue = sales?.reduce((acc, sale) => acc + (sale.quantity * sale.salesPrice), 0) || 0  

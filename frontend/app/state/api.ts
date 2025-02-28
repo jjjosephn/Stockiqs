@@ -1,14 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import exp from "constants";
-import { create } from "domain";
 
 
 export interface Users {
-   userId: String,
+   userId: string,
 }
 
 export interface NewUser {
-   userId: String,
+   userId: string,
 }
 
 export interface Customers {
