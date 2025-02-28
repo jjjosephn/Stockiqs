@@ -9,7 +9,6 @@ export const getProductsArchive = async (
 ): Promise<void> => {
    try {
       const count = await prisma.productsArchive.count();
-      console.log(`Found ${count} products in archive`);
       
       const productsArchive = await prisma.productsArchive.findMany({
          include: {

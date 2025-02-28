@@ -13,7 +13,6 @@ const RecentPurchasesCard = () => {
    const [currentPage, setCurrentPage] = useState(1)
    const itemsPerPage = 5
 
-   console.log(userId)
 
    const findProductInArchive = (productsArchiveId: string, stockId: string) => {
       const product = productsArchive?.find(p => p.productsArchiveId === productsArchiveId)

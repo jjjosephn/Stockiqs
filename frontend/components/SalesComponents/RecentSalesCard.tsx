@@ -53,8 +53,6 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
-  console.log(sales)
-
   const isLoading = salesLoading || archiveLoading || !sales || !productsArchive
 
   const sortedSales = useMemo(() => {

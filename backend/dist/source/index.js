@@ -34,7 +34,7 @@ app.use('/purchases', purchasesRoutes_1.default);
 app.use('/dashboard', userRoutes_1.default);
 app.use('/archive', archiveRoutes_1.default);
 /* Server */
-const port = process.env.PORT || 3001;
-app.listen(port, () => {
+const port = Number(process.env.PORT) || 3001;
+app.listen(port, "0.0.0.0", () => {
     console.log(`Server is running on port ${port}`);
 });

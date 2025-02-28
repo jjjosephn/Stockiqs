@@ -60,7 +60,6 @@ const Customers = () => {
     await addCustomer(data)
   }
 
-  console.log(window.location.href);
   return (
     <div className="container mx-auto p-4">
       <Card className='shadow-lg'>
@@ -117,7 +116,7 @@ const Customers = () => {
                   <TableCell className='text-gray-800'>{customer.phoneNumber}</TableCell>
                   <TableCell className='text-gray-800'>{customer.customerId}</TableCell>
                   <TableCell className='text-gray-900'>
-                    <Button className='hover:bg-gray-300'variant="ghost" asChild onClick={() => {console.log(customer.customerId)}}>
+                    <Button className='hover:bg-gray-300'variant="ghost" asChild>
                       <Link href={`/customers/${customer.customerId}`}>
                         <p className='text-gray-900'>View Details</p>
                       </Link>

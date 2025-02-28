@@ -48,7 +48,6 @@ const CustomerDetail = () => {
   const [updateCustomer] = useUpdateCustomerMutation()
   const [currentPage, setCurrentPage] = useState(1)
 
-  console.log(customer)
   const customerSales = useMemo(() => 
     (sales?.filter(sale => sale.customerId === customerId) || [])
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()),
