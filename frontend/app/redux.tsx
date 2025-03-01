@@ -19,27 +19,38 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
+  WebStorage,
 } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import React from "react";
 
 /* REDUX PERSISTENCE */
-const createNoopStorage = () => {
+// Define a compatible storage interface that works with redux-persist
+interface NoopStorage {
+  getItem(key: string): Promise<null>;
+  setItem(key: string, value: string): Promise<void>;
+  removeItem(key: string): Promise<void>;
+}
+
+const createNoopStorage = (): NoopStorage => {
   return {
-    getItem(_key: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getItem(key: string) {
       return Promise.resolve(null);
     },
-    setItem(_key: any, value: any) {
-      return Promise.resolve(value);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    setItem(key: string, value: string) {
+      return Promise.resolve();
     },
-    removeItem(_key: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    removeItem(key: string) {
       return Promise.resolve();
     },
   };
 };
 
-const storage =
+const storage: WebStorage | NoopStorage =
   typeof window === "undefined"
     ? createNoopStorage()
     : createWebStorage("local");
@@ -49,10 +60,12 @@ const persistConfig = {
   storage,
   whitelist: ["global"],
 };
+
 const rootReducer = combineReducers({
   global: globalReducer,
   [api.reducerPath]: api.reducer,
 });
+
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 /* REDUX STORE */
@@ -87,7 +100,7 @@ export default function StoreProvider({
     setupListeners(storeRef.current.dispatch);
   }
   const persistor = persistStore(storeRef.current);
-
+  
   return (
     <Provider store={storeRef.current}>
       <PersistGate loading={null} persistor={persistor}>
