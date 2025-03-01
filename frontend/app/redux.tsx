@@ -35,13 +35,16 @@ interface NoopStorage {
 
 const createNoopStorage = (): NoopStorage => {
   return {
-    getItem(_key: string) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getItem(key: string) {
       return Promise.resolve(null);
     },
-    setItem(_key: string, _value: string) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    setItem(key: string, value: string) {
       return Promise.resolve();
     },
-    removeItem(_key: string) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    removeItem(key: string) {
       return Promise.resolve();
     },
   };
@@ -97,7 +100,7 @@ export default function StoreProvider({
     setupListeners(storeRef.current.dispatch);
   }
   const persistor = persistStore(storeRef.current);
-
+  
   return (
     <Provider store={storeRef.current}>
       <PersistGate loading={null} persistor={persistor}>
