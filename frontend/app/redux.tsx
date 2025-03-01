@@ -35,13 +35,13 @@ interface NoopStorage {
 
 const createNoopStorage = (): NoopStorage => {
   return {
-    getItem(key: string) {
+    getItem(_key: string) {
       return Promise.resolve(null);
     },
-    setItem(key: string, value: string) {
+    setItem(_key: string, _value: string) {
       return Promise.resolve();
     },
-    removeItem(key: string) {
+    removeItem(_key: string) {
       return Promise.resolve();
     },
   };

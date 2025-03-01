@@ -40,13 +40,6 @@ type ProductStock = {
   price: number
 }
 
-type ProductsArchive = {
-  productsArchiveId: string
-  productId: string
-  name: string
-  psArchive: PSArchive[]
-}
-
 type Sale = {
   saleId: string
   customerId: string

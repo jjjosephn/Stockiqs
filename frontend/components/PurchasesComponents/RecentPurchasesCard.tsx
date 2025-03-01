@@ -53,7 +53,7 @@ const RecentPurchasesCard = () => {
    const totalPages = Math.ceil(sortedPurchases.length / itemsPerPage)
    const currentPurchases = sortedPurchases.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
-   const formatCurrency = (value: Number) => {
+   const formatCurrency = (value: number) => {
       return `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
     }
 
