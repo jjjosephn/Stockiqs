@@ -29,10 +29,10 @@ const Customers = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [addCustomerModalOpen, setAddCustomerModalOpen] = useState(false)
   const [addCustomer] = useCreateCustomerMutation()
+  const { data, isError, isLoading } = useGetCustomersQuery({userId: userId || ''})
   if (!isLoaded || !userId) {
     return <div className="flex justify-center items-center h-screen">Loading auth...</div>
   }
-  const { data, isError, isLoading } = useGetCustomersQuery({userId})
   const itemsPerPage = 10
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen">Loading customers...</div>

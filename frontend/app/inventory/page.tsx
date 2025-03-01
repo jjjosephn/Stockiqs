@@ -10,11 +10,19 @@ import { Button } from "@/components/ui/button"
 import { useAuth } from "@clerk/nextjs"
 import Image from 'next/image'
 
-type StockItem = {
-  stockId: string
-  price: number
-  size: number
-  quantity: number
+interface StockItem {
+  productId: string;
+  size: number;
+  stockId: string;
+  price: number;
+  quantity: number;
+}
+
+interface Product {
+  productId: string;
+  name: string;
+  image?: string;
+  stock: StockItem[];
 }
 
 const Inventory = () => {
@@ -23,7 +31,7 @@ const Inventory = () => {
   const [sneakerInfoModalOpen, setSneakerInfoModalOpen] = useState(false)
   const { data, isError, isLoading } = useGetProductsQuery({ search: search || '', userId: userId || '' })
   const [deleteProduct] = useDeleteProductMutation()
-  const [selectedProduct, setSelectedProduct] = useState<any>(null)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const { refetch: refetchSales } = useGetSalesQuery({ userId: userId || '' });
   const { refetch: refetchProductsArchive } = useGetProductsArchiveQuery();

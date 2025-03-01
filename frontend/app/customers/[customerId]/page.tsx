@@ -37,7 +37,7 @@ interface Product {
   productId: string;
   userId: string;
   name: string;
-  image: string;
+  image?: string;
 }
 
 interface ProductStock {
@@ -78,17 +78,7 @@ interface Sale {
   salesPrice: number;
   customers?: Customer;
   productStock?: ProductStock;  
-  psArchive?: PSArchive;
-}
-
-interface ProductArchive {
-  productsArchiveId: string;
-  name: string;
-  psArchive?: {
-    archiveId: string;
-    size: number;
-    price: number;
-  }[];
+  psArchive?: PSArchive[]; 
 }
 
 const ITEMS_PER_PAGE = 5

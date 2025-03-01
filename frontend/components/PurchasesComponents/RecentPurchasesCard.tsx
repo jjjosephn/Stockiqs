@@ -53,7 +53,7 @@ const RecentPurchasesCard = () => {
    const totalPages = Math.ceil(sortedPurchases.length / itemsPerPage)
    const currentPurchases = sortedPurchases.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
-   const formatCurrency = (value: any) => {
+   const formatCurrency = (value: Number) => {
       return `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
     }
 
@@ -119,7 +119,7 @@ const RecentPurchasesCard = () => {
                                     <TableCell>{productData?.name || 'N/A'}</TableCell>
                                     <TableCell>{productData?.size || 'N/A'}</TableCell>
                                     <TableCell>{productData?.quantity || 'N/A'}</TableCell>
-                                    <TableCell>{formatCurrency(productData?.price) || 'N/A'}</TableCell>
+                                    <TableCell>{formatCurrency(productData?.price ?? 0) || 'N/A'}</TableCell>
                                     <TableCell>
                                        {formatCurrency((productData?.price || 0) * (productData?.quantity || 0))}
                                     </TableCell>

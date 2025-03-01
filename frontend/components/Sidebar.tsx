@@ -64,12 +64,14 @@ const Sidebar = () => {
          <div className={`flex gap-3 justify-between md:justify-normal items-center pt-8 
             ${isSideBarCollapsed ? 'px-5' : 'px-8'}`}
          >
-            <Image src={logo} alt='logo' width={40} height={40}/>
-            <h1 className={`${sigmar.className} text-2xl
-               ${isSideBarCollapsed ? 'hidden' : 'block'}`}
-            >
-               Stockiqs
-            </h1>
+            <Link href='/dashboard' className="flex items-center gap-2">
+               <Image src={logo} alt='logo' width={40} height={40}/>
+               <h1 className={`${sigmar.className} text-2xl 
+                  ${isSideBarCollapsed ? 'hidden' : 'block'}`}
+               >
+                  Stockiqs
+               </h1>
+            </Link>
             <button 
                className='md:hidden px-3 py-3 bg-gray-100 rounded-full hover:bg-blue-100'
                onClick={handleToggleSidebar}

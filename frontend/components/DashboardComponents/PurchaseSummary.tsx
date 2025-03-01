@@ -8,11 +8,22 @@ import { useAuth } from "@clerk/nextjs"
 
 const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
-const formatCurrency = (value: any) => {
+const formatCurrency = (value: number): string => {
   return `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value: number;
+    dataKey: string;
+    name: string;
+    color: string;
+  }>;
+  label?: string;
+}
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps): React.ReactElement | null => {
   if (active && payload && payload.length) {
     const thisWeek = payload[0].value
     const pastWeek = payload[1].value
@@ -43,7 +54,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null
 }
 
-const getNiceRoundedMax = (value: number) => {
+const getNiceRoundedMax = (value: number): number => {
   if (value <= 0) return 100;
   
   const magnitude = Math.pow(10, Math.floor(Math.log10(value)))
@@ -56,28 +67,55 @@ const getNiceRoundedMax = (value: number) => {
   return Math.ceil(value / (magnitude / 4)) * (magnitude / 4)
 }
 
-const PurchaseSummary = () => {
+interface DailySummary {
+  day: string;
+  thisWeek: number;
+  pastWeek: number;
+}
+
+interface ProductStock {
+  price: number;
+  quantity: number;
+}
+
+interface PSArchive {
+  price: number;
+  quantity: number;
+}
+
+interface Purchase {
+  timestamp: string;
+  productStock?: ProductStock;
+  psArchive?: PSArchive;
+}
+
+interface Totals {
+  thisWeekTotal: number;
+  pastWeekTotal: number;
+}
+
+const PurchaseSummary = (): JSX.Element => {
   const {userId} = useAuth()
   const { data: purchases, isLoading, isError } = useGetPurchasesQuery({userId: userId || ''})
 
-  const purchaseSummaryData = useMemo(() => {
+  const purchaseSummaryData = useMemo((): DailySummary[] => {
     if (!purchases) return []
 
     const now = new Date()
     const startOfThisWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay())
     const startOfPastWeek = new Date(startOfThisWeek.getTime() - 7 * 24 * 60 * 60 * 1000)
 
-    const dailyTotals = daysOfWeek.map((day) => ({
+    const dailyTotals: DailySummary[] = daysOfWeek.map((day) => ({
       day,
       thisWeek: 0,
       pastWeek: 0,
     }))
 
-    purchases.forEach((purchase) => {
+    purchases.forEach((purchase: Purchase) => {
       const purchaseDate = new Date(purchase.timestamp)
       const dayIndex = purchaseDate.getDay()
-      const price = (purchase.productStock?.price * purchase.productStock?.quantity) || 
-         (purchase.psArchive?.price * purchase.psArchive?.quantity) || 0
+      const price = ((purchase.productStock?.price ?? 0) * (purchase.productStock?.quantity ?? 0)) || 
+         ((purchase.psArchive?.price ?? 0) * (purchase.psArchive?.quantity ?? 0)) || 0
 
       if (purchaseDate >= startOfThisWeek) {
         dailyTotals[dayIndex].thisWeek += price
@@ -89,8 +127,8 @@ const PurchaseSummary = () => {
     return dailyTotals
   }, [purchases])
 
-  const totals = useMemo(() => {
-    if (!purchaseSummaryData.length) return { thisWeek: 0, pastWeek: 0}
+  const totals = useMemo((): Totals => {
+    if (!purchaseSummaryData.length) return { thisWeekTotal: 0, pastWeekTotal: 0 }
     
     const thisWeekTotal = purchaseSummaryData.reduce((sum, day) => sum + day.thisWeek, 0)
     const pastWeekTotal = purchaseSummaryData.reduce((sum, day) => sum + day.pastWeek, 0)
@@ -98,7 +136,7 @@ const PurchaseSummary = () => {
     return { thisWeekTotal, pastWeekTotal }
   }, [purchaseSummaryData])
 
-  const maxValue = useMemo(() => {
+  const maxValue = useMemo((): number => {
     if (!purchaseSummaryData.length) return 100;
     
     return Math.max(
@@ -108,7 +146,7 @@ const PurchaseSummary = () => {
   
   const roundedMaxValue = getNiceRoundedMax(maxValue);
   
-  const yAxisTicks = useMemo(() => {
+  const yAxisTicks = useMemo((): number[] => {
     return Array.from({ length: 6 }, (_, i) => Math.round(i * roundedMaxValue / 5));
   }, [roundedMaxValue]);
 
@@ -171,7 +209,7 @@ const PurchaseSummary = () => {
               />
               <YAxis
                 stroke="#6b7280"
-                tickFormatter={(value) => `$${value.toLocaleString()}`}
+                tickFormatter={(value: number) => `$${value.toLocaleString()}`}
                 tick={{ fill: "#6b7280" }}
                 tickLine={{ stroke: "#6b7280" }}
                 domain={[0, roundedMaxValue]}

@@ -29,6 +29,14 @@ type SneakerSuggestion = {
    image: string
 }
 
+interface SneakerApiResponse {
+  status: string;
+  data?: Array<{
+    title: string;
+    image: string;
+  }>;
+}
+
 const AddSneakerCard = () => {
    const {userId} = useAuth()
    const [addSneaker] = useCreateProductMutation()
@@ -76,10 +84,10 @@ const AddSneakerCard = () => {
     
       try {
         const response = await fetch(`https://api.sneakersapi.dev/api/v3/stockx/products?query=${encodedQuery}`, options)
-        const responseData = await response.json()
+        const responseData: SneakerApiResponse = await response.json()
     
         if (responseData.status === 'success' && Array.isArray(responseData.data)) {
-          setSuggestions(responseData.data.map((item: any) => ({ 
+          setSuggestions(responseData.data.map((item) => ({ 
             title: item.title,
             image: item.image
           })))
@@ -126,12 +134,18 @@ const AddSneakerCard = () => {
    }
    
    const handleStockChange = (index: number, field: keyof StockItem, value: string) => {
-      setFormData(prev => ({
-         ...prev,
-         stock: prev.stock.map((item, i) => 
-         i === index ? { ...item, [field]: field === 'size' || field === 'price' ? parseFloat(value) : parseInt(value, 10) } : item
-         )
-      }))
+      const parsedValue = field === 'size' || field === 'price'
+         ? parseFloat(value)
+         : parseInt(value, 10);
+   
+      if (!isNaN(parsedValue)) {
+         setFormData(prev => ({
+            ...prev,
+            stock: prev.stock.map((item, i) =>
+               i === index ? { ...item, [field]: parsedValue } : item
+            )
+         }))
+      }
    }
    
    const addStockItem = () => {
@@ -175,7 +189,7 @@ const AddSneakerCard = () => {
          <CardHeader className="border-b bg-white">
             <div className="flex items-center space-x-3">
                <ShoppingBag className="text-gray-900 h-7 w-7" />
-               <CardTitle className="text-2xl font-bold text-gray-900">Add New Sneaker to Inventory</CardTitle>
+               <CardTitle className="text-2xl font-bold text-gray-900">Add New Sneakers to Inventory</CardTitle>
             </div>
          </CardHeader>
          <CardContent className="p-0">
@@ -311,7 +325,7 @@ const AddSneakerCard = () => {
                         disabled={isSubmitting}
                         className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium text-lg"
                      >
-                        {isSubmitting ? "Adding to Inventory..." : "Add Sneaker to Inventory"}
+                        {isSubmitting ? "Adding to Inventory..." : "Add Sneakers to Inventory"}
                      </Button>
                   </form>
                </div>

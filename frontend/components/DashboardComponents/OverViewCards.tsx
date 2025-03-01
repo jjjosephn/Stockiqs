@@ -5,6 +5,12 @@ import { useGetCustomersQuery, useGetProductsQuery, useGetSalesQuery } from '@/a
 import Link from 'next/link'
 import { useAuth } from '@clerk/nextjs'
 
+interface Sale {
+  timestamp: string;
+  quantity: number;
+  salesPrice: number;
+}
+
 const isCurrentWeek = (dateString: string) => {
   const now = new Date()
   const date = new Date(dateString)
@@ -13,7 +19,7 @@ const isCurrentWeek = (dateString: string) => {
   return date >= startOfWeek
 }
 
-const getRevenueChange = (sales: any[]) => {
+const getRevenueChange = (sales: Sale[]) => {
   const thisWeekRevenue = sales
     .filter(sale => isCurrentWeek(sale.timestamp))
     .reduce((acc, sale) => acc + (sale.quantity * sale.salesPrice), 0)
@@ -30,6 +36,18 @@ const formatCurrency = (value: number) => {
    return `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
  };
 
+interface OverviewCard {
+  title: string;
+  link: string;
+  value: string | number | undefined;
+  subtitle: string;
+  icon: React.ElementType;
+  color: string;
+  bgColor: string;
+  gradient: string;
+  change?: string | null;
+}
+
 const OverviewCards = () => {
   const {userId} = useAuth()
   const { data: customers } = useGetCustomersQuery({userId: userId || ''})
@@ -42,7 +60,7 @@ const OverviewCards = () => {
   
   const revenueChange = sales ? getRevenueChange(sales) : 0
 
-  const overviewCards = [
+  const overviewCards: OverviewCard[] = [
       {
         title: "Total Customers",
         link: "/customers",

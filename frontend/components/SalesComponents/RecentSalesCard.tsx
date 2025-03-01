@@ -40,6 +40,36 @@ type ProductStock = {
   price: number
 }
 
+type ProductsArchive = {
+  productsArchiveId: string
+  productId: string
+  name: string
+  psArchive: PSArchive[]
+}
+
+type Sale = {
+  saleId: string
+  customerId: string
+  stockId?: string
+  archiveId?: string
+  productsArchiveId?: string
+  quantity: number
+  salesPrice: number
+  timestamp: string
+}
+
+type ProductInfo = {
+  stock: PSArchive | ProductStock | null
+  product: { name: string; productId: string } | null
+}
+
+type SummaryStats = {
+  totalSales: number
+  totalRevenue: number
+  totalProfit: number
+  avgProfitMargin: number
+}
+
 type RecentSalesCardProps = {
   customers: Customer[]
   products: Product[]
@@ -48,6 +78,7 @@ type RecentSalesCardProps = {
 const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
   const {userId} = useAuth()
   const { data: sales, isLoading: salesLoading } = useGetSalesQuery({userId: userId || ''})
+  // Remove the generic type parameter which was causing the issue
   const { data: productsArchive, isLoading: archiveLoading } = useGetProductsArchiveQuery()
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
@@ -59,7 +90,7 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
     return [...sales].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
   }, [sales, productsArchive])
 
-  const getProductInfo = (sale: any) => {
+  const getProductInfo = (sale: Sale): ProductInfo => {
     if (sale.stockId) {
       const stock = products
         .flatMap((product) => product.stock)
@@ -95,11 +126,11 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
       
       if (archivedProduct && archivedProduct.psArchive) {
         const archivedStock = sale.archiveId 
-          ? archivedProduct.psArchive.find(ps => ps.archiveId === sale.archiveId)
+          ? archivedProduct.psArchive.find((ps: PSArchive) => ps.archiveId === sale.archiveId)
           : archivedProduct.psArchive[0] 
 
         return {
-          stock: archivedStock,
+          stock: archivedStock || null,
           product: { name: archivedProduct.name, productId: archivedProduct.productId }
         }
       }
@@ -108,7 +139,7 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
     return { stock: null, product: null }
   }
 
-  const summaryStats = useMemo(() => {
+  const summaryStats = useMemo((): SummaryStats => {
     if (!sortedSales.length || !productsArchive) {
       return { 
         totalSales: 0, 
@@ -122,7 +153,7 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
     let totalRevenue = 0
     let totalProfit = 0
 
-    sortedSales.forEach((sale: any) => {
+    sortedSales.forEach((sale: Sale) => {
       const { stock } = getProductInfo(sale)
       const purchasePrice = stock?.price || 0
       const soldPrice = sale.salesPrice
@@ -133,7 +164,7 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
       totalProfit += (soldPrice - purchasePrice) * quantity
     })
 
-    const avgProfitMargin = (totalProfit / totalRevenue) * 100
+    const avgProfitMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0
 
     return {
       totalSales,
@@ -195,13 +226,13 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentSales.map((sale: any) => {
+            {currentSales.map((sale: Sale) => {
               const customer = customers.find((c) => c.customerId === sale.customerId)
               const { stock, product } = getProductInfo(sale)
               const purchasePrice = stock?.price || 0
               const soldPrice = sale.salesPrice
               const profit = (soldPrice - purchasePrice) * sale.quantity
-              const profitMargin = ((profit / (sale.quantity * soldPrice)) * 100).toFixed(2)
+              const profitMargin = soldPrice > 0 ? ((profit / (sale.quantity * soldPrice)) * 100).toFixed(2) : "0.00"
 
               return (
                 <TableRow key={sale.saleId}>

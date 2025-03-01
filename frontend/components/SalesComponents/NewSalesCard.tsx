@@ -12,12 +12,10 @@ import {
   useNewSaleMutation,
   useUpdateProductStockAfterSaleMutation,
   useDeleteProductStockAfterSaleMutation,
-  useGetProductsQuery,
   useGetSalesQuery,
   useCreateCustomerMutation,
 } from "@/app/state/api"
 import { Label } from "@/components/ui/label"
-import { PlusCircle } from "lucide-react"
 import AddCustomerModal from "../CustomerComponents/AddCustomerModal"
 import { useAuth } from "@clerk/nextjs"
 
