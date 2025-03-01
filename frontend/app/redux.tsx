@@ -25,15 +25,9 @@ import { PersistGate } from "redux-persist/integration/react";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import React from "react";
 
-/* REDUX PERSISTENCE */
-// Define a compatible storage interface that works with redux-persist
-interface NoopStorage {
-  getItem(key: string): Promise<null>;
-  setItem(key: string, value: string): Promise<void>;
-  removeItem(key: string): Promise<void>;
-}
 
-const createNoopStorage = (): NoopStorage => {
+
+const createNoopStorage = () => {
   return {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getItem(key: string) {
@@ -50,7 +44,7 @@ const createNoopStorage = (): NoopStorage => {
   };
 };
 
-const storage: WebStorage | NoopStorage =
+const storage =
   typeof window === "undefined"
     ? createNoopStorage()
     : createWebStorage("local");

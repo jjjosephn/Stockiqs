@@ -1,6 +1,4 @@
 'use client'
-
-
 import Dashboard from "./dashboard/page";
 
 
