@@ -8,6 +8,38 @@ import { useAuth } from "@clerk/nextjs"
 
 const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
+// Define interfaces for our data structures
+interface Sale {
+  timestamp: string;
+  quantity: number;
+  salesPrice: number;
+}
+
+interface GroupedSalesByDay {
+  [weekday: string]: {
+    thisWeek: number;
+    pastWeek: number;
+  };
+}
+
+interface WeeklySalesData {
+  day: string;
+  thisWeek: number;
+  pastWeek: number;
+  change: number;
+}
+
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value: number;
+    name: string;
+    color: string;
+    payload: WeeklySalesData;
+  }>;
+  label?: string;
+}
+
 const getWeekday = (dateString: string) => {
   const date = new Date(dateString)
   return weekdays[date.getDay()]
@@ -32,8 +64,8 @@ const isCurrentWeek = (dateString: string) => {
   return date >= currentWeek.start && date <= currentWeek.end
 }
 
-const groupSalesByWeekday = (sales: any[]) => {
-  const groupedSales = sales.reduce((acc, sale) => {
+const groupSalesByWeekday = (sales: Sale[]): WeeklySalesData[] => {
+  const groupedSales: GroupedSalesByDay = sales.reduce((acc: GroupedSalesByDay, sale) => {
     const weekday = getWeekday(sale.timestamp)
     const week = isCurrentWeek(sale.timestamp) ? "thisWeek" : "pastWeek"
     if (!acc[weekday]) {
@@ -57,7 +89,7 @@ const formatCurrency = (value: number) => {
   return `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
   if (active && payload && payload.length) {
     const thisWeek = payload[0].value
     const pastWeek = payload[1].value
@@ -66,7 +98,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return (
       <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-200">
         <p className="font-semibold mb-2">{label}</p>
-        {payload.map((entry: any, index: number) => (
+        {payload.map((entry, index) => (
           <div key={index} className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
             <span className="text-sm">
@@ -99,7 +131,7 @@ const getNiceRoundedMax = (value: number) => {
   return Math.ceil(value / (magnitude / 4)) * (magnitude / 4)
 }
 
-const SalesSummary = () => {
+const SalesSummary: React.FC = () => {
   const {userId} = useAuth()
   const { data: sales, isLoading, isError } = useGetSalesQuery({userId: userId || ''})
 
@@ -162,12 +194,11 @@ const SalesSummary = () => {
               <XAxis dataKey="day" stroke="#6b7280" tick={{ fill: "#6b7280" }} tickLine={{ stroke: "#6b7280" }} />
               <YAxis
                 stroke="#6b7280"
-                tickFormatter={(value) => `$${value.toLocaleString()}`}
+                tickFormatter={(value: number) => `$${value.toLocaleString()}`}
                 tick={{ fill: "#6b7280" }}
                 tickLine={{ stroke: "#6b7280" }}
                 domain={[0, roundedMaxValue]}
                 width={80}
-                // Use ticks to control the exact values shown on the y-axis
                 ticks={Array.from({ length: 6 }, (_, i) => Math.round(i * roundedMaxValue / 5))}
                 />
               <Tooltip content={<CustomTooltip />} />

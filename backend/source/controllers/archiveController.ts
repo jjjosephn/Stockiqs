@@ -8,8 +8,6 @@ export const getProductsArchive = async (
    res: Response
 ): Promise<void> => {
    try {
-      const count = await prisma.productsArchive.count();
-      
       const productsArchive = await prisma.productsArchive.findMany({
          include: {
             psArchive: true

@@ -10,6 +10,6 @@ router.put('/:productId', updateProduct);
 router.post('/:productId/stock', updateProductStock);
 router.delete('/:productId/stock/:stockId', deleteProductStock);
 router.post('/stock/:stockId', updateProductStockAfterSale);
-router.delete('/stock/:stockId', deleteProductStockAfterSale);
+router.delete('/stock/:stockId/:userId', deleteProductStockAfterSale);
 
 export default router;

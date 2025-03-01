@@ -73,15 +73,24 @@ exports.createCustomer = createCustomer;
 const deleteCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { customerId } = req.params;
+        yield prisma.sales.updateMany({
+            where: {
+                customerId: customerId,
+            },
+            data: {
+                customerId: null,
+            },
+        });
         yield prisma.customers.delete({
             where: {
-                customerId
-            }
+                customerId: customerId,
+            },
         });
-        res.status(200).json({ message: 'User deleted' });
+        res.status(200).json({ message: 'Customer and associated sales updated and deleted successfully' });
     }
     catch (error) {
-        res.status(500).json({ message: 'Error deleting user' });
+        console.error('Error deleting customer:', error);
+        res.status(500).json({ message: 'Error deleting customer' });
     }
 });
 exports.deleteCustomer = deleteCustomer;

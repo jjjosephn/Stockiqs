@@ -155,12 +155,13 @@ const NewSalesCard = ({ customers, products }: NewSalesCardProps) => {
       };
       
       await addNewSale(adjustedFormData);
-      await deleteStock({ stockId: selectedSize.stockId });
-    } else {
+      await deleteStock({ stockId: selectedSize.stockId, userId: userId || '' });
+    } 
+    else {
       await addNewSale(formData);
       
       if (selectedSize.quantity === formData.quantity) {
-        await deleteStock({ stockId: selectedSize.stockId });
+        await deleteStock({ stockId: selectedSize.stockId, userId: userId || '' });
       } else {
         await updateStock({
           stockId: selectedSize.stockId,

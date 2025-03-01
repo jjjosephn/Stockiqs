@@ -338,6 +338,7 @@ export const deleteProductStockAfterSale = async (
             data: {
                productId: product.productId,
                name: product.name,
+               image: product.image,
                user: { connect: { userId: userId } },
             },
          });

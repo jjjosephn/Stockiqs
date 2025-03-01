@@ -90,12 +90,12 @@ model Sales {
   userId            String
   stockId           String?
   archiveId         String?
-  customerId        String
+  customerId        String?
   productsArchiveId String?
   timestamp         DateTime
   quantity          Int
   salesPrice        Float
-  customers         Customers        @relation(fields: [customerId], references: [customerId])
+  customers         Customers?        @relation(fields: [customerId], references: [customerId])
   productStock      ProductStock?    @relation(fields: [stockId], references: [stockId])
   psArchive         PSArchive?       @relation(fields: [archiveId], references: [archiveId])
   productsArchive   ProductsArchive? @relation(fields: [productsArchiveId], references: [productsArchiveId])

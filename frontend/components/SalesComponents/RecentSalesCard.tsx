@@ -207,9 +207,14 @@ const RecentSalesCard = ({ customers, products }: RecentSalesCardProps) => {
                 <TableRow key={sale.saleId}>
                   <TableCell className="font-medium">{new Date(sale.timestamp).toLocaleDateString()}</TableCell>
                   <TableCell>
-                    <Link href={`/customers/${customer?.customerId}`}>
-                      {customer?.name}
-                    </Link>
+                  {customer?.customerId ? (
+                      <Link href={`/customers/${customer.customerId}`}>
+                          {customer.name || "Deleted Customer"}
+                      </Link>
+                    ) : (
+                      <span>{customer?.name || "Deleted Customer"}</span>
+                    )
+                  }
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">

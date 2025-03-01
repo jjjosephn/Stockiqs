@@ -285,6 +285,7 @@ const deleteProductStockAfterSale = (req, res) => __awaiter(void 0, void 0, void
                 data: {
                     productId: product.productId,
                     name: product.name,
+                    image: product.image,
                     user: { connect: { userId: userId } },
                 },
             });

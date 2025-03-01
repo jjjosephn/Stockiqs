@@ -14,7 +14,6 @@ const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getProductsArchive = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const count = yield prisma.productsArchive.count();
         const productsArchive = yield prisma.productsArchive.findMany({
             include: {
                 psArchive: true

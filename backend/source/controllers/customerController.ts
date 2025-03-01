@@ -80,18 +80,30 @@ export const deleteCustomer = async (
    res: Response  
 ): Promise<void> => {
    try {
-      const { customerId } = req.params
+      const { customerId } = req.params;
+
+      await prisma.sales.updateMany({
+         where: {
+            customerId: customerId, 
+         },
+         data: {
+            customerId: null, 
+         },
+      });
+
       await prisma.customers.delete({
          where: {
-            customerId
-         }
-      })
-      res.status(200).json({ message: 'User deleted' });
+            customerId: customerId, 
+         },
+      });
+
+      res.status(200).json({ message: 'Customer and associated sales updated and deleted successfully' });
+   } catch (error) {
+      console.error('Error deleting customer:', error); 
+      res.status(500).json({ message: 'Error deleting customer' });
    }
-   catch (error) {
-      res.status(500).json({ message: 'Error deleting user' });
-   }
-}
+};
+
 
 export const updateCustomer = async (
    req: Request,

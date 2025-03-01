@@ -33,26 +33,63 @@ type CustomerDetailProps = {
   zipCode: string
 }
 
-type ProductStock = {
-  product?: {  
-    name: string;
-  };
-  size: number;
-  price: number;
-};
+interface Product {
+  productId: string;
+  userId: string;
+  name: string;
+  image: string;
+}
 
-type Sale = {
+interface ProductStock {
+  stockId: string;
+  price: number;
+  productId: string;
+  size: number;
+  quantity: number;
+  product?: Product;
+}
+
+interface PSArchive {
+  productsArchiveId: string;
+  archiveId: string;
+}
+
+interface Customer {
+  customerId: string;
+  userId: string;
+  phoneNumber: string;
+  name: string;
+  instagram: string | null;
+  streetAddress: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
+
+interface Sale {
   saleId: string;
+  userId: string;
+  stockId: string | null;
+  archiveId: string | null;
+  customerId: string;
+  productsArchiveId: string | null;
   timestamp: string;
   quantity: number;
   salesPrice: number;
-  customerId: string;
+  customers?: Customer;
   productStock?: ProductStock;  
+  psArchive?: PSArchive;
+}
+
+interface ProductArchive {
+  productsArchiveId: string;
+  name: string;
   psArchive?: {
-    productsArchiveId: string;
     archiveId: string;
-  };
-};
+    size: number;
+    price: number;
+  }[];
+}
 
 const ITEMS_PER_PAGE = 5
 
@@ -69,18 +106,20 @@ const CustomerDetail = () => {
   const [updateCustomer] = useUpdateCustomerMutation()
   const [currentPage, setCurrentPage] = useState(1)
 
-  const customerSales = useMemo(() => 
-    (sales?.filter(sale => sale.customerId === customerId) || [])
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()),
-    [sales, customerId]
-  )
+  const customerSales = useMemo(() => {
+    if (!sales || !customerId) return []
+    
+    return sales
+      .filter(sale => sale.customerId === customerId)
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+  }, [sales, customerId])
 
   const totalPurchases = useMemo(() => 
     customerSales.reduce((total, sale) => total + (sale.salesPrice * sale.quantity), 0),
     [customerSales]
   )
 
-  const totalPages = Math.ceil(customerSales.length / ITEMS_PER_PAGE)
+  const totalPages = Math.max(1, Math.ceil(customerSales.length / ITEMS_PER_PAGE))
   const paginatedSales = customerSales.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
@@ -89,20 +128,26 @@ const CustomerDetail = () => {
   const getProductInfo = (sale: Sale) => {
     if (sale.productStock) {
       return {
-        name: sale.productStock.product?.name,
+        name: sale.productStock.product?.name || 'Unknown Product',
         size: sale.productStock.size,
         price: sale.productStock.price
       }
-    } else if (sale.psArchive) {
-      const archivedProduct = productsArchive?.find(p => p.productsArchiveId === sale.psArchive?.productsArchiveId)
-      const archivedStock = archivedProduct?.psArchive?.find(s => s.archiveId === sale.psArchive?.archiveId)
+    } else if (sale.psArchive && sale.productsArchiveId && sale.archiveId) {
+      const archivedProduct = productsArchive?.find(p => 
+        p.productsArchiveId === sale.productsArchiveId
+      )
+      const archivedStock = archivedProduct?.psArchive?.find(s => 
+        s.archiveId === sale.archiveId
+      )
+      
       return {
         name: archivedProduct?.name || 'Unknown Product',
-        size: archivedStock?.size || 'N/A',
+        size: archivedStock?.size || 0,
         price: archivedStock?.price || 0
       }
     }
-    return { name: 'Unknown Product', size: 'N/A', price: 0 }
+    
+    return { name: 'Unknown Product', size: 0, price: 0 }
   }
 
   if (isLoading || salesLoading || productsArchiveLoading) {
@@ -256,59 +301,74 @@ const CustomerDetail = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-xl font-bold text-gray-900">Purchase History</CardTitle>
+          <CardDescription>
+            {customerSales.length === 0 
+              ? "No purchase history available for this customer." 
+              : `Showing ${customerSales.length} purchase${customerSales.length !== 1 ? 's' : ''}`}
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-100">
-                  <TableHead className="font-semibold">Date</TableHead>
-                  <TableHead className="font-semibold">Product</TableHead>
-                  <TableHead className="font-semibold">Size</TableHead>
-                  <TableHead className="font-semibold">Quantity</TableHead>
-                  <TableHead className="font-semibold">Product Price/Pair</TableHead>
-                  <TableHead className="font-semibold">Sales Price/Pair</TableHead>
-                  <TableHead className="font-semibold">Total Purchase Price</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paginatedSales.map((sale) => {
-                  const productInfo = getProductInfo(sale)
-                  
-                  return (
-                    <TableRow key={sale.saleId} className="hover:bg-gray-50">
-                      <TableCell>{new Date(sale.timestamp).toLocaleDateString()}</TableCell>
-                      <TableCell className="font-medium">{productInfo.name}</TableCell>
-                      <TableCell>{productInfo.size}</TableCell>
-                      <TableCell>{sale.quantity}</TableCell>
-                      <TableCell>${productInfo.price.toFixed(2)}</TableCell>
-                      <TableCell>${sale.salesPrice.toFixed(2)}</TableCell>
-                      <TableCell className="font-semibold">${(sale.salesPrice * sale.quantity).toFixed(2)}</TableCell>
+          {customerSales.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              This customer has not made any purchases yet.
+            </div>
+          ) : (
+            <>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gray-100">
+                      <TableHead className="font-semibold">Date</TableHead>
+                      <TableHead className="font-semibold">Product</TableHead>
+                      <TableHead className="font-semibold">Size</TableHead>
+                      <TableHead className="font-semibold">Quantity</TableHead>
+                      <TableHead className="font-semibold">Product Price/Pair</TableHead>
+                      <TableHead className="font-semibold">Sales Price/Pair</TableHead>
+                      <TableHead className="font-semibold">Total Purchase Price</TableHead>
                     </TableRow>
-                  )   
-                })}
-              </TableBody>
-            </Table>
-          </div>
-          <div className="flex items-center justify-between mt-4">
-            <Button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Previous
-            </Button>
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <Button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-            >
-              Next
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedSales.map((sale) => {
+                      const productInfo = getProductInfo(sale)
+                      
+                      return (
+                        <TableRow key={sale.saleId} className="hover:bg-gray-50">
+                          <TableCell>{new Date(sale.timestamp).toLocaleDateString()}</TableCell>
+                          <TableCell className="font-medium">{productInfo.name}</TableCell>
+                          <TableCell>{productInfo.size}</TableCell>
+                          <TableCell>{sale.quantity}</TableCell>
+                          <TableCell>${productInfo.price.toFixed(2)}</TableCell>
+                          <TableCell>${sale.salesPrice.toFixed(2)}</TableCell>
+                          <TableCell className="font-semibold">${(sale.salesPrice * sale.quantity).toFixed(2)}</TableCell>
+                        </TableRow>
+                      )   
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between mt-4">
+                  <Button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="mr-2 h-4 w-4" />
+                    Previous
+                  </Button>
+                  <span>
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <Button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                    <ChevronRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
         </CardContent>
       </Card>
 

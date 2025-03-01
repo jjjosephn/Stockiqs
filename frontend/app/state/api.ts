@@ -190,9 +190,9 @@ export const api = createApi({
          }),
          invalidatesTags: ['Products']
       }),
-      deleteProductStockAfterSale: build.mutation<Product, { stockId: string }>({
-         query: ({ stockId }) => ({
-            url: `/products/stock/${stockId}`,
+      deleteProductStockAfterSale: build.mutation<Product, { stockId: string, userId?: string }>({
+         query: ({ stockId, userId }) => ({
+            url: `/products/stock/${stockId}/${userId}`,
             method: 'DELETE',
          }),
          invalidatesTags: ['Products']

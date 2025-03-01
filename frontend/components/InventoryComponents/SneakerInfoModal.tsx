@@ -42,7 +42,7 @@ const SneakerInfoModal = ({ isOpen, onClose, onDelete, product }: SneakerInfoMod
    const [deleteProductStock] = useDeleteProductStockMutation()
    const { data: productsData, refetch: refetchProducts } = useGetProductsQuery({ userId: userId || '' })
    const { refetch: refetchSales } = useGetSalesQuery({ userId: userId || '' })
-   const {refetch: refetchPurchases} = useGetPurchasesQuery()
+   const {refetch: refetchPurchases} = useGetPurchasesQuery({userId: userId || ''})
 
    const refreshData = useCallback(async () => {
       if (refetchProducts) {
