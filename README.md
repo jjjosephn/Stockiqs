@@ -25,7 +25,7 @@ Experience StockIQs today with our demo account:
 <table>
   <tr>
     <td><strong>Frontend</strong></td>
-    <td>Next.js, TailwindCSS, Vercel</td>
+    <td>Next.js, TailwindCSS, Redux, Vercel</td>
   </tr>
   <tr>
     <td><strong>Backend</strong></td>
