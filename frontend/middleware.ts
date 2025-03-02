@@ -6,6 +6,8 @@ export default clerkMiddleware(async (auth, request) => {
   if (!isPublicRoute(request)) {
     await auth.protect()
   }
+}, {
+  authorizedParties: ['https://stockiqs.vip', 'https://www.stockiqs.vip'], // Replace with your trusted domains
 })
 
 export const config = {

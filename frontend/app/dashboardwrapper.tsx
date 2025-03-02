@@ -38,8 +38,7 @@ const DashboardLayout = ({ children } : { children: React.ReactNode}) => {
 // Auth wrapper to handle auth state changes
 const AuthStateWrapper = ({ children } : { children: React.ReactNode}) => {
   const { isSignedIn, isLoaded } = useAuth();
-  
-  // Add a useEffect to force a component re-render when auth state changes
+  console.log(isSignedIn)
   useEffect(() => {
     // This effect runs when isSignedIn changes
     // No need to do anything else, just having the dependency will 
