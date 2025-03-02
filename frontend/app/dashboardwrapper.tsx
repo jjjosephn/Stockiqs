@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import Navbar from '@/components/Navbar'
 import Sidebar from '@/components/Sidebar'
 import StoreProvider, { useAppSelector } from './redux'
-import { SignedIn, SignedOut, useAuth } from "@clerk/nextjs"
+import { SignedIn, SignedOut } from "@clerk/nextjs"
 
 const DashboardLayout = ({ children } : { children: React.ReactNode}) => {
   const isSideBarCollapsed = useAppSelector((state) => 
@@ -37,19 +37,6 @@ const DashboardLayout = ({ children } : { children: React.ReactNode}) => {
 
 // Auth wrapper to handle auth state changes
 const AuthStateWrapper = ({ children } : { children: React.ReactNode}) => {
-  const { isSignedIn, isLoaded } = useAuth();
-  console.log(isSignedIn)
-  useEffect(() => {
-    // This effect runs when isSignedIn changes
-    // No need to do anything else, just having the dependency will 
-    // force a re-render when auth state changes
-  }, [isSignedIn, isLoaded]);
-  
-  // Ensure auth is loaded before rendering children
-  if (!isLoaded) {
-    return <div>Loading...</div>; // Optional loading state
-  }
-  
   return (
     <>
       <SignedOut>
