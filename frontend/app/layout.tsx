@@ -4,6 +4,8 @@ import "@/app/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import DashboardWrapper from "./dashboardwrapper";
 import React from "react";
+import { Analytics } from '@vercel/analytics/next';
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +35,7 @@ export default function RootLayout({
         <ClerkProvider>
           <DashboardWrapper>
             {children}
+            <Analytics />
           </DashboardWrapper>
         </ClerkProvider>
       </body>
