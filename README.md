@@ -12,7 +12,7 @@ StockIQs is a comprehensive inventory management system designed specifically fo
 - **📦 Inventory Tracking**: Manage your entire sneaker collection with detailed information on each pair
 - **👥 Customer Tracking**: Build relationships by tracking customers and their purchase history
 - **📊 Financial Analytics**: Monitor ROI, profit margins, and overall business performance
-- **🔄 Multi-channel Integration**: Seamlessly sync with StockX, GOAT, eBay, and other selling platforms
+- **🔄 Multi-channel Integration**: Synced with StockX and Goat
 
 ## 🚀 Try It Out
 Experience StockIQs today with our demo account:
