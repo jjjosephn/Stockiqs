@@ -6,7 +6,7 @@
 </div>
 
 ## 📋 Overview
-StockIQs is a comprehensive inventory management system designed specifically for sneaker resellers. Track your inventory, monitor profits, and streamline your reselling business with our specialized tools built by resellers, for resellers.
+Stockiqs is a comprehensive inventory management system designed specifically for sneaker resellers. Track your inventory, monitor profits, and streamline your reselling business with our specialized tools built by resellers, for resellers.
 
 ## ✨ Features
 - **📦 Inventory Tracking**: Manage your entire sneaker collection with detailed information on each pair
